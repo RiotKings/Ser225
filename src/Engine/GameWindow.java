@@ -9,7 +9,8 @@ import javax.swing.*;
 public class GameWindow {
 	private JFrame gameWindow;
 	private GamePanel gamePanel;
-
+	private Mouse mouse;
+	
 	public GameWindow() {
 		gameWindow = new JFrame("Game");
 		gamePanel = new GamePanel();
@@ -27,6 +28,17 @@ public class GameWindow {
 	// triggers the game loop to start as defined in the GamePanel class
 	public void startGame() {
 		gamePanel.startGame();
+		// Initialize Mouse and add it to the GamePanel
+        mouse = new Mouse();  // Updated class name
+        gamePanel.addMouseListener(mouse);   // Add MouseListener
+        gamePanel.addMouseMotionListener(mouse);  // Add MouseMotionListener
+		
+	}
+
+	 // Expose the Mouse to get mouse coordinates from outside GameWindow
+    public Mouse getMouse() {
+        return mouse;
+    
 	}
 
 	public ScreenManager getScreenManager() {

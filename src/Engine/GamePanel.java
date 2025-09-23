@@ -23,6 +23,8 @@ public class GamePanel extends JPanel {
 	private KeyLocker keyLocker = new KeyLocker();
 	private final Key pauseKey = Key.P;
 	private Thread gameLoopProcess;
+	
+	private Mouse mouse;
 
 	private Key showFPSKey = Key.G;
 	private SpriteFont fpsDisplayLabel;
@@ -37,7 +39,12 @@ public class GamePanel extends JPanel {
 
 		// attaches Keyboard class's keyListener to this JPanel
 		this.addKeyListener(Keyboard.getKeyListener());
-
+		
+		// attaches Mouse class's lisener to this JPanel
+		mouse = new Mouse();  // Updated class name
+ 		this.addMouseListener(mouse);   // Add MouseListener
+    	this.addMouseMotionListener(mouse);  // Add MouseMotionListener
+		
 		graphicsHandler = new GraphicsHandler();
 
 		screenManager = new ScreenManager();
@@ -125,6 +132,8 @@ public class GamePanel extends JPanel {
 		if (showFPS) {
 			fpsDisplayLabel.draw(graphicsHandler);
 		}
+		int mouseX = mouse.getMouseX();
+		int mouseY = mouse.getMouseY();
 	}
 
 	@Override
