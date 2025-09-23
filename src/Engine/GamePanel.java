@@ -7,6 +7,8 @@ import Utils.Colors;
 import javax.swing.*;
 import java.awt.*;
 
+
+
 /*
  * This is where the game loop process and render back buffer is setup
  */
@@ -24,6 +26,9 @@ public class GamePanel extends JPanel {
 	private final Key pauseKey = Key.P;
 	private Thread gameLoopProcess;
 
+	private Mouse mouse;
+	
+
 	private Key showFPSKey = Key.G;
 	private SpriteFont fpsDisplayLabel;
 	private boolean showFPS = false;
@@ -34,6 +39,15 @@ public class GamePanel extends JPanel {
 	public GamePanel() {
 		super();
 		this.setDoubleBuffered(true);
+
+		// attaches Mouse class's lisener to this JPanel
+		mouse = new Mouse();  // Updated class name
+ 		this.addMouseListener(mouse);   // Add MouseListener
+    	this.addMouseMotionListener(mouse);  // Add MouseMotionListener
+
+
+
+
 
 		// attaches Keyboard class's keyListener to this JPanel
 		this.addKeyListener(Keyboard.getKeyListener());
@@ -125,6 +139,9 @@ public class GamePanel extends JPanel {
 		if (showFPS) {
 			fpsDisplayLabel.draw(graphicsHandler);
 		}
+
+		int mouseX = mouse.getMouseX();
+		int mouseY = mouse.getMouseY();
 	}
 
 	@Override
