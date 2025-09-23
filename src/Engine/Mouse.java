@@ -23,7 +23,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        // You can leave this empty if you don't need to handle releases
+        // You can leave this empty if you don't need to handle releases 
     }
 
     @Override
