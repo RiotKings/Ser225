@@ -9,6 +9,7 @@ import javax.swing.*;
 public class GameWindow {
 	private JFrame gameWindow;
 	private GamePanel gamePanel;
+	private Mouse mouse;
 
 	public GameWindow() {
 		gameWindow = new JFrame("Game");
@@ -22,8 +23,18 @@ public class GameWindow {
 		gameWindow.setVisible(true);
 		gameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // it'd be nice if this actually worked more than 1/3rd of the time
 		gamePanel.setupGame();
+
+		// Initialize Mouse and add it to the GamePanel
+        mouse = new Mouse();  // Updated class name
+        gamePanel.addMouseListener(mouse);   // Add MouseListener
+        gamePanel.addMouseMotionListener(mouse);  // Add MouseMotionListener
+		
 	}
 
+	 // Expose the Mouse to get mouse coordinates from outside GameWindow
+    public Mouse getMouse() {
+        return mouse;
+    }
 	// triggers the game loop to start as defined in the GamePanel class
 	public void startGame() {
 		gamePanel.startGame();
