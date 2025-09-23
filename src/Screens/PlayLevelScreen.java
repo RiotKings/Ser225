@@ -6,7 +6,7 @@ import Game.GameState;
 import Game.ScreenCoordinator;
 import Level.*;
 import Maps.TestMap;
-import Players.Cat;
+import Players.Alex;
 import Utils.Direction;
 import Maps.TestingRoomMap;
 
@@ -35,12 +35,12 @@ public void initialize() {
     map = new TestingRoomMap();   
     map.setFlagManager(flagManager);
 
-    // Cat at the map’s start position
-    player = new Players.Cat(
-        map.getPlayerStartPosition().x,
-        map.getPlayerStartPosition().y
-    );
-    player.setMap(map);
+
+        // setup player
+        player = new Alex(map.getPlayerStartPosition().x, map.getPlayerStartPosition().y);
+        player.setMap(map);
+        playLevelScreenState = PlayLevelScreenState.RUNNING;
+        player.setFacingDirection(Direction.LEFT);
 
     playLevelScreenState = PlayLevelScreenState.RUNNING;
     player.setFacingDirection(Direction.LEFT);

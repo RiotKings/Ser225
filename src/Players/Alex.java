@@ -10,12 +10,49 @@ import Level.Player;
 
 import java.util.HashMap;
 
-// This is the class for the Cat player character
+// This is the class for the Alex player character
 // basically just sets some values for physics and then defines animations
-public class Cat extends Player {
+public class Alex extends Player {
 
-    public Cat(float x, float y) {
-        super(new SpriteSheet(ImageLoader.load("Cat.png"), 24, 24), x, y, "STAND_RIGHT");
+    private int health;
+    private int knowledge;
+    private int sanity;
+    
+    public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
+        super(spriteSheet, x, y, startingAnimationName); 
+        this.health = 100;
+        this.sanity = 100;
+        this.knowledge = 0;
+    }
+
+     public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName,
+               int health, int sanity, int knowledge) {
+        super(spriteSheet, x, y, startingAnimationName);
+        this.health = health;
+        this.sanity = sanity;
+        this.knowledge = knowledge;
+    }
+
+    public int getHealth() { return health; }
+    public int getSanity() { return sanity; }
+    public int getKnowledge() { return knowledge; }
+
+    public void setHealth(int health) {
+        this.health = Math.max(0, Math.min(health, 100));
+    }
+
+    public void setSanity(int sanity) {
+        this.sanity = Math.max(0, Math.min(sanity, 100));
+    }
+
+    public void setKnowledge(int knowledge) {
+        this.knowledge = Math.max(0, knowledge);
+    }
+
+    public void takeDamage(int damage) { setHealth(health - damage); }
+    
+    public Alex(float x, float y) {
+        super(new SpriteSheet(ImageLoader.load("Alex sprite planning.png"), 24, 24), x, y, "STAND_RIGHT");
         walkSpeed = 2.3f;
     }
 
