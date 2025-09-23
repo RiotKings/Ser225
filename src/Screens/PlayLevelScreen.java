@@ -8,6 +8,7 @@ import Level.*;
 import Maps.TestMap;
 import Players.Cat;
 import Utils.Direction;
+import Maps.TestingRoomMap;
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -22,39 +23,42 @@ public class PlayLevelScreen extends Screen implements GameListener {
         this.screenCoordinator = screenCoordinator;
     }
 
-    public void initialize() {
-        // setup state
-        flagManager = new FlagManager();
-        flagManager.addFlag("hasLostBall", false);
-        flagManager.addFlag("hasTalkedToWalrus", false);
-        flagManager.addFlag("hasTalkedToDinosaur", false);
-        flagManager.addFlag("hasFoundBall", false);
+    @Override
+public void initialize() {
+    // setup state
+    flagManager = new FlagManager();
+    flagManager.addFlag("hasLostBall");
+    flagManager.addFlag("hasTalkedToWalrus");
+    flagManager.addFlag("hasTalkedToBug");
+    flagManager.addFlag("hasFoundBall");
 
-        // define/setup map
-        map = new TestMap();
-        map.setFlagManager(flagManager);
+    map = new TestingRoomMap();   
+    map.setFlagManager(flagManager);
 
-        // setup player
-        player = new Cat(map.getPlayerStartPosition().x, map.getPlayerStartPosition().y);
-        player.setMap(map);
-        playLevelScreenState = PlayLevelScreenState.RUNNING;
-        player.setFacingDirection(Direction.LEFT);
+    // Cat at the map’s start position
+    player = new Players.Cat(
+        map.getPlayerStartPosition().x,
+        map.getPlayerStartPosition().y
+    );
+    player.setMap(map);
 
-        map.setPlayer(player);
+    playLevelScreenState = PlayLevelScreenState.RUNNING;
+    player.setFacingDirection(Direction.LEFT);
 
-        // let pieces of map know which button to listen for as the "interact" button
-        map.getTextbox().setInteractKey(player.getInteractKey());
+    map.setPlayer(player);
 
-        // add this screen as a "game listener" so other areas of the game that don't normally have direct access to it (such as scripts) can "signal" to have it do something
-        // this is used in the "onWin" method -- a script signals to this class that the game has been won by calling its "onWin" method
-        map.addListener(this);
+    // let map know which key is interact
+    map.getTextbox().setInteractKey(player.getInteractKey());
 
-        // preloads all scripts ahead of time rather than loading them dynamically
-        // both are supported, however preloading is recommended
-        map.preloadScripts();
+    // add this screen as a listener
+    map.addListener(this);
 
-        winScreen = new WinScreen(this);
-    }
+    // preload scripts
+    map.preloadScripts();
+
+    winScreen = new WinScreen(this);
+}
+
 
     public void update() {
         // based on screen state, perform specific actions
