@@ -5,6 +5,7 @@ import Engine.Screen;
 import Game.GameState;
 import Game.ScreenCoordinator;
 import Level.*;
+import NPCs.EnemyBasic;
 import Maps.TestMap;
 import Players.Alex;
 import Utils.Direction;
@@ -46,6 +47,13 @@ public void initialize() {
     player.setFacingDirection(Direction.LEFT);
 
     map.setPlayer(player);
+
+        EnemyBasic e1 = new EnemyBasic(
+            1001,
+            player.getBounds().getX() - 400,
+            player.getBounds().getY());
+        map.addNPC(e1);
+        e1.setBounds(0f, 0f, map.getWidthPixels(), map.getHeightPixels());
 
     // let map know which key is interact
     map.getTextbox().setInteractKey(player.getInteractKey());
