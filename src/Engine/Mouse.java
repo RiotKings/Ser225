@@ -1,4 +1,3 @@
-
 package Engine;
 import java.awt.event.*;
 
@@ -6,13 +5,24 @@ public class Mouse implements MouseListener, MouseMotionListener {
     private int mouseX = 0;
     private int mouseY = 0;
 
-     // Store the last time the position was printed
+    // Store the last time the position was printed
     private long lastUpdateTime = 0;
-    private final long updateInterval = 500;  // Update every 2 seconds (2000 milliseconds)
+    private final long updateInterval = 500;  // Update every 500 milliseconds
 
-    // Constructor
-    public Mouse() {
+    // Static instance of Mouse for Singleton pattern
+    private static Mouse instance;
+
+    // Private constructor to prevent instantiation from outside
+    private Mouse() {
         // Initialization (if needed)
+    }
+
+    // Static method to get the single instance of the Mouse class
+    public static Mouse getInstance() {
+        if (instance == null) {
+            instance = new Mouse();  // Create a new instance if it doesn't exist
+        }
+        return instance;
     }
 
     // MouseListener methods

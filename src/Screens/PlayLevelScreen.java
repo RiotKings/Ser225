@@ -2,14 +2,17 @@ package Screens;
 
 import Engine.GraphicsHandler;
 import Engine.Screen;
+import Engine.Mouse; 
 import Game.GameState;
 import Game.ScreenCoordinator;
+import Hud.Crosshair;
 import Level.*;
 import NPCs.EnemyBasic;
 import Maps.TestMap;
 import Players.Alex;
 import Utils.Direction;
 import Maps.TestingRoomMap;
+
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -19,7 +22,8 @@ public class PlayLevelScreen extends Screen implements GameListener {
     protected PlayLevelScreenState playLevelScreenState;
     protected WinScreen winScreen;
     protected FlagManager flagManager;
-
+    
+    
     public PlayLevelScreen(ScreenCoordinator screenCoordinator) {
         this.screenCoordinator = screenCoordinator;
     }
@@ -47,7 +51,7 @@ public void initialize() {
     player.setFacingDirection(Direction.LEFT);
 
     map.setPlayer(player);
-
+        //set up enemy
         EnemyBasic e1 = new EnemyBasic(
             1001,
             player.getBounds().getX() - 400,
@@ -55,6 +59,8 @@ public void initialize() {
         map.addNPC(e1);
         e1.setBounds(0f, 0f, map.getWidthPixels(), map.getHeightPixels());
 
+        //set up Crosshair
+        
     // let map know which key is interact
     map.getTextbox().setInteractKey(player.getInteractKey());
 

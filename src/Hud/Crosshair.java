@@ -14,16 +14,18 @@ public class Crosshair extends GameObject {
     private Mouse mouse;
 
     // Constructor
-    public Crosshair(float x, float y,Mouse mouse) {
+    public Crosshair(float x, float y) {
         super(x, y);
-        this.mouse = mouse;
-
+        
         // Load the crosshair image from the file
         try {
-            crosshairImage = ImageIO.read(new File("resources/Crosshair.png")); 
+            crosshairImage = ImageIO.read(new File("resources/crosshair.png")); 
         } catch (IOException e) {
             e.printStackTrace();  // Handle the exception if the image is not found
         }
+
+        // Access the Singleton Mouse instance
+        this.mouse = Mouse.getInstance();
     }
 
     // Override update method if necessary, for instance to follow the mouse
@@ -32,8 +34,8 @@ public class Crosshair extends GameObject {
         super.update();
 
         if (mouse != null) {
-            int mouseX = mouse.getMouseX();
-            int mouseY = mouse.getMouseY();
+            int mouseX = mouse.getMouseX();  // Get the current mouse X position
+            int mouseY = mouse.getMouseY();  // Get the current mouse Y position
             // Set the crosshair's position to the mouse position (centering it)
             this.x = mouseX - crosshairImage.getWidth() / 2;  // Center the crosshair on the mouse
             this.y = mouseY - crosshairImage.getHeight() / 2;
