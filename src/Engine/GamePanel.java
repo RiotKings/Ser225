@@ -25,6 +25,7 @@ public class GamePanel extends JPanel {
 	private Thread gameLoopProcess;
 	
 	private Mouse mouse;
+	private Hud.Crosshair crosshair;
 
 
 	private Key showFPSKey = Key.G;
@@ -45,6 +46,8 @@ public class GamePanel extends JPanel {
 		mouse = Mouse.getInstance();  // Get Singleton instance
 		this.addMouseListener(mouse);   // Add MouseListener
 		this.addMouseMotionListener(mouse);  // Add MouseMotionListener
+
+		crosshair = new Hud.Crosshair(0, 0); // HUD object
 
 		// Initialize the Crosshair object here, passing the Mouse object
         
@@ -97,6 +100,7 @@ public class GamePanel extends JPanel {
 
 		if (!isGamePaused) {
 			screenManager.update();
+			if (crosshair != null) crosshair.update();
 		}
 	}
 
@@ -138,7 +142,8 @@ public class GamePanel extends JPanel {
 			fpsDisplayLabel.draw(graphicsHandler);
 		}
 		
-	
+		  // draw crosshair LAST so it’s above map/player/overlays
+   		 if (crosshair != null) crosshair.draw(graphicsHandler);
 
 	}
 
