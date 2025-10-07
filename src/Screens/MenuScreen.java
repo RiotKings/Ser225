@@ -9,6 +9,10 @@ import SpriteFont.SpriteFont;
 
 import java.awt.*;
 
+import javax.sound.sampled.*;
+import java.io.File;
+import java.net.URL;
+
 // This is the class for the main menu screen
 public class MenuScreen extends Screen {
     protected ScreenCoordinator screenCoordinator;
@@ -20,6 +24,12 @@ public class MenuScreen extends Screen {
     protected int keyPressTimer;
     protected int pointerLocationX, pointerLocationY;
     protected KeyLocker keyLocker = new KeyLocker();
+
+    // audio fields (new)
+    private Clip bgmClip;
+    private FloatControl bgmVolume;
+    private int loopStartFrame = -1;
+    private int loopEndFrame   = -1;
 
     public MenuScreen(ScreenCoordinator screenCoordinator) {
         this.screenCoordinator = screenCoordinator;
@@ -38,6 +48,9 @@ public class MenuScreen extends Screen {
         keyPressTimer = 0;
         menuItemSelected = -1;
         keyLocker.lockKey(Key.SPACE);
+
+        // 🔊 start title music
+        startTitleMusic();
     }
 
     public void update() {
@@ -84,8 +97,12 @@ public class MenuScreen extends Screen {
         if (!keyLocker.isKeyLocked(Key.SPACE) && Keyboard.isKeyDown(Key.SPACE)) {
             menuItemSelected = currentMenuItemHovered;
             if (menuItemSelected == 0) {
+                // 🔊 stop music before switching screens
+                stopTitleMusic();
                 screenCoordinator.setGameState(GameState.LEVEL);
             } else if (menuItemSelected == 1) {
+                // 🔊 stop music before switching screens
+                stopTitleMusic();
                 screenCoordinator.setGameState(GameState.CREDITS);
             }
         }
@@ -95,6 +112,68 @@ public class MenuScreen extends Screen {
         background.draw(graphicsHandler);
         playGame.draw(graphicsHandler);
         credits.draw(graphicsHandler);
-        graphicsHandler.drawFilledRectangleWithBorder(pointerLocationX, pointerLocationY, 20, 20, new Color(49, 207, 240), Color.black, 2);
+        graphicsHandler.drawFilledRectangleWithBorder(
+            pointerLocationX, pointerLocationY, 20, 20,
+            new Color(49, 207, 240), Color.black, 2
+        );
+    }
+
+    // =========================
+    // 🔊 music helpers (new)
+    // =========================
+    private void startTitleMusic() {
+        try {
+            // load WAV from Resources
+            URL url = new File("Resources/title_theme.wav").toURI().toURL();
+            AudioInputStream in = AudioSystem.getAudioInputStream(url);
+
+            // make sure it's PCM-signed for Clip
+            AudioFormat base = in.getFormat();
+            AudioFormat decoded = new AudioFormat(
+                    AudioFormat.Encoding.PCM_SIGNED,
+                    base.getSampleRate(),
+                    16,
+                    base.getChannels(),
+                    base.getChannels() * 2,
+                    base.getSampleRate(),
+                    false
+            );
+            AudioInputStream din = AudioSystem.getAudioInputStream(decoded, in);
+
+            bgmClip = AudioSystem.getClip();
+            bgmClip.open(din);
+
+            // 40-second loop
+            float frameRate = decoded.getFrameRate();
+            int totalFrames = (int) bgmClip.getFrameLength();
+            int startMs = 0;        // change if you want to skip intro
+            int endMs   = 40000;    // 40s
+            loopStartFrame = Math.max(0, (int) (startMs / 1000f * frameRate));
+            loopEndFrame   = Math.min(totalFrames - 1, (int) (endMs   / 1000f * frameRate));
+
+            // optional volume
+            if (bgmClip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                bgmVolume = (FloatControl) bgmClip.getControl(FloatControl.Type.MASTER_GAIN);
+                // bgmVolume.setValue(-6.0f); // quieter if desired
+            }
+
+            bgmClip.setLoopPoints(loopStartFrame, loopEndFrame);
+            bgmClip.setFramePosition(loopStartFrame);
+            bgmClip.loop(Clip.LOOP_CONTINUOUSLY);
+            bgmClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopTitleMusic() {
+        try {
+            if (bgmClip != null) {
+                bgmClip.stop();
+                bgmClip.flush();
+                bgmClip.close();
+            }
+        } catch (Exception ignored) {}
+        bgmClip = null;
     }
 }
