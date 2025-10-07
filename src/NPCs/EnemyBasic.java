@@ -130,7 +130,7 @@ public class EnemyBasic extends NPC {
             float bx = exScreen + (dxScreen / distScreen) * MUZZLE_OFFSET;
             float by = eyScreen + (dyScreen / dist) * MUZZLE_OFFSET;
 
-            bullets.add(new Bullet(bx, by, dxScreen, dyScreen));
+            bullets.add(new Bullet(bx, by, dxScreen, dyScreen, player));
             bulletCooldown = BULLET_INTERVAL;
         }
         } else {

@@ -37,10 +37,28 @@ public abstract class Player extends GameObject {
 protected Key MOVE_RIGHT_KEY = Key.D;
 protected Key MOVE_UP_KEY = Key.W;
 protected Key MOVE_DOWN_KEY = Key.S;
+protected Key Dodge = Key.SPACE;
 
     protected Key INTERACT_KEY = Key.E;
 
     protected boolean isLocked = false;
+
+    // Dodge system variables
+    private boolean isDodging = false;
+    private long dodgeStartTime = 0;
+    private long lastDodgeTime = 0;
+
+    private static final long DODGE_DURATION = 300; // milliseconds (0.3s)
+    private static final long DODGE_COOLDOWN = 1000; // milliseconds (1s)
+    private static final float DODGE_SPEED = 2.0f; // speed multiplier during dodge
+
+// store direction at start of dodge
+    private float dodgeDirX = 0;
+    private float dodgeDirY = 0;
+
+    public boolean isDodging() {
+    return isDodging;
+    }
 
     public Player(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
         super(spriteSheet, x, y, startingAnimationName);
@@ -51,6 +69,11 @@ protected Key MOVE_DOWN_KEY = Key.S;
     }
 
     public void update() {
+        long currentTime = System.currentTimeMillis();
+
+        if (isDodging && currentTime - dodgeStartTime >= DODGE_DURATION) {
+            isDodging = false;
+        }
         if (!isLocked) {
             moveAmountX = 0;
             moveAmountY = 0;
@@ -150,6 +173,20 @@ protected Key MOVE_DOWN_KEY = Key.S;
 
         if (Keyboard.isKeyUp(MOVE_LEFT_KEY) && Keyboard.isKeyUp(MOVE_RIGHT_KEY) && Keyboard.isKeyUp(MOVE_UP_KEY) && Keyboard.isKeyUp(MOVE_DOWN_KEY)) {
             playerState = PlayerState.STANDING;
+        }
+        if (isDodging) {
+        // Move faster in dodge direction
+        x += dodgeDirX * DODGE_SPEED;
+        y += dodgeDirY * DODGE_SPEED;
+        return; // skip normal movement while dodging
+        }
+        if (Keyboard.isKeyDown(Key.SPACE) && !keyLocker.isKeyLocked(Key.SPACE)) {
+        startDodge();
+        keyLocker.lockKey(Key.SPACE);
+        }
+
+        if (Keyboard.isKeyUp(Key.SPACE)) {
+        keyLocker.unlockKey(Key.SPACE);
         }
     }
 
@@ -255,6 +292,29 @@ protected Key MOVE_DOWN_KEY = Key.S;
             moveX(speed);
         }
     }
+
+    public void startDodge() {
+    long currentTime = System.currentTimeMillis();
+
+    
+    if (currentTime - lastDodgeTime >= DODGE_COOLDOWN && !isDodging) {
+
+        dodgeDirX = 0;
+        dodgeDirY = 0;
+        if (Keyboard.isKeyDown(MOVE_LEFT_KEY))  dodgeDirX = -1;
+        if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) dodgeDirX = 1;
+        if (Keyboard.isKeyDown(MOVE_UP_KEY))    dodgeDirY = -1;
+        if (Keyboard.isKeyDown(MOVE_DOWN_KEY))  dodgeDirY = 1;
+
+        if (dodgeDirX != 0 || dodgeDirY != 0) {
+            isDodging = true;
+            dodgeStartTime = currentTime;
+            lastDodgeTime = currentTime;
+
+             
+        }
+    }
+}
 
     // Uncomment this to have game draw player's bounds to make it easier to visualize
     /*
