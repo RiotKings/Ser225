@@ -1,14 +1,17 @@
 package Level;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 import Engine.GraphicsHandler;
 import Engine.Key;
 import Engine.KeyLocker;
 import Engine.Keyboard;
+import Engine.Mouse;
 import GameObject.GameObject;
 import GameObject.Rectangle;
 import GameObject.SpriteSheet;
+import GameObject.Bullet;
 import Utils.Direction;
 
 public abstract class Player extends GameObject {
@@ -33,14 +36,29 @@ public abstract class Player extends GameObject {
 
     // define keys
     protected KeyLocker keyLocker = new KeyLocker();
-   protected Key MOVE_LEFT_KEY = Key.A;
-protected Key MOVE_RIGHT_KEY = Key.D;
-protected Key MOVE_UP_KEY = Key.W;
-protected Key MOVE_DOWN_KEY = Key.S;
+    protected Key MOVE_LEFT_KEY = Key.A;
+    protected Key MOVE_RIGHT_KEY = Key.D;
+    protected Key MOVE_UP_KEY = Key.W;
+    protected Key MOVE_DOWN_KEY = Key.S;
 
     protected Key INTERACT_KEY = Key.E;
 
     protected boolean isLocked = false;
+
+    protected Mouse mouse;
+
+    // Shooting
+    private static final float STEP_DT = 1f / 60f;
+    private static final int FIRE_INTERVAL = 60;
+    private static final float MUZZLE_OFFSET = 10f;
+    private static final int BURST_COUNT = 1;
+    private static final int BULLET_SIZE = 6;
+
+    private final ArrayList<Bullet> bullets = new ArrayList<>();
+    private int fireCooldown = 0;
+
+    // Let subclasses (e.g., Players.Alex) define how damage is applied
+    public abstract void takeDamage(int amount);
 
     public Player(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
         super(spriteSheet, x, y, startingAnimationName);
@@ -67,11 +85,13 @@ protected Key MOVE_DOWN_KEY = Key.S;
             lastAmountMovedX = super.moveXHandleCollision(moveAmountX);
         }
 
+        // Shooting: attempt to fire
+        updateFiringAndBullets();
+
         handlePlayerAnimation();
 
         updateLockedKeys();
 
-        // update player's animation
         super.update();
     }
 
@@ -207,7 +227,6 @@ protected Key MOVE_DOWN_KEY = Key.S;
     public Direction getLastWalkingXDirection() { return lastWalkingXDirection; }
     public Direction getLastWalkingYDirection() { return lastWalkingYDirection; }
 
-    
     public void lock() {
         isLocked = true;
         playerState = PlayerState.STANDING;
@@ -220,47 +239,111 @@ protected Key MOVE_DOWN_KEY = Key.S;
         this.currentAnimationName = facingDirection == Direction.RIGHT ? "STAND_RIGHT" : "STAND_LEFT";
     }
 
-    // used by other files or scripts to force player to stand
-    public void stand(Direction direction) {
-        playerState = PlayerState.STANDING;
-        facingDirection = direction;
-        if (direction == Direction.RIGHT) {
-            this.currentAnimationName = "STAND_RIGHT";
+    // Shooting
+
+    // Placeholder fire input: SPACE held. (Swap to Mouse later if desired)
+    protected boolean isFireHeld() {
+        return Keyboard.isKeyDown(Key.SPACE);
+    }
+
+    // Player center - same as EnemyBasic
+    protected float[] getPlayerCenterScreen() {
+        float cxScreen = this.getCalibratedXLocation() + this.getWidth() / 2f;
+        float cyScreen = this.getCalibratedYLocation() + this.getHeight() / 2f;
+        return new float[] { cxScreen, cyScreen };
+    }
+
+    // Aim toward the mouse cursor, with fallback if mouse not injected yet
+    protected float[] getAimTargetScreen() {
+        if (mouse != null) {
+            return new float[] { mouse.getMouseX(), mouse.getMouseY() };
         }
-        else if (direction == Direction.LEFT) {
-            this.currentAnimationName = "STAND_LEFT";
+        // Fallback: shoot in facing direction if mouse not injected yet
+        float[] c = getPlayerCenterScreen();
+        final float OFF = 100f;
+        float dx = 0f, dy = 0f;
+        switch (this.facingDirection) {
+            case RIGHT: dx =  OFF; break;
+            case LEFT:  dx = -OFF; break;
+            case UP:    dy = -OFF; break;
+            case DOWN:  dy =  OFF; break;
+            default:    dx =  OFF; break;
+        }
+        return new float[] { c[0] + dx, c[1] + dy };
+    }
+
+
+    public void setMouse(Mouse mouse) {
+        this.mouse = mouse;
+    }
+
+    // Shooting
+    private void updateFiringAndBullets() {
+        //Fire when cooldown elapsed and player not locked
+        if (!isLocked && isFireHeld() && fireCooldown <= 0) {
+            float[] centerScreen = getPlayerCenterScreen();
+            float[] aimScreen    = getAimTargetScreen();
+
+            float dxScreen = aimScreen[0] - centerScreen[0];
+            float dyScreen = aimScreen[1] - centerScreen[1];
+            float distScreen = (float) Math.sqrt(dxScreen * dxScreen + dyScreen * dyScreen);
+            if (distScreen < 1e-4f) distScreen = 1f;
+
+            float bx = centerScreen[0] + (dxScreen / distScreen) * MUZZLE_OFFSET;
+            float by = centerScreen[1] + (dyScreen / distScreen) * MUZZLE_OFFSET;
+
+            for (int i = 0; i < BURST_COUNT; i++) {
+                bullets.add(new Bullet(bx, by, dxScreen, dyScreen));
+            }
+            fireCooldown = FIRE_INTERVAL;
+        } else {
+            if (fireCooldown > 0) fireCooldown--;
+        }
+
+        // Update bullets
+        for (int i = bullets.size() - 1; i >= 0; i--) {
+            Bullet b = bullets.get(i);
+            b.update(STEP_DT);
+
+            if (isOffMap(b)) {
+                bullets.remove(i);
+            }
         }
     }
 
-    // used by other files or scripts to force player to walk
-    public void walk(Direction direction, float speed) {
-        playerState = PlayerState.WALKING;
-        facingDirection = direction;
-        if (direction == Direction.RIGHT) {
-            this.currentAnimationName = "WALK_RIGHT";
-        }
-        else if (direction == Direction.LEFT) {
-            this.currentAnimationName = "WALK_LEFT";
-        }
-        if (direction == Direction.UP) {
-            moveY(-speed);
-        }
-        else if (direction == Direction.DOWN) {
-            moveY(speed);
-        }
-        else if (direction == Direction.LEFT) {
-            moveX(-speed);
-        }
-        else if (direction == Direction.RIGHT) {
-            moveX(speed);
+    private boolean isOffMap(Bullet b) {
+        if (map == null) return false;
+        Rectangle rb = b.getBounds();
+        float bx = rb.getX() + rb.getWidth() / 2f;
+        float by = rb.getY() + rb.getHeight() / 2f;
+
+        int w = map.getWidthPixels();
+        int h = map.getHeightPixels();
+
+        if (bx < -BULLET_SIZE || bx > (w + BULLET_SIZE)) return true;
+        if (by < -BULLET_SIZE || by > (h + BULLET_SIZE)) return true;
+        return false;
+    }
+
+    // Drawing
+    @Override
+    public void draw(GraphicsHandler graphicsHandler) {
+        super.draw(graphicsHandler);
+        drawPlayerBullets(graphicsHandler);
+    }
+
+    protected void drawPlayerBullets(GraphicsHandler g) {
+        for (int i = 0; i < bullets.size(); i++) {
+            bullets.get(i).draw(g);
         }
     }
 
     // Uncomment this to have game draw player's bounds to make it easier to visualize
-    /*
+    /* 
     public void draw(GraphicsHandler graphicsHandler) {
         super.draw(graphicsHandler);
         drawBounds(graphicsHandler, new Color(255, 0, 0, 100));
     }
     */
 }
+

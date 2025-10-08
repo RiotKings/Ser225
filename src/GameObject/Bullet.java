@@ -3,6 +3,8 @@ package GameObject;
 import Level.MapEntity;
 import Engine.GraphicsHandler;
 import java.awt.Color;
+import GameObject.Rectangle;
+
 
 public class Bullet extends MapEntity {
     private float vx, vy;
@@ -21,7 +23,19 @@ public class Bullet extends MapEntity {
         y += vy * dt;
     }
 
-    public void draw(GraphicsHandler graphicsHandler) {
-        graphicsHandler.drawFilledRectangle((int)x - 3, (int)y - 3, 6, 6, Color.RED);
+    @Override
+    public void draw(GraphicsHandler g) {
+        float sx = x;
+        float sy = y;
+        if (map != null && map.getCamera() != null) {
+            sx -= map.getCamera().getX();
+            sy -= map.getCamera().getY();
+        }
+        g.drawFilledRectangle(Math.round(sx) - 3, Math.round(sy) - 3, 6, 6, Color.RED);
+    }
+
+    @Override
+    public Rectangle getBounds() {
+        return new Rectangle(x - 3, y - 3, 6, 6);
     }
 }
