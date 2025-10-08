@@ -13,6 +13,8 @@ import java.util.HashMap;
 // This is the class for the Alex player character
 // basically just sets some values for physics and then defines animations
 public class Alex extends Player {
+    private long dodgeStartTime;
+    private long dodgeDuration = 400; // milliseconds
 
     private int health;
     private int knowledge;
@@ -65,6 +67,8 @@ public class Alex extends Player {
     public void draw(GraphicsHandler graphicsHandler) {
         super.draw(graphicsHandler);
     }
+
+    
 
     
 
@@ -128,10 +132,44 @@ public class Alex extends Player {
                             .build()
             });
             put("DODGE_LEFT", new Frame[] {
-                    
+                    new FrameBuilder(spriteSheet.getSprite(2, 0), 14)
+                            .withScale(3)
+                            .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
+                            .withBounds(6, 12, 12, 7)
+                            .build(),
+                    new FrameBuilder(spriteSheet.getSprite(2, 1), 14)
+                            .withScale(3)
+                            .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
+                            .withBounds(6, 12, 12, 7)
+                            .build(),
+                    new FrameBuilder(spriteSheet.getSprite(2, 2), 14)
+                            .withScale(3)
+                            .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
+                            .withBounds(6, 12, 12, 7)
+                            .build(),
+                    new FrameBuilder(spriteSheet.getSprite(2, 3), 14)
+                            .withScale(3)
+                            .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
+                            .withBounds(6, 12, 12, 7)
+                            .build()
             });
             put("DODGE_RIGHT", new Frame[]{
-                
+                    new FrameBuilder(spriteSheet.getSprite(2, 0), 14)
+                            .withScale(3)
+                            .withBounds(6, 12, 12, 7)
+                            .build(),
+                    new FrameBuilder(spriteSheet.getSprite(2, 1), 14)
+                            .withScale(3)
+                            .withBounds(6, 12, 12, 7)
+                            .build(),
+                    new FrameBuilder(spriteSheet.getSprite(2, 2), 14)
+                            .withScale(3)
+                            .withBounds(6, 12, 12, 7)
+                            .build(),
+                    new FrameBuilder(spriteSheet.getSprite(2, 3), 14)
+                            .withScale(3)
+                            .withBounds(6, 12, 12, 7)
+                            .build()
             });
         }};
     }

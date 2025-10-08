@@ -50,11 +50,12 @@ protected Key Dodge = Key.SPACE;
 
     private static final long DODGE_DURATION = 300; // milliseconds (0.3s)
     private static final long DODGE_COOLDOWN = 1000; // milliseconds (1s)
-    private static final float DODGE_SPEED = 2.0f; // speed multiplier during dodge
+    private static final float DODGE_SPEED = 3.0f; // speed multiplier during dodge
 
 // store direction at start of dodge
     private float dodgeDirX = 0;
     private float dodgeDirY = 0;
+
 
     public boolean isDodging() {
     return isDodging;
@@ -106,6 +107,9 @@ protected Key Dodge = Key.SPACE;
                 break;
             case WALKING:
                 playerWalking();
+                break;
+            case DODGING:
+                startDodge();
                 break;
         }
     }
@@ -206,6 +210,9 @@ protected Key Dodge = Key.SPACE;
             // sets animation to a WALK animation based on which way player is facing
             this.currentAnimationName = facingDirection == Direction.RIGHT ? "WALK_RIGHT" : "WALK_LEFT";
         }
+        else if (playerState == PlayerState.DODGING){
+            this.currentAnimationName = facingDirection == Direction.RIGHT ? "DODGE_RIGHT" : "DODGE_LEFT";
+        }
     }
 
     @Override
@@ -294,11 +301,13 @@ protected Key Dodge = Key.SPACE;
     }
 
     public void startDodge() {
+        playerState = PlayerState.DODGING;
     long currentTime = System.currentTimeMillis();
 
-    
+    // Check cooldown
     if (currentTime - lastDodgeTime >= DODGE_COOLDOWN && !isDodging) {
 
+        // Determine dodge direction based on current movement keys
         dodgeDirX = 0;
         dodgeDirY = 0;
         if (Keyboard.isKeyDown(MOVE_LEFT_KEY))  dodgeDirX = -1;
@@ -306,15 +315,75 @@ protected Key Dodge = Key.SPACE;
         if (Keyboard.isKeyDown(MOVE_UP_KEY))    dodgeDirY = -1;
         if (Keyboard.isKeyDown(MOVE_DOWN_KEY))  dodgeDirY = 1;
 
+        // Only dodge if there's a direction
         if (dodgeDirX != 0 || dodgeDirY != 0) {
             isDodging = true;
             dodgeStartTime = currentTime;
             lastDodgeTime = currentTime;
 
-             
+            // Optional: play animation or change color
         }
+        // Handle dodge movement
+        if (isDodging) {
+            // Move faster in dodge direction
+            x += dodgeDirX * DODGE_SPEED;
+            y += dodgeDirY * DODGE_SPEED;
+            return; // skip normal movement while dodging
+}
     }
 }
+        public void handlePlayerInput() {
+        long currentTime = System.currentTimeMillis();
+
+    // --- Handle dodge timer ---
+    if (isDodging && currentTime - dodgeStartTime >= DODGE_DURATION) {
+        isDodging = false;
+    }
+
+    // --- Dodge movement ---
+    if (isDodging) {
+        // Move smoothly in stored dodge direction
+        x += dodgeDirX * DODGE_SPEED;
+        y += dodgeDirY * DODGE_SPEED;
+        return; // Skip normal movement while dodging
+    }
+
+    // --- Normal movement keys ---
+    moveAmountX = 0;
+    moveAmountY = 0;
+
+    if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) {
+        moveAmountX -= walkSpeed;
+        currentWalkingXDirection = Direction.LEFT;
+    } else if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) {
+        moveAmountX += walkSpeed;
+        currentWalkingXDirection = Direction.RIGHT;
+    }
+
+    if (Keyboard.isKeyDown(MOVE_UP_KEY)) {
+        moveAmountY -= walkSpeed;
+        currentWalkingYDirection = Direction.UP;
+    } else if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) {
+        moveAmountY += walkSpeed;
+        currentWalkingYDirection = Direction.DOWN;
+    }
+
+    // Apply movement
+    x += moveAmountX;
+    y += moveAmountY;
+
+    // --- Handle dodge input (Space key) ---
+    if (Keyboard.isKeyDown(Key.SPACE) && !keyLocker.isKeyLocked(Key.SPACE)) {
+        startDodge();
+        keyLocker.lockKey(Key.SPACE);
+    }
+
+    if (Keyboard.isKeyUp(Key.SPACE)) {
+        keyLocker.unlockKey(Key.SPACE);
+    }
+}
+
+    
 
     // Uncomment this to have game draw player's bounds to make it easier to visualize
     /*
