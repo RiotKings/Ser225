@@ -1,59 +1,53 @@
 package Hud;
 
 import Engine.GraphicsHandler;
-import java.awt.image.BufferedImage;
-import GameObject.GameObject; // Import GameObject class
+import GameObject.GameObject;
+import GameObject.ImageEffect;
 import Engine.Mouse;
+
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class Crosshair extends GameObject {
-
     private BufferedImage crosshairImage;
-    private Mouse mouse;
+    private final Mouse mouse;
 
-    // Constructor
-    public Crosshair(float x, float y,Mouse mouse) {
+    public Crosshair(float x, float y) {
         super(x, y);
-        this.mouse = mouse;
-
-        // Load the crosshair image from the file
         try {
-            crosshairImage = ImageIO.read(new File("resources/Crosshair.png")); 
+            // put your image here or switch to getResourceAsStream if you package resources
+            crosshairImage = ImageIO.read(new File("Resources/crosshair.png"));
         } catch (IOException e) {
-            e.printStackTrace();  // Handle the exception if the image is not found
+            e.printStackTrace();
         }
+        mouse = Mouse.getInstance();
     }
 
-    // Override update method if necessary, for instance to follow the mouse
     @Override
     public void update() {
-        super.update();
-
-        if (mouse != null) {
+        super.update(); // once, not twice
+        if (mouse != null && crosshairImage != null) {
             int mouseX = mouse.getMouseX();
             int mouseY = mouse.getMouseY();
-            // Set the crosshair's position to the mouse position (centering it)
-            this.x = mouseX - crosshairImage.getWidth() / 2;  // Center the crosshair on the mouse
-            this.y = mouseY - crosshairImage.getHeight() / 2;
+            // HUD uses SCREEN space, so store raw screen coords here
+            this.x = mouseX - crosshairImage.getWidth() / 2f;
+            this.y = mouseY - crosshairImage.getHeight() / 2f;
         }
-
-        super.update();  // Call the super update method if necessary (for additional logic)
     }
 
-    // Override the draw method to render the crosshair image
     @Override
-    public void draw(GraphicsHandler graphicsHandler) {
-        graphicsHandler.drawImage(
-            crosshairImage, 
-            Math.round(getCalibratedXLocation()), 
-            Math.round(getCalibratedYLocation()), 
-            crosshairImage.getWidth(), 
-            crosshairImage.getHeight(), 
-            null
+    public void draw(GraphicsHandler g) {
+        if (crosshairImage == null) return;
+        // IMPORTANT: draw in SCREEN space — DO NOT use calibrated locations here
+        g.drawImage(
+            crosshairImage,
+            Math.round(this.x),
+            Math.round(this.y),
+            crosshairImage.getWidth(),
+            crosshairImage.getHeight(),
+            ImageEffect.NONE
         );
     }
-
-    // Optionally override other methods to customize behavior (e.g., collision detection if needed)
 }
