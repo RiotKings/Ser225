@@ -34,7 +34,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new TestingRoomMap();   
+        map = new TestMap();   
         map.setFlagManager(flagManager);
 
         // setup player
