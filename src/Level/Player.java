@@ -31,12 +31,16 @@ public abstract class Player extends GameObject {
     protected Direction facingDirection;
     protected Direction lastMovementDirection;
 
+    // health system
+    protected int currentHealth = 6;  // Starting health (3 hearts)
+    protected int maxHealth = 6;      // Max health (3 hearts)
+
     // define keys
     protected KeyLocker keyLocker = new KeyLocker();
-   protected Key MOVE_LEFT_KEY = Key.A;
-protected Key MOVE_RIGHT_KEY = Key.D;
-protected Key MOVE_UP_KEY = Key.W;
-protected Key MOVE_DOWN_KEY = Key.S;
+    protected Key MOVE_LEFT_KEY = Key.A;
+    protected Key MOVE_RIGHT_KEY = Key.D;
+    protected Key MOVE_UP_KEY = Key.W;
+    protected Key MOVE_DOWN_KEY = Key.S;
 
     protected Key INTERACT_KEY = Key.E;
 
@@ -206,6 +210,34 @@ protected Key MOVE_DOWN_KEY = Key.S;
     public Direction getCurrentWalkingYDirection() { return currentWalkingYDirection; }
     public Direction getLastWalkingXDirection() { return lastWalkingXDirection; }
     public Direction getLastWalkingYDirection() { return lastWalkingYDirection; }
+
+    // Health system methods
+    public int getHealth() {
+        return currentHealth;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setHealth(int health) {
+        this.currentHealth = Math.max(0, Math.min(health, maxHealth));
+        if (this.currentHealth <= 0) {
+            // Player died - you can add death logic here later
+        }
+    }
+
+    public void takeDamage(int damage) {
+        setHealth(currentHealth - damage);
+    }
+
+    public void heal(int amount) {
+        setHealth(currentHealth + amount);
+    }
+
+    public boolean isDead() {
+        return currentHealth <= 0;
+    }
 
     
     public void lock() {

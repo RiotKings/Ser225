@@ -1,4 +1,4 @@
-package Engine;
+package Hud;
 
 import javax.swing.*;
 import java.awt.*;
