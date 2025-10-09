@@ -10,6 +10,7 @@ import Players.Alex;
 import Utils.Direction;
 import Maps.TestingRoomMap;
 
+
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
     protected ScreenCoordinator screenCoordinator;
@@ -18,7 +19,8 @@ public class PlayLevelScreen extends Screen implements GameListener {
     protected PlayLevelScreenState playLevelScreenState;
     protected WinScreen winScreen;
     protected FlagManager flagManager;
-
+    
+    
     public PlayLevelScreen(ScreenCoordinator screenCoordinator) {
         this.screenCoordinator = screenCoordinator;
     }
@@ -46,7 +48,16 @@ public void initialize() {
     player.setFacingDirection(Direction.LEFT);
 
     map.setPlayer(player);
+        //set up enemy
+        EnemyBasic e1 = new EnemyBasic(
+            1001,
+            player.getBounds().getX() - 400,
+            player.getBounds().getY());
+        map.addNPC(e1);
+        e1.setBounds(0f, 0f, map.getWidthPixels(), map.getHeightPixels());
 
+        //set up Crosshair
+        
     // let map know which key is interact
     map.getTextbox().setInteractKey(player.getInteractKey());
 

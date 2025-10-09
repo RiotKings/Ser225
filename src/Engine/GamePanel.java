@@ -23,6 +23,10 @@ public class GamePanel extends JPanel {
 	private KeyLocker keyLocker = new KeyLocker();
 	private final Key pauseKey = Key.P;
 	private Thread gameLoopProcess;
+	
+	private Mouse mouse;
+	private Hud.Crosshair crosshair;
+
 
 	private Key showFPSKey = Key.G;
 	private SpriteFont fpsDisplayLabel;
@@ -37,6 +41,17 @@ public class GamePanel extends JPanel {
 
 		// attaches Keyboard class's keyListener to this JPanel
 		this.addKeyListener(Keyboard.getKeyListener());
+		
+	// accesses the Mouse singleton instance and adds MouseListener and MouseMotionListener
+		mouse = Mouse.getInstance();  // Get Singleton instance
+		this.addMouseListener(mouse);   // Add MouseListener
+		this.addMouseMotionListener(mouse);  // Add MouseMotionListener
+
+		crosshair = new Hud.Crosshair(0, 0); // HUD object
+
+		// Initialize the Crosshair object here, passing the Mouse object
+        
+
 
 		graphicsHandler = new GraphicsHandler();
 
@@ -85,6 +100,7 @@ public class GamePanel extends JPanel {
 
 		if (!isGamePaused) {
 			screenManager.update();
+			if (crosshair != null) crosshair.update();
 		}
 	}
 
@@ -125,6 +141,10 @@ public class GamePanel extends JPanel {
 		if (showFPS) {
 			fpsDisplayLabel.draw(graphicsHandler);
 		}
+		
+		  // draw crosshair LAST so it’s above map/player/overlays
+   		 if (crosshair != null) crosshair.draw(graphicsHandler);
+
 	}
 
 	@Override
