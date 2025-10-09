@@ -34,7 +34,6 @@ public class EnemyBasic extends NPC {
     private boolean hasBounds = false;
     private float inset = 24f;
 
-
     // Attack
     private static final float ATTACK_RADIUS = 215f;
     private boolean isAttacking = false;
@@ -42,6 +41,7 @@ public class EnemyBasic extends NPC {
     private static final float BULLET_INTERVAL = 1f;
     private static final float MUZZLE_OFFSET = 10f;
     private ArrayList<Bullet> bullets = new ArrayList<>();
+    private static final int ENEMY_BULLET_DAMAGE = 10;
 
     private static final float STOP_DISTANCE = 5f;
 
@@ -159,9 +159,40 @@ public class EnemyBasic extends NPC {
             }
         }
 
-
-        for (Bullet bullet : bullets) {
+        for (int i = bullets.size() - 1; i >= 0; i--) {
+            Bullet bullet = bullets.get(i);
             bullet.update(STEP_DT);
+
+            Rectangle br = bullet.getBounds();
+            Rectangle pr = player.getBounds();
+
+            float bx1 = br.getX1(), by1 = br.getY1();
+            float bx2 = bx1 + br.getWidth(), by2 = by1 + br.getHeight();
+
+            float px1 = pr.getX1(), py1 = pr.getY1();
+            float px2 = px1 + pr.getWidth(), py2 = py1 + pr.getHeight();
+
+            // Inflate upward/sides to cover torso/head
+            final float PAD_X = 4f;
+            final float PAD_UP = 18f;
+            final float PAD_DOWN = 2f;
+
+            px1 -= PAD_X;  px2 += PAD_X;
+            py1 -= PAD_UP; py2 += PAD_DOWN;
+
+            boolean hit = (bx1 < px2) && (bx2 > px1) && (by1 < py2) && (by2 > py1);
+
+            if (hit) {
+                player.takeDamage(ENEMY_BULLET_DAMAGE);
+                System.out.println("[EnemyBasic] Hit! Applied " + ENEMY_BULLET_DAMAGE + " damage to player.");
+                bullets.remove(i);
+                continue;
+            }
+
+            // Off-map cull
+            if (isOffMap(bullet)) {
+                bullets.remove(i);
+            }
         }
     }
 
@@ -205,6 +236,21 @@ public class EnemyBasic extends NPC {
                 if (y1 + h > boundBottom) super.moveY(boundBottom - (y1 + h));
             }
         }
+    }
+
+    // Off-map culling for enemy bullets (WORLD space)
+    private boolean isOffMap(Bullet b) {
+        if (map == null) return false;
+
+        Rectangle rb = b.getBounds();
+        float bx = rb.getX() + rb.getWidth() * 0.5f;
+        float by = rb.getY() + rb.getHeight() * 0.5f;
+
+        int w = map.getWidthPixels();
+        int h = map.getHeightPixels();
+        final int MARGIN = 6;
+
+        return (bx < -MARGIN || bx > (w + MARGIN) || by < -MARGIN || by > (h + MARGIN));
     }
 
     private static float randRange(float a, float b) {
