@@ -3,7 +3,7 @@ package Engine;
 import GameObject.Rectangle;
 import SpriteFont.SpriteFont;
 import Utils.Colors;
-
+import Engine.HideOSCursor;
 import javax.swing.*;
 import java.awt.*;
 
@@ -25,6 +25,7 @@ public class GamePanel extends JPanel {
 	private Thread gameLoopProcess;
 	
 	private Mouse mouse;
+	private Hud.Crosshair crosshair;
 
 
 	private Key showFPSKey = Key.G;
@@ -45,6 +46,11 @@ public class GamePanel extends JPanel {
 		mouse = Mouse.getInstance();  // Get Singleton instance
 		this.addMouseListener(mouse);   // Add MouseListener
 		this.addMouseMotionListener(mouse);  // Add MouseMotionListener
+
+		crosshair = new Hud.Crosshair(0, 0); // HUD object
+		
+		hideOsCursor();
+		
 
 		// Initialize the Crosshair object here, passing the Mouse object
         
@@ -78,6 +84,21 @@ public class GamePanel extends JPanel {
 	public void startGame() {
 		gameLoopProcess.start();
 	}
+   /** Make sure we get focus when added to a window */
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        requestFocusInWindow();
+    }
+
+    /** Hides the OS cursor on this panel */
+    private void hideOsCursor() {
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        // 1x1 transparent image works well
+        Image blank = tk.createImage(new byte[0]);
+        Cursor invisible = tk.createCustomCursor(blank, new Point(0, 0), "invisible");
+        setCursor(invisible);
+    }
 
 	public ScreenManager getScreenManager() {
 		return screenManager;
@@ -97,6 +118,7 @@ public class GamePanel extends JPanel {
 
 		if (!isGamePaused) {
 			screenManager.update();
+			if (crosshair != null) crosshair.update();
 		}
 	}
 
@@ -138,7 +160,8 @@ public class GamePanel extends JPanel {
 			fpsDisplayLabel.draw(graphicsHandler);
 		}
 		
-	
+		  // draw crosshair LAST so it’s above map/player/overlays
+   		 if (crosshair != null) crosshair.draw(graphicsHandler);
 
 	}
 

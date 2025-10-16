@@ -4,6 +4,7 @@ import java.awt.event.*;
 public class Mouse implements MouseListener, MouseMotionListener {
     private int mouseX = 0;
     private int mouseY = 0;
+    private boolean mousedown = false;
 
     // Store the last time the position was printed
     private long lastUpdateTime = 0;
@@ -30,11 +31,13 @@ public class Mouse implements MouseListener, MouseMotionListener {
     public void mousePressed(MouseEvent e) {
         // You can leave this empty if you don't need to handle clicks
         System.out.println("Mouse pressed at: (" + e.getX() + ", " + e.getY() + ")");
+        mousedown = true;
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         // You can leave this empty if you don't need to handle releases
+        mousedown = false;
     }
 
     @Override
@@ -68,7 +71,19 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        // Handle mouse dragging if needed
+         mousedown = true; // stays true during drag
+         updatePosAndMaybeLog(e.getX(), e.getY(), "dragged");
+    }
+
+      private void updatePosAndMaybeLog(int x, int y, String kind) {
+        mouseX = x;
+        mouseY = y;
+
+        long now = System.currentTimeMillis();
+        if (now - lastUpdateTime >= updateInterval) {
+            System.out.println("Mouse " + kind + " to: (" + mouseX + ", " + mouseY + ")");
+            lastUpdateTime = now;
+        }
     }
 
     // Getter methods to retrieve mouse coordinates
@@ -79,4 +94,11 @@ public class Mouse implements MouseListener, MouseMotionListener {
     public int getMouseY() {
         return mouseY;
     }
+    public boolean isMouseDown() {
+    return mousedown;
+    }
+
+
+
+    
 }

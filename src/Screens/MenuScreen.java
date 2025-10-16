@@ -9,10 +9,13 @@ import SpriteFont.SpriteFont;
 
 import java.awt.*;
 
-// This is the class for the main menu screen
+import javax.sound.sampled.*;
+import java.io.File;
+import java.net.URL;
+
 public class MenuScreen extends Screen {
     protected ScreenCoordinator screenCoordinator;
-    protected int currentMenuItemHovered = 0; // current menu item being "hovered" over
+    protected int currentMenuItemHovered = 0;
     protected int menuItemSelected = -1;
     protected SpriteFont playGame;
     protected SpriteFont credits;
@@ -20,6 +23,10 @@ public class MenuScreen extends Screen {
     protected int keyPressTimer;
     protected int pointerLocationX, pointerLocationY;
     protected KeyLocker keyLocker = new KeyLocker();
+
+    private Clip bgmClip;
+    private int loopStartFrame = -1;
+    private int loopEndFrame   = -1;
 
     public MenuScreen(ScreenCoordinator screenCoordinator) {
         this.screenCoordinator = screenCoordinator;
@@ -38,13 +45,12 @@ public class MenuScreen extends Screen {
         keyPressTimer = 0;
         menuItemSelected = -1;
         keyLocker.lockKey(Key.SPACE);
+        startTitleMusic();
     }
 
     public void update() {
-        // update background map (to play tile animations)
         background.update(null);
 
-        // if down or up is pressed, change menu item "hovered" over (blue square in front of text will move along with currentMenuItemHovered changing)
         if (Keyboard.isKeyDown(Key.DOWN) && keyPressTimer == 0) {
             keyPressTimer = 14;
             currentMenuItemHovered++;
@@ -57,14 +63,12 @@ public class MenuScreen extends Screen {
             }
         }
 
-        // if down is pressed on last menu item or up is pressed on first menu item, "loop" the selection back around to the beginning/end
         if (currentMenuItemHovered > 1) {
             currentMenuItemHovered = 0;
         } else if (currentMenuItemHovered < 0) {
             currentMenuItemHovered = 1;
         }
 
-        // sets location for blue square in front of text (pointerLocation) and also sets color of spritefont text based on which menu item is being hovered
         if (currentMenuItemHovered == 0) {
             playGame.setColor(new Color(255, 215, 0));
             credits.setColor(new Color(49, 207, 240));
@@ -77,15 +81,16 @@ public class MenuScreen extends Screen {
             pointerLocationY = 230;
         }
 
-        // if space is pressed on menu item, change to appropriate screen based on which menu item was chosen
         if (Keyboard.isKeyUp(Key.SPACE)) {
             keyLocker.unlockKey(Key.SPACE);
         }
         if (!keyLocker.isKeyLocked(Key.SPACE) && Keyboard.isKeyDown(Key.SPACE)) {
             menuItemSelected = currentMenuItemHovered;
             if (menuItemSelected == 0) {
+                stopTitleMusic();
                 screenCoordinator.setGameState(GameState.LEVEL);
             } else if (menuItemSelected == 1) {
+                stopTitleMusic();
                 screenCoordinator.setGameState(GameState.CREDITS);
             }
         }
@@ -95,6 +100,56 @@ public class MenuScreen extends Screen {
         background.draw(graphicsHandler);
         playGame.draw(graphicsHandler);
         credits.draw(graphicsHandler);
-        graphicsHandler.drawFilledRectangleWithBorder(pointerLocationX, pointerLocationY, 20, 20, new Color(49, 207, 240), Color.black, 2);
+        graphicsHandler.drawFilledRectangleWithBorder(
+            pointerLocationX, pointerLocationY, 20, 20,
+            new Color(49, 207, 240), Color.black, 2
+        );
+    }
+
+    private void startTitleMusic() {
+        try {
+            URL url = new File("Resources/title_theme.wav").toURI().toURL();
+            AudioInputStream in = AudioSystem.getAudioInputStream(url);
+
+            AudioFormat base = in.getFormat();
+            AudioFormat decoded = new AudioFormat(
+                    AudioFormat.Encoding.PCM_SIGNED,
+                    base.getSampleRate(),
+                    16,
+                    base.getChannels(),
+                    base.getChannels() * 2,
+                    base.getSampleRate(),
+                    false
+            );
+            AudioInputStream din = AudioSystem.getAudioInputStream(decoded, in);
+
+            bgmClip = AudioSystem.getClip();
+            bgmClip.open(din);
+
+            float frameRate = decoded.getFrameRate();
+            int totalFrames = (int) bgmClip.getFrameLength();
+            int startMs = 0;
+            int endMs   = 40000;
+            loopStartFrame = Math.max(0, (int) (startMs / 1000f * frameRate));
+            loopEndFrame   = Math.min(totalFrames - 1, (int) (endMs   / 1000f * frameRate));
+
+            bgmClip.setLoopPoints(loopStartFrame, loopEndFrame);
+            bgmClip.setFramePosition(loopStartFrame);
+            bgmClip.loop(Clip.LOOP_CONTINUOUSLY);
+            bgmClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopTitleMusic() {
+        try {
+            if (bgmClip != null) {
+                bgmClip.stop();
+                bgmClip.flush();
+                bgmClip.close();
+            }
+        } catch (Exception ignored) {}
+        bgmClip = null;
     }
 }

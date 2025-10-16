@@ -2,17 +2,14 @@ package Screens;
 
 import Engine.GraphicsHandler;
 import Engine.Screen;
-import Engine.Mouse; 
 import Game.GameState;
 import Game.ScreenCoordinator;
-import Hud.Crosshair;
 import Level.*;
-import NPCs.EnemyBasic;
 import Maps.TestMap;
 import Players.Alex;
 import Utils.Direction;
 import Maps.TestingRoomMap;
-
+import Hud.GameHealthHUD;
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -22,57 +19,52 @@ public class PlayLevelScreen extends Screen implements GameListener {
     protected PlayLevelScreenState playLevelScreenState;
     protected WinScreen winScreen;
     protected FlagManager flagManager;
-    
-    
+    protected GameHealthHUD healthHUD;
+
     public PlayLevelScreen(ScreenCoordinator screenCoordinator) {
         this.screenCoordinator = screenCoordinator;
     }
 
     @Override
-public void initialize() {
-    // setup state
-    flagManager = new FlagManager();
-    flagManager.addFlag("hasLostBall");
-    flagManager.addFlag("hasTalkedToWalrus");
-    flagManager.addFlag("hasTalkedToBug");
-    flagManager.addFlag("hasFoundBall");
+    public void initialize() {
+        // setup state
+        flagManager = new FlagManager();
+        flagManager.addFlag("hasLostBall");
+        flagManager.addFlag("hasTalkedToWalrus");
+        flagManager.addFlag("hasTalkedToBug");
+        flagManager.addFlag("hasFoundBall");
 
-    map = new TestingRoomMap();   
-    map.setFlagManager(flagManager);
-
+        map = new TestMap();   
+        map.setFlagManager(flagManager);
 
         // setup player
         player = new Alex(map.getPlayerStartPosition().x, map.getPlayerStartPosition().y);
         player.setMap(map);
+        player.setHealth(6);
+
+
         playLevelScreenState = PlayLevelScreenState.RUNNING;
         player.setFacingDirection(Direction.LEFT);
 
-    playLevelScreenState = PlayLevelScreenState.RUNNING;
-    player.setFacingDirection(Direction.LEFT);
+        playLevelScreenState = PlayLevelScreenState.RUNNING;
+        player.setFacingDirection(Direction.LEFT);
 
-    map.setPlayer(player);
-        //set up enemy
-        EnemyBasic e1 = new EnemyBasic(
-            1001,
-            player.getBounds().getX() - 400,
-            player.getBounds().getY());
-        map.addNPC(e1);
-        e1.setBounds(0f, 0f, map.getWidthPixels(), map.getHeightPixels());
+        map.setPlayer(player);
 
-        //set up Crosshair
-        
-    // let map know which key is interact
-    map.getTextbox().setInteractKey(player.getInteractKey());
+        // let map know which key is interact
+        map.getTextbox().setInteractKey(player.getInteractKey());
 
-    // add this screen as a listener
-    map.addListener(this);
+        // add this screen as a listener
+        map.addListener(this);
 
-    // preload scripts
-    map.preloadScripts();
+        // preload scripts
+        map.preloadScripts();
 
-    winScreen = new WinScreen(this);
-}
+        // initialize health HUD
+        healthHUD = new GameHealthHUD(player);
 
+        winScreen = new WinScreen(this);
+    }
 
     public void update() {
         // based on screen state, perform specific actions
@@ -100,6 +92,7 @@ public void initialize() {
         switch (playLevelScreenState) {
             case RUNNING:
                 map.draw(player, graphicsHandler);
+                healthHUD.draw(graphicsHandler);
                 break;
             case LEVEL_COMPLETED:
                 winScreen.draw(graphicsHandler);
