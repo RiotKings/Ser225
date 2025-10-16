@@ -47,7 +47,7 @@ protected Key Dodge = Key.SPACE;
     private boolean isDodging = false;
     private long dodgeStartTime = 0;
     private long lastDodgeTime = 0;
-    private boolean invincible = false;
+    protected boolean invincible = false;
 
     private static final long DODGE_DURATION = 300; // milliseconds (0.3s)
     private static final long DODGE_COOLDOWN = 1000; // milliseconds (1s)
@@ -337,16 +337,16 @@ private double lastDirectionY = 0;
         dodgeDirX = 0;
         dodgeDirY = 0;
         if (Keyboard.isKeyDown(MOVE_LEFT_KEY)){
-              moveAmountX -= 1.5;
+              moveAmountX -= 2.5;
         }
         if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) {
-              moveAmountX += 1.5;
+              moveAmountX += 2.5;
         }
         if (Keyboard.isKeyDown(MOVE_UP_KEY)){
-              moveAmountY -= 1.5;
+              moveAmountY -= 2.5;
         }
         if (Keyboard.isKeyDown(MOVE_DOWN_KEY)){
-              moveAmountY += 1.5;
+              moveAmountY += 2.5;
         }
 
         if (dodgeDirX != 0 || dodgeDirY != 0) {
