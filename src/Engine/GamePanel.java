@@ -3,7 +3,7 @@ package Engine;
 import GameObject.Rectangle;
 import SpriteFont.SpriteFont;
 import Utils.Colors;
-
+import Engine.HideOSCursor;
 import javax.swing.*;
 import java.awt.*;
 
@@ -48,6 +48,9 @@ public class GamePanel extends JPanel {
 		this.addMouseMotionListener(mouse);  // Add MouseMotionListener
 
 		crosshair = new Hud.Crosshair(0, 0); // HUD object
+		
+		hideOsCursor();
+		
 
 		// Initialize the Crosshair object here, passing the Mouse object
         
@@ -81,6 +84,21 @@ public class GamePanel extends JPanel {
 	public void startGame() {
 		gameLoopProcess.start();
 	}
+   /** Make sure we get focus when added to a window */
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        requestFocusInWindow();
+    }
+
+    /** Hides the OS cursor on this panel */
+    private void hideOsCursor() {
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        // 1x1 transparent image works well
+        Image blank = tk.createImage(new byte[0]);
+        Cursor invisible = tk.createCustomCursor(blank, new Point(0, 0), "invisible");
+        setCursor(invisible);
+    }
 
 	public ScreenManager getScreenManager() {
 		return screenManager;
