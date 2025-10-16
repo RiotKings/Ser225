@@ -41,7 +41,7 @@ public class EnemyBasic extends NPC {
     private static final float BULLET_INTERVAL = 1f;
     private static final float MUZZLE_OFFSET = 10f;
     private ArrayList<Bullet> bullets = new ArrayList<>();
-    private static final int ENEMY_BULLET_DAMAGE = 10;
+    private static final int ENEMY_BULLET_DAMAGE = 1;
 
     private static final float STOP_DISTANCE = 5f;
 
