@@ -50,7 +50,7 @@ protected Key Dodge = Key.SPACE;
     protected boolean invincible = false;
 
     private static final long DODGE_DURATION = 300; // milliseconds (0.3s)
-    private static final long DODGE_COOLDOWN = 1000; // milliseconds (1s)
+    private static final long DODGE_COOLDOWN = 5000; // milliseconds (1s)
     private static final float DODGE_SPEED = 3.0f; // speed multiplier during dodge
 
 // store direction at start of dodge
@@ -333,7 +333,7 @@ private double lastDirectionY = 0;
         playerState = PlayerState.DODGING;
         long currentTime = System.currentTimeMillis();
     // Check cooldown
-    if (currentTime - lastDodgeTime >= DODGE_COOLDOWN && !isDodging) {
+    if (currentTime >= DODGE_COOLDOWN && !isDodging) {
         dodgeDirX = 0;
         dodgeDirY = 0;
         if (Keyboard.isKeyDown(MOVE_LEFT_KEY)){
