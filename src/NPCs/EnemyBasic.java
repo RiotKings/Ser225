@@ -130,7 +130,11 @@ public class EnemyBasic extends NPC {
             float bx = exScreen + (dxScreen / distScreen) * MUZZLE_OFFSET;
             float by = eyScreen + (dyScreen / dist) * MUZZLE_OFFSET;
 
-            bullets.add(new Bullet(bx, by, dxScreen, dyScreen));
+            
+            Bullet bullet = new Bullet(bx, by, dxScreen, dyScreen);
+            bullet.setMap(this.map);
+            map.addNPC(bullet);
+            bullets.add(bullet);
             bulletCooldown = BULLET_INTERVAL;
         }
         
@@ -160,6 +164,25 @@ public class EnemyBasic extends NPC {
             }
         }
 
+
+        for (int i = bullets.size() - 1; i >= 0; i--) {
+            Bullet bullet = bullets.get(i);
+            bullet.update(STEP_DT);
+
+            if (bullet.intersects(player)) {
+                player.takeDamage(ENEMY_BULLET_DAMAGE);
+                System.out.println("[EnemyBasic] Hit! Applied " + ENEMY_BULLET_DAMAGE + " damage to player.");
+                bullets.remove(i);
+                continue;
+            }
+
+            if (isOffMap(bullet)) {
+                bullets.remove(i);
+            }
+        }
+    }
+
+/*
         for (int i = bullets.size() - 1; i >= 0; i--) {
             Bullet bullet = bullets.get(i);
             bullet.update(STEP_DT);
@@ -173,7 +196,7 @@ public class EnemyBasic extends NPC {
             float px1 = pr.getX1(), py1 = pr.getY1();
             float px2 = px1 + pr.getWidth(), py2 = py1 + pr.getHeight();
 
-            // Inflate upward/sides to cover torso/head
+            // Inflate to cover head
             final float PAD_X = 4f;
             final float PAD_UP = 18f;
             final float PAD_DOWN = 2f;
@@ -190,12 +213,12 @@ public class EnemyBasic extends NPC {
                 continue;
             }
 
-            // Off-map cull
+            // Off-map  
             if (isOffMap(bullet)) {
                 bullets.remove(i);
             }
         }
-    }
+        */
 
     // Draw bullets
     @Override

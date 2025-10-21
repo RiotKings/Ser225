@@ -3,6 +3,7 @@ package Maps;
 import Level.*;
 import Tilesets.CommonTileset;
 import NPCs.Bug;
+import NPCs.EnemyBasic;
 import Utils.Point;
 import java.util.ArrayList;
 
@@ -23,15 +24,28 @@ public class TestingRoomMap extends Map {
     @Override
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
-        MapTile bugTile = getMapTile(11, 7);   //  picks tile of the bug
+        
+        // Add Bug NPC
+        MapTile bugTile = getMapTile(11, 7);
         if (bugTile != null) 
-            npcs.add(new Bug(1, bugTile.getLocation()));  //   actually creates the Bug
+            npcs.add(new Bug(1, bugTile.getLocation()));
+        
+        // Add EnemyBasic NPC
+        MapTile enemyTile = getMapTile(15, 7);  // Spawn at a different location
+        if (enemyTile != null) {
+            EnemyBasic enemy = new EnemyBasic(2, enemyTile.getLocation().x, enemyTile.getLocation().y);
+            // Set bounds for the enemy to wander within (whole map bounds)
+            enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
+            npcs.add(enemy);
+        }
+        
         return npcs;
     }
 
-
     @Override
-    protected ArrayList<EnhancedMapTile> loadEnhancedMapTiles() { return new ArrayList<>(); }
+    protected ArrayList<EnhancedMapTile> loadEnhancedMapTiles() { 
+        return new ArrayList<>(); 
+    }
 
     @Override
     protected void loadScripts() { }

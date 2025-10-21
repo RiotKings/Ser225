@@ -1,12 +1,13 @@
 package GameObject;
 
 import Level.MapEntity;
+import Level.NPC;
 import Engine.GraphicsHandler;
 import java.awt.Color;
 import GameObject.Rectangle;
 
 
-public class Bullet extends MapEntity {
+public class Bullet extends NPC {
     private float vx, vy;
     private static final float SPEED = 180f;
 
@@ -20,7 +21,7 @@ public class Bullet extends MapEntity {
     
     public void update(float dt) {
         x += vx * dt;
-        y += vy * dt;
+        y += vy * dt;    
     }
 
     @Override
