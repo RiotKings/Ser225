@@ -5,6 +5,7 @@ import Engine.Screen;
 import Game.GameState;
 import Game.ScreenCoordinator;
 import Level.*;
+import Maps.FirstRoom;
 import Maps.TestMap;
 import Players.Alex;
 import Utils.Direction;
@@ -34,7 +35,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new TestMap();   
+        map = new FirstRoom();   
         map.setFlagManager(flagManager);
 
         // setup player
