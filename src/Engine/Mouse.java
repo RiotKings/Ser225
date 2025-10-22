@@ -71,7 +71,19 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        // Handle mouse dragging if needed
+         mousedown = true; // stays true during drag
+         updatePosAndMaybeLog(e.getX(), e.getY(), "dragged");
+    }
+
+      private void updatePosAndMaybeLog(int x, int y, String kind) {
+        mouseX = x;
+        mouseY = y;
+
+        long now = System.currentTimeMillis();
+        if (now - lastUpdateTime >= updateInterval) {
+            System.out.println("Mouse " + kind + " to: (" + mouseX + ", " + mouseY + ")");
+            lastUpdateTime = now;
+        }
     }
 
     // Getter methods to retrieve mouse coordinates

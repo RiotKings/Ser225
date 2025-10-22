@@ -1,3 +1,4 @@
+/* 
 package Players;
 
 import Builders.FrameBuilder;
@@ -10,24 +11,22 @@ import Level.Player;
 
 import java.util.HashMap;
 
-// This is the class for the Alex player character
+// This is the class for the Cat player character
 // basically just sets some values for physics and then defines animations
-public class Alex extends Player {
-    private long dodgeStartTime;
-    private long dodgeDuration = 400; // milliseconds
+public class Cat extends Player {
 
     private int health;
     private int knowledge;
     private int sanity;
     
-    public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
-        super(spriteSheet, x, y, startingAnimationName); 
+    public Cat(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
+        super(spriteSheet, x, y, startingAnimationName); // must call Player's constructor
         this.health = 100;
         this.sanity = 100;
         this.knowledge = 0;
     }
 
-     public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName,
+     public Cat(SpriteSheet spriteSheet, float x, float y, String startingAnimationName,
                int health, int sanity, int knowledge) {
         super(spriteSheet, x, y, startingAnimationName);
         this.health = health;
@@ -40,7 +39,7 @@ public class Alex extends Player {
     public int getKnowledge() { return knowledge; }
 
     public void setHealth(int health) {
-        this.health = 100;
+        this.health = Math.max(0, Math.min(health, 100));
     }
 
     public void setSanity(int sanity) {
@@ -51,13 +50,10 @@ public class Alex extends Player {
         this.knowledge = Math.max(0, knowledge);
     }
 
-    public void takeDamage(int damage){
-        if (invincible = false){
-        setHealth(health - damage);
-        System.out.println(getHealth()); }}
-    
-    public Alex(float x, float y) {
-        super(new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24), x, y, "STAND_RIGHT");
+    public void takeDamage(int damage) { setHealth(health - damage); }
+
+    public Cat(float x, float y) {
+        super(new SpriteSheet(ImageLoader.load("Alex.png"), 24, 24), x, y, "STAND_RIGHT");
         walkSpeed = 2.3f;
     }
 
@@ -128,46 +124,7 @@ public class Alex extends Player {
                             .withBounds(6, 12, 12, 7)
                             .build()
             });
-            put("DODGE_LEFT", new Frame[] {
-                    new FrameBuilder(spriteSheet.getSprite(2, 0), 14)
-                            .withScale(3)
-                            .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
-                            .withBounds(6, 12, 12, 7)
-                            .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 1), 14)
-                            .withScale(3)
-                            .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
-                            .withBounds(6, 12, 12, 7)
-                            .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 2), 14)
-                            .withScale(3)
-                            .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
-                            .withBounds(6, 12, 12, 7)
-                            .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 3), 14)
-                            .withScale(3)
-                            .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
-                            .withBounds(6, 12, 12, 7)
-                            .build()
-            });
-            put("DODGE_RIGHT", new Frame[]{
-                    new FrameBuilder(spriteSheet.getSprite(2, 0), 14)
-                            .withScale(3)
-                            .withBounds(6, 12, 12, 7)
-                            .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 1), 14)
-                            .withScale(3)
-                            .withBounds(6, 12, 12, 7)
-                            .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 2), 14)
-                            .withScale(3)
-                            .withBounds(6, 12, 12, 7)
-                            .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 3), 14)
-                            .withScale(3)
-                            .withBounds(6, 12, 12, 7)
-                            .build()
-            });
         }};
     }
 }
+    */
