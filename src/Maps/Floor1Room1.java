@@ -5,13 +5,14 @@ import Level.*;
 import Tilesets.CommonTileset;
 import NPCs.Bug;
 import NPCs.EnemyBasic;
+import Scripts.DoorScript;
 import Utils.Point;
 import java.util.ArrayList;
 
 public class Floor1Room1 extends Map {
     public Floor1Room1() {
         super("Floor1Room1", new CommonTileset());
-        this.playerStartPosition = new Point(7, 8);
+        this.playerStartPosition = new Point(325, 370);
     }
     @Override
     protected ArrayList<EnhancedMapTile> loadEnhancedMapTiles() {
@@ -43,11 +44,12 @@ public class Floor1Room1 extends Map {
         // TEMP FIX: disable NPCs for Map Editor stability
         
     }
-
-    @Override
-    protected ArrayList<Trigger> loadTriggers() {
-        // TEMP FIX: no triggers so editor doesn't crash
-        return new ArrayList<>();
+ @Override
+    public ArrayList<Trigger> loadTriggers() {
+        ArrayList<Trigger> triggers = new ArrayList<>();
+        triggers.add(new Trigger(340, 0, 40, 40, new DoorScript()));
+        return triggers;
+    
     }
 
     @Override

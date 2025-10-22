@@ -5,12 +5,20 @@ import Engine.Screen;
 import Game.GameState;
 import Game.ScreenCoordinator;
 import Level.*;
-import Maps.FirstRoom;
 import Maps.TestMap;
 import Players.Alex;
 import Utils.Direction;
 import Maps.TestingRoomMap;
 import Hud.GameHealthHUD;
+
+//Levels 
+
+import Maps.FirstRoom;
+import Maps.Floor1Room0;
+import Maps.Floor1Room1;
+import Maps.Floor1Room2;
+import Maps.Floor1Room0;
+
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -21,6 +29,8 @@ public class PlayLevelScreen extends Screen implements GameListener {
     protected WinScreen winScreen;
     protected FlagManager flagManager;
     protected GameHealthHUD healthHUD;
+
+    int MapCount = 0; 
 
     public PlayLevelScreen(ScreenCoordinator screenCoordinator) {
         this.screenCoordinator = screenCoordinator;
@@ -35,7 +45,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new FirstRoom();   
+        map = new FirstRoom();   //pick room 
         map.setFlagManager(flagManager);
 
         // setup player
@@ -116,5 +126,46 @@ public class PlayLevelScreen extends Screen implements GameListener {
     // This enum represents the different states this screen can be in
     private enum PlayLevelScreenState {
         RUNNING, LEVEL_COMPLETED
+    }
+
+    @Override
+    public void changeMap() {
+        
+        int j = (int)(Math.random() * 3);
+        Map[] maps = new Map[4];
+
+        // Levels
+        maps[0] = new Floor1Room0(); 
+        maps[1] = new Floor1Room1(); 
+        maps[2] = new Floor1Room2(); 
+      
+        if (MapCount == 5){
+        //map = Floor1BossRoom
+
+            map.setFlagManager(flagManager);
+            player.setMap(map);
+            map.setPlayer(player);
+            map.addListener(this);
+            map.getTextbox().setInteractKey(player.getInteractKey());
+            map.preloadScripts();
+          
+            player.setLocation(325, 370);
+            System.out.println("roomcount = " + MapCount);
+       }else{
+            map = maps[j];
+            MapCount++;
+          
+            map.setFlagManager(flagManager);
+            player.setMap(map);
+            map.setPlayer(player);
+            map.addListener(this);
+            map.getTextbox().setInteractKey(player.getInteractKey());
+            map.preloadScripts();
+          
+            player.setLocation(325, 370);
+            System.out.println("roomcount = " + MapCount);
+       } 
+
+       
     }
 }
