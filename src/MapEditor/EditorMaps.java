@@ -1,8 +1,8 @@
 package MapEditor;
 
 import Level.Map;
-import Maps.NewRoom_1;
-import Maps.NewRoom_2;
+import Maps.Floor1Room6;
+import Maps.Floor1Room7;
 import Maps.TestMap;
 import Maps.TitleScreenMap;
 import Maps.FirstRoom;
@@ -19,14 +19,15 @@ public class EditorMaps {
         return new ArrayList<String>() {{
             add("TestMap");
             add("TitleScreen");
-            add("NewRoom_1");
-            add("NewRoom_2");
             add("FirstRoom");
             add("Floor1Room0");
             add("Floor1Room1");
             add("Floor1Room2");
             add("Floor1Room3");
             add("Floor1Room4");
+
+            add("Floor1Room6");
+            add("Floor1Room7");
         }};
     }
 
@@ -36,10 +37,6 @@ public class EditorMaps {
                 return new TestMap();
             case "TitleScreen":
                 return new TitleScreenMap();
-            case "NewRoom_1":
-                return new NewRoom_1();
-            case "NewRoom_2":
-                return new NewRoom_2();
             case "FirstRoom":
                 return new FirstRoom();
             case "Floor1Room0":
@@ -52,6 +49,10 @@ public class EditorMaps {
                 return new Floor1Room3();
             case "Floor1Room4":
                 return new Floor1Room4();
+            case "Floor1Room6":
+                return new Floor1Room6();
+            case "Floor1Room7":
+                return new Floor1Room7();
 
             default:
                 throw new RuntimeException("Unrecognized map name");

@@ -7,10 +7,10 @@ import NPCs.EnemyBasic;
 import Utils.Point;
 import java.util.ArrayList;
 
-public class NewRoom_2 extends Map {
+public class Floor1Room7 extends Map {
 
-    public NewRoom_2() {
-        super("newRoom_2.txt", new CommonTileset());
+    public Floor1Room7() {
+        super("Floor1Room7.txt", new CommonTileset());
 
         MapTile center = getMapTile(10, 7);
         if (center != null) {
