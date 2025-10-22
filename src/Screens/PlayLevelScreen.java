@@ -6,6 +6,8 @@ import Game.GameState;
 import Game.ScreenCoordinator;
 import Level.*;
 import Maps.TestMap;
+import Maps.BossRoomMap;
+import Maps.RegularRoomMap;
 import Players.Alex;
 import Utils.Direction;
 import Maps.TestingRoomMap;

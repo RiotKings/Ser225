@@ -380,6 +380,11 @@ private double lastDirectionY = 0;
     public void setMouse(Mouse mouse) {
         this.mouse = mouse;
     }
+    
+    // Getter for bullets to allow Map class to access them
+    public ArrayList<Bullet> getBullets() {
+        return bullets;
+    }
 
     // Shooting
     private void updateFiringAndBullets() {

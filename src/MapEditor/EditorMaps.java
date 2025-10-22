@@ -3,6 +3,8 @@ package MapEditor;
 import Level.Map;
 import Maps.TestMap;
 import Maps.TitleScreenMap;
+import Maps.RegularRoomMap;
+import Maps.BossRoomMap;
 
 import java.util.ArrayList;
 
@@ -11,6 +13,8 @@ public class EditorMaps {
         return new ArrayList<String>() {{
             add("TestMap");
             add("TitleScreen");
+            add("RegularRoom");
+            add("BossRoom");
         }};
     }
 
@@ -20,6 +24,10 @@ public class EditorMaps {
                 return new TestMap();
             case "TitleScreen":
                 return new TitleScreenMap();
+            case "RegularRoom":
+                return new RegularRoomMap();
+            case "BossRoom":
+                return new BossRoomMap();
             default:
                 throw new RuntimeException("Unrecognized map name");
         }

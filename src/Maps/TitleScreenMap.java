@@ -4,48 +4,43 @@ import Engine.GraphicsHandler;
 import Engine.ImageLoader;
 import GameObject.ImageEffect;
 import GameObject.Sprite;
+import GameObject.SpriteSheet;
 import Level.Map;
 import Tilesets.CommonTileset;
-import Utils.Colors;
 import Utils.Point;
-import SpriteFont.SpriteFont;
 
-import java.awt.*;
-
+// Represents the map that is used as a background for the main menu and credits menu screen
 public class TitleScreenMap extends Map {
 
-    private Sprite enemy;
     private Sprite alex;
-    private SpriteFont titleText;
+    private Sprite samurai;
 
     public TitleScreenMap() {
         super("title_screen_map.txt", new CommonTileset());
         
-        // put Enemy (samurai) on the left side of the screen facing towards right
-        Point enemyLocation = getMapTile(6, 7).getLocation();
-        enemy = new Sprite(ImageLoader.loadSubImage("samurai.png", Colors.MAGENTA, 0, 0, 22, 16));
-        enemy.setScale(4);
-        enemy.setImageEffect(ImageEffect.NONE); 
-        enemy.setLocation(enemyLocation.x, enemyLocation.y);
-        
-        // put Alex on the right side of the screen facing towards left
-        Point alexLocation = getMapTile(10, 7).getLocation();
-        alex = new Sprite(ImageLoader.loadSubImage("Alex sprite planning.png", Colors.MAGENTA, 0, 0, 24, 24));
-        alex.setScale(4);
-        alex.setImageEffect(ImageEffect.NONE); 
+        // Center the characters on the screen
+        // Alex on the left side, centered vertically - use same sprite as Alex player
+        Point alexLocation = getMapTile(6, 7).getLocation().subtractX(6).subtractY(7);
+        SpriteSheet alexSpriteSheet = new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24);
+        alex = new Sprite(alexSpriteSheet.getSprite(0, 0));
+        alex.setScale(3);
+        alex.setImageEffect(ImageEffect.FLIP_HORIZONTAL); // Face right
         alex.setLocation(alexLocation.x, alexLocation.y);
         
-        // title text at the top
-        titleText = new SpriteFont("THE SUMMONS OF CTHULHU", 120, 30, "Comic Sans MS", 40, new Color(255, 255, 255));
-        titleText.setOutlineColor(Color.BLACK);
-        titleText.setOutlineThickness(3.0f);
+        // Samurai on the right side, centered vertically - use same sprite as EnemyBasic
+        Point samuraiLocation = getMapTile(10, 7).getLocation().subtractX(6).subtractY(7);
+        SpriteSheet samuraiSpriteSheet = new SpriteSheet(ImageLoader.load("samurai.png"), 22, 16);
+        samurai = new Sprite(samuraiSpriteSheet.getSprite(0, 0));
+        samurai.setScale(3);
+        // Samurai faces left toward Alex (with flip to face left)
+        samurai.setImageEffect(ImageEffect.FLIP_HORIZONTAL);
+        samurai.setLocation(samuraiLocation.x, samuraiLocation.y);
     }
 
     @Override
     public void draw(GraphicsHandler graphicsHandler) {
         super.draw(graphicsHandler);
-        enemy.draw(graphicsHandler);
         alex.draw(graphicsHandler);
-        titleText.draw(graphicsHandler);
+        samurai.draw(graphicsHandler);
     }
 }
