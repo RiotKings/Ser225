@@ -60,7 +60,7 @@ public abstract class Player extends GameObject {
     private boolean isDodging = false;
     private long dodgeStartTime = 0;
     private long lastDodgeTime = 0;
-    protected boolean invincible = false;
+    
 
     private static final long DODGE_DURATION = 300; // milliseconds (0.3s)
     private static final long DODGE_COOLDOWN = 5000; // milliseconds (1s)
@@ -107,7 +107,8 @@ public abstract class Player extends GameObject {
         double dx = 0;
         double dy = 0;
         long currentTime = System.currentTimeMillis();
-
+        
+        
         if (isDodging && currentTime - dodgeStartTime > DODGE_DURATION) {
             isDodging = false;
         }
@@ -466,7 +467,6 @@ public abstract class Player extends GameObject {
 
         if (dodgeDirX != 0 || dodgeDirY != 0) {
             isDodging = true;
-            invincible = true;
             dodgeStartTime = currentTime;
             lastDodgeTime = currentTime;
             if (hasAnimationLooped == true){
