@@ -1,10 +1,13 @@
 package Screens;
 
+import java.lang.reflect.GenericSignatureFormatError;
+
 import Engine.GraphicsHandler;
 import Engine.Screen;
 import Game.GameState;
 import Game.ScreenCoordinator;
 import Level.*;
+
 import Maps.TestMap;
 import Players.Alex;
 import Utils.Direction;
@@ -27,6 +30,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
     protected Player player;
     protected PlayLevelScreenState playLevelScreenState;
     protected WinScreen winScreen;
+    protected GameOverScreen gameOverScreen;
     protected FlagManager flagManager;
     protected GameHealthHUD healthHUD;
 
@@ -75,6 +79,9 @@ public class PlayLevelScreen extends Screen implements GameListener {
         healthHUD = new GameHealthHUD(player);
 
         winScreen = new WinScreen(this);
+
+        gameOverScreen = new GameOverScreen(this);
+        
     }
 
     public void update() {
@@ -84,11 +91,17 @@ public class PlayLevelScreen extends Screen implements GameListener {
             case RUNNING:
                 player.update();
                 map.update(player);
+                 if (player.getHealth() <= 0) {
+                    onLose();
+                 }
                 break;
             // if level has been completed, bring up level cleared screen
             case LEVEL_COMPLETED:
                 winScreen.update();
                 break;
+            // if player has lost, bring up game over screen
+            case LEVEL_LOST:
+                gameOverScreen.update();
         }
     }
 
@@ -97,6 +110,11 @@ public class PlayLevelScreen extends Screen implements GameListener {
         // when this method is called within the game, it signals the game has been "won"
         playLevelScreenState = PlayLevelScreenState.LEVEL_COMPLETED;
     }
+
+    public void onLose(){
+        playLevelScreenState = PlayLevelScreenState.LEVEL_LOST;
+    }
+    
 
     public void draw(GraphicsHandler graphicsHandler) {
         // based on screen state, draw appropriate graphics
@@ -108,6 +126,8 @@ public class PlayLevelScreen extends Screen implements GameListener {
             case LEVEL_COMPLETED:
                 winScreen.draw(graphicsHandler);
                 break;
+            case LEVEL_LOST:
+                gameOverScreen.draw(graphicsHandler);
         }
     }
 
@@ -125,7 +145,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
     // This enum represents the different states this screen can be in
     private enum PlayLevelScreenState {
-        RUNNING, LEVEL_COMPLETED
+        RUNNING, LEVEL_COMPLETED, LEVEL_LOST;
     }
 
     @Override
