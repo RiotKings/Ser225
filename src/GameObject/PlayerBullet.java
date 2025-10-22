@@ -3,11 +3,12 @@ package GameObject;
 import Level.MapEntityStatus;
 import Level.NPC;
 import Level.Player;
+import NPCs.EnemyBasic;
 import Engine.GraphicsHandler;
 import java.awt.Color;
 import GameObject.Rectangle;
 
-public class Bullet extends NPC {
+public class PlayerBullet extends NPC {
   
 
     private float vx, vy;
@@ -22,7 +23,7 @@ public class Bullet extends NPC {
     private boolean markedForRemoval = false;
     private float t = Tm;
 
-    public Bullet(int id, float x, float y, float nx, float ny, int damage) {
+    public PlayerBullet(int id, float x, float y, float nx, float ny, int damage) {
         super(id, x, y);
         float len = (float) Math.sqrt(nx * nx + ny * ny);
         if (len < 1e-6f) { nx = 1f; ny = 0f; }
@@ -60,15 +61,23 @@ public class Bullet extends NPC {
             }
         }
 
-        if (player != null) {
+        if (map != null) {
             Rectangle br = getBounds();
-            Rectangle pr = player.getBounds();
-            boolean hit = (br.getX1() < pr.getX1() + pr.getWidth()) && (br.getX1() + br.getWidth() > pr.getX1()) && (br.getY1() < pr.getY1() + pr.getHeight()) && (br.getY1() + br.getHeight() > pr.getY1());
-            if (hit) {
-                System.out.println("Hit player for " + damage + " damage!");
-                player.takeDamage(damage);
-                markedForRemoval = true;
-                this.mapEntityStatus = MapEntityStatus.REMOVED;
+            var npcs = map.getNPCs();
+            for (int i = npcs.size() - 1; i >= 0; i--) {
+                NPC npc = npcs.get(i);
+                if (!(npc instanceof EnemyBasic enemy)) continue;
+                if (enemy.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                Rectangle er = enemy.getBounds();
+                boolean hit = (br.getX1() < er.getX1() + er.getWidth()) && (br.getX1() + br.getWidth() > er.getX1()) && (br.getY1() < er.getY1() + er.getHeight()) && (br.getY1() + br.getHeight() > er.getY1());
+                if (hit) {
+                    enemy.takeDamage(damage);
+                    System.out.println("Hit enemy for " + damage + " damage!");
+                    markedForRemoval = true;
+                    this.mapEntityStatus = MapEntityStatus.REMOVED;
+                    break;
+                }
             }
         }
     }
@@ -81,7 +90,7 @@ public class Bullet extends NPC {
             sx -= map.getCamera().getX();
             sy -= map.getCamera().getY();
         }
-        g.drawFilledRectangle(Math.round(getCalibratedXLocation()), Math.round(getCalibratedYLocation()), 7, 7, Color.RED);
+        g.drawFilledRectangle(Math.round(getCalibratedXLocation()), Math.round(getCalibratedYLocation()), 7, 7, Color.YELLOW);
     }
 
     @Override

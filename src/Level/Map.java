@@ -6,6 +6,8 @@ import Engine.ScreenManager;
 import GameObject.Rectangle;
 import Utils.Direction;
 import Utils.Point;
+import GameObject.Bullet;
+import GameObject.PlayerBullet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,6 +59,9 @@ public abstract class Map {
     protected ArrayList<EnhancedMapTile> enhancedMapTiles;
     protected ArrayList<NPC> npcs;
     protected ArrayList<Trigger> triggers;
+
+    protected ArrayList<NPC> pendingNPCAdds = new ArrayList<>();
+    protected boolean isUpdatingNPCs = false;
 
     // current script that is being executed (if any)
     protected Script activeScript;
@@ -306,6 +311,7 @@ public abstract class Map {
     public ArrayList<NPC> getNPCs() {
         return npcs;
     }
+    
     public ArrayList<Trigger> getTriggers() { return triggers; }
 
     public ArrayList<MapTile> getAnimatedMapTiles() {

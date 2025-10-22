@@ -52,16 +52,22 @@ public class Alex extends Player {
         super(new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24), x, y, "STAND_RIGHT");
         walkSpeed = 2.3f;
     }
+    
 
     public void update() {
         super.update();
+        if (health <= 0){
+            
+        }
     }
 
     public void draw(GraphicsHandler graphicsHandler) {
         super.draw(graphicsHandler);
     }
 
-    
+ 
+
+
 
     
 
