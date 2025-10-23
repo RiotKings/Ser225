@@ -3,6 +3,7 @@ package GameObject;
 import Level.MapEntityStatus;
 import Level.NPC;
 import Level.Player;
+import NPCs.Bug;
 import NPCs.EnemyBasic;
 import Engine.GraphicsHandler;
 import java.awt.Color;
@@ -12,13 +13,13 @@ public class PlayerBullet extends NPC {
   
 
     private float vx, vy;
-    private static final float SPEED = 3f;
-    //private static final float BULLET_SIZE = 10f;
-    private static final float Tm = 3.5f;
+    private static final float Speed = 3;
+    private static final int BulletSize = 4;
+    private static final float Tm = 3;
 
     private final int damage;
 
-    private static final float STEP_DT = 1f / 60f;
+    private static final float STEP_DT = 1 / 60;
 
     private boolean markedForRemoval = false;
     private float t = Tm;
@@ -29,8 +30,8 @@ public class PlayerBullet extends NPC {
         if (len < 1e-6f) { nx = 1f; ny = 0f; }
         else { nx /= len; ny /= len; }
 
-        this.vx = SPEED * nx;
-        this.vy = SPEED * ny;
+        this.vx = Speed * nx;
+        this.vy = Speed * ny;
         this.damage = damage;
     }
 
@@ -86,6 +87,7 @@ public class PlayerBullet extends NPC {
                 }
             }
         }
+
     }
 
     @Override
@@ -96,7 +98,7 @@ public class PlayerBullet extends NPC {
             sx -= map.getCamera().getX();
             sy -= map.getCamera().getY();
         }
-        g.drawFilledRectangle(Math.round(getCalibratedXLocation()), Math.round(getCalibratedYLocation()), 7, 7, Color.YELLOW);
+        g.drawFilledRectangle(Math.round(getCalibratedXLocation()), Math.round(getCalibratedYLocation()), BulletSize, BulletSize, Color.YELLOW);
     }
 
     @Override

@@ -53,7 +53,7 @@ public class Alex extends Player {
 
     public void takeDamage(int damage){
         setHealth(health - damage);
-        System.out.println(getHealth()); }
+        System.out.println("Player has " + getHealth() + " health left"); }
     
     public Alex(float x, float y) {
         super(new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24), x, y, "STAND_RIGHT");

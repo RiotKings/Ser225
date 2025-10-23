@@ -64,7 +64,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
         // Print the mouse position to the terminal every couple of seconds
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastUpdateTime >= updateInterval) {
-            System.out.println("Mouse moved to: (" + mouseX + ", " + mouseY + ")");
+            //System.out.println("Mouse moved to: (" + mouseX + ", " + mouseY + ")");
             lastUpdateTime = currentTime;
         }
     }

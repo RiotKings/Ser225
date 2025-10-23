@@ -11,13 +11,13 @@ public class Bullet extends NPC {
   
 
     private float vx, vy;
-    private static final float SPEED = 3f;
-    private static final float BULLET_SIZE = 10f;
-    private static final float Tm = 6.0f;
+    private static final float Speed = 3;
+    private static final int BulletSize = 6;
+    private static final float Tm = 5;
 
     private final int damage;
 
-    private static final float STEP_DT = 1f / 60f;
+    private static final float STEP_DT = 1 / 60;
 
     private boolean markedForRemoval = false;
     private float t = Tm;
@@ -28,8 +28,8 @@ public class Bullet extends NPC {
         if (len < 1e-6f) { nx = 1f; ny = 0f; }
         else { nx /= len; ny /= len; }
 
-        this.vx = SPEED * nx;
-        this.vy = SPEED * ny;
+        this.vx = Speed * nx;
+        this.vy = Speed * ny;
         this.damage = damage;
     }
 
@@ -85,7 +85,7 @@ public class Bullet extends NPC {
             sx -= map.getCamera().getX();
             sy -= map.getCamera().getY();
         }
-        g.drawFilledRectangle(Math.round(getCalibratedXLocation()), Math.round(getCalibratedYLocation()), 7, 7, Color.RED);
+        g.drawFilledRectangle(Math.round(getCalibratedXLocation()), Math.round(getCalibratedYLocation()), BulletSize, BulletSize, Color.RED);
     }
 
     @Override
