@@ -42,6 +42,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
     protected GameHealthHUD healthHUD;
 
     int MapCount = 0; 
+    int lastIndex = -1;
 
     public PlayLevelScreen(ScreenCoordinator screenCoordinator) {
         this.screenCoordinator = screenCoordinator;
@@ -156,7 +157,7 @@ public void initialize() {
 
         @Override
     public void changeMap() {
-        
+      
         Map[] pool = new Map[] {
             new Floor1Room0(),
             new Floor1Room1(),
@@ -173,11 +174,15 @@ public void initialize() {
         if (MapCount == 5) {
             next = new Floor1BossRoomMap(); // Floor1BossRoom
             
-        } else {
-            int j = (int)(Math.random() * pool.length);  // 0..(length-1)
-            next = pool[j];
-            MapCount++;
-        }
+        }else{ int j;
+        do {
+            j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
+        } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
+
+        lastIndex = j;
+        next = pool[j];
+        MapCount++;
+    }
 
         
         map = next;
