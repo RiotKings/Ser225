@@ -70,26 +70,41 @@ public class PlayerBullet extends NPC {
             var npcs = map.getNPCs();
             for (int i = npcs.size() - 1; i >= 0; i--) {
                 NPC npc = npcs.get(i);
-                if (!(npc instanceof EnemyBasic enemy)) continue;
-                if (enemy.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+                if (npc.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
 
-                Rectangle er = enemy.getBounds();
+                if (npc instanceof EnemyBasic enemy){
+                    Rectangle er = enemy.getBounds();
 
-                final float PAD_X = 4f, PAD_UP = 18f, PAD_DOWN = 2f;
+                    final float PAD_X = 4f, PAD_UP = 18f, PAD_DOWN = 2f;
 
-                boolean hit = (br.getX1() < er.getX1() + er.getWidth() + PAD_X * 2) && (br.getX1() + br.getWidth() > er.getX1() - PAD_X) && (br.getY1() < er.getY1() + er.getHeight() + PAD_UP + PAD_DOWN) && (br.getY1() + br.getHeight() > er.getY1() - PAD_UP);
-                if (hit) {
-                    enemy.takeDamage(damage);
-                    System.out.println("Hit enemy for " + damage + " damage!");
-                    markedForRemoval = true;
-                    this.mapEntityStatus = MapEntityStatus.REMOVED;
-                    break;
+                    boolean hit = (br.getX1() < er.getX1() + er.getWidth() + PAD_X * 2) && (br.getX1() + br.getWidth() > er.getX1() - PAD_X) && (br.getY1() < er.getY1() + er.getHeight() + PAD_UP + PAD_DOWN) && (br.getY1() + br.getHeight() > er.getY1() - PAD_UP);
+                    if (hit) {
+                        enemy.takeDamage(damage);
+                        System.out.println("Hit enemy for " + damage + " damage!");
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
+                }
+                else if (npc instanceof Bug bug) {
+                    if (bug.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                    Rectangle bugr = bug.getBounds();
+
+                    final float PAD_X1 = 4f, PAD_UP1 = 18f, PAD_DOWN1 = 2f;
+
+                    boolean hitbug = (br.getX1() < bugr.getX1() + bugr.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bugr.getX1() - PAD_X1) && (br.getY1() < bugr.getY1() + bugr.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bugr.getY1() - PAD_UP1);
+                    if (hitbug) {
+                        bug.takeDamage(damage);
+                        System.out.println("Hit bug for " + damage + " damage!");
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
                 }
             }
         }
-
     }
-
     @Override
     public void draw(GraphicsHandler g) {
         float sx = x;
