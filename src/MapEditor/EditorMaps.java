@@ -5,8 +5,8 @@ import Maps.Floor1Room6;
 import Maps.Floor1Room7;
 import Maps.TestMap;
 import Maps.TitleScreenMap;
-import Maps.RegularRoomMap;
-import Maps.BossRoomMap;
+import Maps.Floor1Room5;
+import Maps.Floor1BossRoomMap;
 import Maps.FirstRoom;
 import Maps.Floor1Room0;
 import Maps.Floor1Room1;
@@ -41,9 +41,9 @@ public class EditorMaps {
             case "TitleScreen":
                 return new TitleScreenMap();
             case "RegularRoom":
-                return new RegularRoomMap();
+                return new Floor1Room5();
             case "BossRoom":
-                return new BossRoomMap();
+                return new Floor1BossRoomMap();
             case "FirstRoom":
                 return new FirstRoom();
             case "Floor1Room0":

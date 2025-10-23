@@ -10,8 +10,8 @@ import Game.ScreenCoordinator;
 import Level.*;
 
 import Maps.TestMap;
-import Maps.BossRoomMap;
-import Maps.RegularRoomMap;
+import Maps.Floor1BossRoomMap;
+import Maps.Floor1Room5;
 import Players.Alex;
 import Utils.Direction;
 import Maps.TestingRoomMap;
@@ -25,10 +25,10 @@ import Maps.Floor1Room1;
 import Maps.Floor1Room2;
 import Maps.Floor1Room3;
 import Maps.Floor1Room4;
-import Maps.RegularRoomMap;// Maps.Floor1Room5;
+import Maps.Floor1Room5;// Maps.Floor1Room5;
 import Maps.Floor1Room6;
 import Maps.Floor1Room7;
-import Maps.BossRoomMap;
+import Maps.Floor1BossRoomMap;
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -163,7 +163,7 @@ public void initialize() {
             new Floor1Room2(),
             new Floor1Room3(),
             new Floor1Room4(),
-            new RegularRoomMap(), // Floor1Room5(), 
+            new Floor1Room5(), 
             new Floor1Room6(),
             new Floor1Room7()
         };
@@ -171,7 +171,7 @@ public void initialize() {
         // Decide next map
         Map next;
         if (MapCount == 5) {
-            next = new BossRoomMap(); // Floor1BossRoom
+            next = new Floor1BossRoomMap(); // Floor1BossRoom
             
         } else {
             int j = (int)(Math.random() * pool.length);  // 0..(length-1)

@@ -13,8 +13,8 @@ import Tilesets.CommonTileset;
 import Scripts.*;
 
 import Utils.Point;
-public class RegularRoomMap extends Map {
-    public RegularRoomMap() {
+public class Floor1Room5 extends Map {
+    public Floor1Room5() {
         super("Floor1Room5.txt", new CommonTileset());
         this.playerStartPosition = new Point(325, 200);
 
