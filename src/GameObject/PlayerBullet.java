@@ -13,8 +13,8 @@ public class PlayerBullet extends NPC {
 
     private float vx, vy;
     private static final float SPEED = 3f;
-    private static final float BULLET_SIZE = 10f;
-    private static final float Tm = 6.0f;
+    //private static final float BULLET_SIZE = 10f;
+    private static final float Tm = 4.0f;
 
     private final int damage;
 
@@ -38,17 +38,20 @@ public class PlayerBullet extends NPC {
     public void update(Player player) {
         if (markedForRemoval) return;
 
+        t -= STEP_DT;
+
+        if (t <= 0f) {
+            markedForRemoval = true;
+            this.mapEntityStatus = MapEntityStatus.REMOVED;
+            return;
+        }
+
         //System.out.println(vx);
         //System.out.println(vy); 
 
         x += vx;
         y += vy;
-
-        if (t <= 0f) {
-            markedForRemoval = true;
-            return;
-        }
-
+/*
         if (map != null) {
             int w = map.getWidthPixels();
             int h = map.getHeightPixels();
@@ -60,7 +63,7 @@ public class PlayerBullet extends NPC {
                 return;
             }
         }
-
+*/
         if (map != null) {
             Rectangle br = getBounds();
             var npcs = map.getNPCs();
@@ -70,7 +73,10 @@ public class PlayerBullet extends NPC {
                 if (enemy.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
 
                 Rectangle er = enemy.getBounds();
-                boolean hit = (br.getX1() < er.getX1() + er.getWidth()) && (br.getX1() + br.getWidth() > er.getX1()) && (br.getY1() < er.getY1() + er.getHeight()) && (br.getY1() + br.getHeight() > er.getY1());
+
+                final float PAD_X = 4f, PAD_UP = 18f, PAD_DOWN = 2f;
+
+                boolean hit = (br.getX1() < er.getX1() + er.getWidth() + PAD_X * 2) && (br.getX1() + br.getWidth() > er.getX1() - PAD_X) && (br.getY1() < er.getY1() + er.getHeight() + PAD_UP + PAD_DOWN) && (br.getY1() + br.getHeight() > er.getY1() - PAD_UP);
                 if (hit) {
                     enemy.takeDamage(damage);
                     System.out.println("Hit enemy for " + damage + " damage!");

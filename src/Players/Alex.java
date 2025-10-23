@@ -72,14 +72,6 @@ public class Alex extends Player {
         super.draw(graphicsHandler);
     }
 
- 
-
-
-
-    
-
-    
-
     @Override
     public HashMap<String, Frame[]> loadAnimations(SpriteSheet spriteSheet) {
         return new HashMap<String, Frame[]>() {{

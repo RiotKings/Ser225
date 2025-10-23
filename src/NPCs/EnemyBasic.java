@@ -41,8 +41,8 @@ public class EnemyBasic extends NPC {
     private static final float MUZZLE_OFFSET = 10f;
     private static final int DAMAGE = 1;
 
-    private int currentHealth = 10;
-    private int maxHealth = 10;
+    private int currentHealth = 3;
+    private int maxHealth = 3;
 
     private static final float STOP_DISTANCE = 5f;
 
