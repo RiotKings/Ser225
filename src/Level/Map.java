@@ -651,6 +651,14 @@ public abstract class Map {
                         // Remove bullet after hit
                         bullets.remove(i);
                         break; // Exit NPC loop since bullet is removed
+                    } else if (npc instanceof NPCs.FloorBoss) {
+                        NPCs.FloorBoss boss = (NPCs.FloorBoss) npc;
+                        boss.takeDamage(1);
+                        System.out.println("[Map] Bullet hit Boss! Boss health: " + boss.getHealth() + "/" + boss.getMaxHealth());
+                        
+                        // Remove bullet after hit
+                        bullets.remove(i);
+                        break; // Exit NPC loop since bullet is removed
                     }
                 }
             }

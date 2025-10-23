@@ -38,7 +38,7 @@ public class FloorBoss extends NPC {
     private boolean isAttacking = false;
     private float bulletCooldown = 0f;
     private static final float BULLET_INTERVAL = 1f;
-    private static final float MUZZLE_OFFSET = 35f; // 3x bigger offset for 3x bigger boss
+    private static final float MUZZLE_OFFSET = 50f; // Increased offset to ensure bullets come from boss edge
     private static final int ENEMY_BULLET_DAMAGE = 2; // Double damage (was 1)
 
     private static final float STOP_DISTANCE = 5f;
@@ -141,6 +141,7 @@ public class FloorBoss extends NPC {
             float bx = ex + nx * MUZZLE_OFFSET;
             float by = ey + ny * MUZZLE_OFFSET;
 
+            System.out.println("[FloorBoss] Firing bullet from boss center (" + ex + ", " + ey + ") to (" + bx + ", " + by + ")");
             Bullet bullet = new Bullet(1000, bx, by, nx, ny, ENEMY_BULLET_DAMAGE);
             bullet.setMap(this.map);
             map.addNPC(bullet);

@@ -1,6 +1,5 @@
 package Engine;
 import java.awt.*;
-import javax.swing.*;
 
 public class HideOSCursor {
     public static void hideCursorOn(Component component) {
