@@ -1,7 +1,5 @@
 package Screens;
 
-import java.lang.reflect.GenericSignatureFormatError;
-
 import Engine.GraphicsHandler;
 import Engine.Mouse;
 import Engine.Screen;
@@ -9,26 +7,21 @@ import Game.GameState;
 import Game.ScreenCoordinator;
 import Level.*;
 
-import Maps.TestMap;
 import Maps.Floor1BossRoomMap;
 import Maps.Floor1Room5;
 import Players.Alex;
 import Utils.Direction;
-import Maps.TestingRoomMap;
 import Hud.GameHealthHUD;
 
-//Levels 
-
+//Levels
 import Maps.FirstRoom;
 import Maps.Floor1Room0;
 import Maps.Floor1Room1;
 import Maps.Floor1Room2;
 import Maps.Floor1Room3;
 import Maps.Floor1Room4;
-import Maps.Floor1Room5;// Maps.Floor1Room5;
 import Maps.Floor1Room6;
 import Maps.Floor1Room7;
-import Maps.Floor1BossRoomMap;
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -48,48 +41,47 @@ public class PlayLevelScreen extends Screen implements GameListener {
         this.screenCoordinator = screenCoordinator;
     }
 
-   @Override
-public void initialize() {
-    // setup state
-    flagManager = new FlagManager();
-    flagManager.addFlag("hasLostBall");
-    flagManager.addFlag("hasTalkedToWalrus");
-    flagManager.addFlag("hasTalkedToBug");
-    flagManager.addFlag("hasFoundBall");
+    @Override
+    public void initialize() {
+        // setup state
+        flagManager = new FlagManager();
+        flagManager.addFlag("hasLostBall");
+        flagManager.addFlag("hasTalkedToWalrus");
+        flagManager.addFlag("hasTalkedToBug");
+        flagManager.addFlag("hasFoundBall");
 
-    map = new FirstRoom();   // starting room   
-    map.setFlagManager(flagManager);
+        map = new FirstRoom(); // starting room
+        map.setFlagManager(flagManager);
 
-    // setup player
-    player = new Alex(map.getPlayerStartPosition().x, map.getPlayerStartPosition().y);
-    player.setMap(map);
-    player.setHealth(6);
+        // setup player
+        player = new Alex(map.getPlayerStartPosition().x, map.getPlayerStartPosition().y);
+        player.setMap(map);
+        player.setHealth(6);
 
-    // ADD THESE LINES FOR MOUSE SUPPORT:
-    Mouse mouse = Mouse.getInstance();
-    player.setMouse(mouse);
+        // ADD THESE LINES FOR MOUSE SUPPORT:
+        Mouse mouse = Mouse.getInstance();
+        player.setMouse(mouse);
 
-    playLevelScreenState = PlayLevelScreenState.RUNNING;
-    player.setFacingDirection(Direction.LEFT);
+        playLevelScreenState = PlayLevelScreenState.RUNNING;
+        player.setFacingDirection(Direction.LEFT);
 
-    map.setPlayer(player);
+        map.setPlayer(player);
 
-    // let map know which key is interact
-    map.getTextbox().setInteractKey(player.getInteractKey());
+        // let map know which key is interact
+        map.getTextbox().setInteractKey(player.getInteractKey());
 
-    // add this screen as a listener
-    map.addListener(this);
+        // add this screen as a listener
+        map.addListener(this);
 
-    // preload scripts
-    map.preloadScripts();
+        // preload scripts
+        map.preloadScripts();
 
-    // initialize health HUD
-    healthHUD = new GameHealthHUD(player);
+        // initialize health HUD
+        healthHUD = new GameHealthHUD(player);
 
-    winScreen = new WinScreen(this);
-
-    gameOverScreen = new GameOverScreen(this);
-}
+        winScreen = new WinScreen(this);
+        gameOverScreen = new GameOverScreen(this);
+    }
 
     public void update() {
         // based on screen state, perform specific actions
@@ -98,9 +90,9 @@ public void initialize() {
             case RUNNING:
                 player.update();
                 map.update(player);
-                 if (player.getHealth() <= 0) {
+                if (player.getHealth() <= 0) {
                     onLose();
-                 }
+                }
                 break;
             // if level has been completed, bring up level cleared screen
             case LEVEL_COMPLETED:
@@ -121,7 +113,6 @@ public void initialize() {
     public void onLose(){
         playLevelScreenState = PlayLevelScreenState.LEVEL_LOST;
     }
-    
 
     public void draw(GraphicsHandler graphicsHandler) {
         // based on screen state, draw appropriate graphics
@@ -155,9 +146,8 @@ public void initialize() {
         RUNNING, LEVEL_COMPLETED, LEVEL_LOST;
     }
 
-        @Override
+    @Override
     public void changeMap() {
-      
         Map[] pool = new Map[] {
             new Floor1Room0(),
             new Floor1Room1(),
@@ -173,18 +163,17 @@ public void initialize() {
         Map next;
         if (MapCount == 5) {
             next = new Floor1BossRoomMap(); // Floor1BossRoom
-            
-        }else{ int j;
-        do {
-            j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
-        } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
+        } else { 
+            int j;
+            do {
+                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
+            } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
 
-        lastIndex = j;
-        next = pool[j];
-        MapCount++;
-    }
+            lastIndex = j;
+            next = pool[j];
+            MapCount++;
+        }
 
-        
         map = next;
         map.setFlagManager(flagManager);
         player.setMap(map);
@@ -193,10 +182,8 @@ public void initialize() {
         map.getTextbox().setInteractKey(player.getInteractKey());
         map.preloadScripts();
 
-       
         player.setLocation(325, 370);
 
         System.out.println("roomcount = " + MapCount);
     }
-
 }

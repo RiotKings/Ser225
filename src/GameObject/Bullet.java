@@ -5,7 +5,6 @@ import Level.NPC;
 import Level.Player;
 import Engine.GraphicsHandler;
 import java.awt.Color;
-import GameObject.Rectangle;
 
 public class Bullet extends NPC {
   
@@ -80,12 +79,6 @@ public class Bullet extends NPC {
 
     @Override
     public void draw(GraphicsHandler g) {
-        float sx = x;
-        float sy = y;
-        if (map != null && map.getCamera() != null) {
-            sx -= map.getCamera().getX();
-            sy -= map.getCamera().getY();
-        }
         g.drawFilledRectangle(Math.round(getCalibratedXLocation()), Math.round(getCalibratedYLocation()), BulletSize, BulletSize, Color.RED);
     }
 
