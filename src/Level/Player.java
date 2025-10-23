@@ -87,7 +87,7 @@ public abstract class Player extends GameObject {
     // Shooting
     private static final float STEP_DT = 1f / 60f;
     private static final int FIRE_INTERVAL = 60;
-    private static final float MUZZLE_OFFSET = 10f;
+    private static final float MUZZLE_OFFSET = 30f;
     private static final int BURST_COUNT = 1;
     private static final int BULLET_SIZE = 6;
 
@@ -272,11 +272,22 @@ public abstract class Player extends GameObject {
     }
 
     @Override
-    public void onEndCollisionCheckX(boolean hasCollided, Direction direction, GameObject entityCollidedWith) { }
+public void onEndCollisionCheckX(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
+    // Ignore collisions with our own bullets
+    if (entityCollidedWith instanceof PlayerBullet) {
+        return;
+    }
+    // Continue with normal collision handling if needed
+}
 
-    @Override
-    public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameObject entityCollidedWith) { }
-
+@Override
+public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
+    // Ignore collisions with our own bullets
+    if (entityCollidedWith instanceof PlayerBullet) {
+        return;
+    }
+    // Continue with normal collision handling if needed
+}
     public PlayerState getPlayerState() {
         return playerState;
     }
