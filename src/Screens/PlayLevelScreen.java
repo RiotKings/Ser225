@@ -3,6 +3,7 @@ package Screens;
 import java.lang.reflect.GenericSignatureFormatError;
 
 import Engine.GraphicsHandler;
+import Engine.Mouse;
 import Engine.Screen;
 import Game.GameState;
 import Game.ScreenCoordinator;
@@ -44,49 +45,48 @@ public class PlayLevelScreen extends Screen implements GameListener {
         this.screenCoordinator = screenCoordinator;
     }
 
-    @Override
-    public void initialize() {
-        // setup state
-        flagManager = new FlagManager();
-        flagManager.addFlag("hasLostBall");
-        flagManager.addFlag("hasTalkedToWalrus");
-        flagManager.addFlag("hasTalkedToBug");
-        flagManager.addFlag("hasFoundBall");
+   @Override
+public void initialize() {
+    // setup state
+    flagManager = new FlagManager();
+    flagManager.addFlag("hasLostBall");
+    flagManager.addFlag("hasTalkedToWalrus");
+    flagManager.addFlag("hasTalkedToBug");
+    flagManager.addFlag("hasFoundBall");
 
-        map = new FirstRoom();   //pick room 
-        map.setFlagManager(flagManager);
+    map = new FirstRoom();   
+    map.setFlagManager(flagManager);
 
-        // setup player
-        player = new Alex(map.getPlayerStartPosition().x, map.getPlayerStartPosition().y);
-        player.setMap(map);
-        player.setHealth(6);
+    // setup player
+    player = new Alex(map.getPlayerStartPosition().x, map.getPlayerStartPosition().y);
+    player.setMap(map);
+    player.setHealth(6);
 
+    // ADD THESE LINES FOR MOUSE SUPPORT:
+    Mouse mouse = Mouse.getInstance();
+    player.setMouse(mouse);
 
-        playLevelScreenState = PlayLevelScreenState.RUNNING;
-        player.setFacingDirection(Direction.LEFT);
+    playLevelScreenState = PlayLevelScreenState.RUNNING;
+    player.setFacingDirection(Direction.LEFT);
 
-        playLevelScreenState = PlayLevelScreenState.RUNNING;
-        player.setFacingDirection(Direction.LEFT);
+    map.setPlayer(player);
 
-        map.setPlayer(player);
+    // let map know which key is interact
+    map.getTextbox().setInteractKey(player.getInteractKey());
 
-        // let map know which key is interact
-        map.getTextbox().setInteractKey(player.getInteractKey());
+    // add this screen as a listener
+    map.addListener(this);
 
-        // add this screen as a listener
-        map.addListener(this);
+    // preload scripts
+    map.preloadScripts();
 
-        // preload scripts
-        map.preloadScripts();
+    // initialize health HUD
+    healthHUD = new GameHealthHUD(player);
 
-        // initialize health HUD
-        healthHUD = new GameHealthHUD(player);
+    winScreen = new WinScreen(this);
 
-        winScreen = new WinScreen(this);
-
-        gameOverScreen = new GameOverScreen(this);
-        
-    }
+    gameOverScreen = new GameOverScreen(this);
+}
 
     public void update() {
         // based on screen state, perform specific actions
