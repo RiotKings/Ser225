@@ -15,14 +15,15 @@ import java.util.HashMap;
 public class Alex extends Player {
     private long dodgeStartTime;
     private long dodgeDuration = 400; // milliseconds
-    private int health;
     private int knowledge;
     private int sanity;
+    
     
     public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
         super(spriteSheet, x, y, startingAnimationName); 
         this.sanity = 6;
         this.knowledge = 0;
+        
     }
 
      public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName,
@@ -30,10 +31,12 @@ public class Alex extends Player {
         super(spriteSheet, x, y, startingAnimationName);
         this.sanity = sanity;
         this.knowledge = knowledge;
+       
     }
 
     public int getSanity() { return sanity; }
     public int getKnowledge() { return knowledge; }
+   
 
     public void setSanity(int sanity) {
         this.sanity = Math.max(0, Math.min(sanity, 100));
@@ -43,14 +46,14 @@ public class Alex extends Player {
         this.knowledge = Math.max(0, knowledge);
     }
 
+    
+
     public void takeDamage(int damage){
-        if (invincible = false){
-        System.out.println("is not invincible");
-        setHealth(health - damage);
-        System.out.println(getHealth()); 
-        // Use the Player class health system - each damage = half a heart
-        super.takeDamage(damage);
-        System.out.println("Player has " + super.getHealth() + " health left!"); 
+        
+        if (invincible == false){
+                super.takeDamage(damage);
+                System.out.println("Player has " + super.getHealth() + " health left!"); 
+                System.out.println(invincible);
         }
 
     }

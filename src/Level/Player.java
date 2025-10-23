@@ -73,11 +73,12 @@ public abstract class Player extends GameObject {
     private double dodgeSpeed = 8.0;
     private double dodgeVelX = 0;
     private double dodgeVelY = 0;
-    protected boolean invincible = false;
+    
 
     // Track last facing direction
     private double lastDirectionX = 1;
     private double lastDirectionY = 0;
+    protected boolean invincible = false;
 
     public boolean isDodging() {
     return isDodging;
@@ -336,9 +337,8 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     }
 
     public void takeDamage(int damage) {
-        if (invincible = false){
         setHealth(currentHealth - damage);
-        }
+        
     }
 
     public void heal(int amount) {
@@ -469,9 +469,9 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
 
     public void startDodge() {
         playerState = PlayerState.DODGING;
-        long currentTime = System.currentTimeMillis();
         invincible = true;
         System.out.println("is invincible");
+        long currentTime = System.currentTimeMillis();
     // Check cooldown
     if (currentTime >= DODGE_COOLDOWN && !isDodging) {
         dodgeDirX = 0;
@@ -510,6 +510,8 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
         
         if (hasAnimationLooped == true){
             playerState = PlayerState.STANDING;
+            invincible = false;
+            System.out.println("Is not invincible");
         }
     }
 }
@@ -560,6 +562,7 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     if (Keyboard.isKeyUp(Key.SPACE)) {
         keyLocker.unlockKey(Key.SPACE);
     }
+    invincible = false;
 }
 
     
