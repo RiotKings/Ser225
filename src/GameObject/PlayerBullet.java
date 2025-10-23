@@ -91,7 +91,7 @@ public class PlayerBullet extends NPC {
 
                     Rectangle bugr = bug.getBounds();
 
-                    final float PAD_X1 = 4f, PAD_UP1 = 18f, PAD_DOWN1 = 2f;
+                    final float PAD_X1 = 4f, PAD_UP1 = 8f, PAD_DOWN1 = 2f;
 
                     boolean hitbug = (br.getX1() < bugr.getX1() + bugr.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bugr.getX1() - PAD_X1) && (br.getY1() < bugr.getY1() + bugr.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bugr.getY1() - PAD_UP1);
                     if (hitbug) {
