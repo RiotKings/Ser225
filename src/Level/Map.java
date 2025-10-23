@@ -633,11 +633,11 @@ public abstract class Map {
         }
         
         // Get player's bullets directly
-        java.util.ArrayList<GameObject.Bullet> bullets = player.getBullets();
+        java.util.ArrayList<GameObject.PlayerBullet> bullets = player.getBullets();
         
         // Check each bullet for collision with NPCs
         for (int i = bullets.size() - 1; i >= 0; i--) {
-            GameObject.Bullet bullet = bullets.get(i);
+            GameObject.PlayerBullet bullet = bullets.get(i);
             
             // Check collision with each NPC
             for (NPC npc : getActiveNPCs()) {

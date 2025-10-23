@@ -91,7 +91,7 @@ public abstract class Player extends GameObject {
     private static final int BURST_COUNT = 1;
     private static final int BULLET_SIZE = 6;
 
-    private final ArrayList<Bullet> bullets = new ArrayList<>();
+    private final ArrayList<PlayerBullet> bullets = new ArrayList<>();
     private int fireCooldown = 0;
 
     public Player(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
@@ -350,8 +350,8 @@ public abstract class Player extends GameObject {
     // Shooting
 
     protected boolean isFireHeld() {
-    return mouse != null && mouse.isMouseDown();
-}
+        return mouse != null && mouse.isMouseDown();
+    }
     // Player center - same as EnemyBasic
     protected float[] getPlayerCenterWorld() {
         Rectangle pb = this.getBounds();
@@ -386,7 +386,7 @@ public abstract class Player extends GameObject {
     }
     
     // Getter for bullets to allow Map class to access them
-    public ArrayList<Bullet> getBullets() {
+    public ArrayList<PlayerBullet> getBullets() {
         return bullets;
     }
 
@@ -413,11 +413,15 @@ public abstract class Player extends GameObject {
                     pb.setMap(map);
                     map.addNPC(pb);  // Map owns lifecycle
                 }
+                bullets.add(pb);  // Also add to player's bullet list for drawing
             }
             fireCooldown = FIRE_INTERVAL;
         } else {
             if (fireCooldown > 0) fireCooldown--;
         }
+        
+        // Clean up bullets that are marked for removal
+        bullets.removeIf(bullet -> bullet.isMarkedForRemoval());
     }
 
     /*
@@ -440,6 +444,7 @@ public abstract class Player extends GameObject {
     @Override
     public void draw(GraphicsHandler graphicsHandler) {
         super.draw(graphicsHandler);
+        drawPlayerBullets(graphicsHandler);
     }
 
     protected void drawPlayerBullets(GraphicsHandler g) {

@@ -13,26 +13,35 @@ import java.util.HashMap;
 // This is the class for the Alex player character
 // basically just sets some values for physics and then defines animations
 public class Alex extends Player {
+    private long dodgeStartTime;
+    private long dodgeDuration = 400; // milliseconds
+
+    private int health;
     private int knowledge;
     private int sanity;
-    private boolean invincible = false;
-    
+   
     public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
-        super(spriteSheet, x, y, startingAnimationName); 
+        super(spriteSheet, x, y, startingAnimationName);
+        this.health = 100;
         this.sanity = 100;
         this.knowledge = 0;
     }
 
      public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName,
-               int health, int sanity, int knowledge) {
+        int health, int sanity, int knowledge) {
         super(spriteSheet, x, y, startingAnimationName);
-        setHealth(health);
+        this.health = health;
         this.sanity = sanity;
         this.knowledge = knowledge;
     }
 
+    public int getHealth() { return health; }
     public int getSanity() { return sanity; }
     public int getKnowledge() { return knowledge; }
+
+    public void setHealth(int health) {
+        this.health = 100;
+    }
 
     public void setSanity(int sanity) {
         this.sanity = Math.max(0, Math.min(sanity, 100));
@@ -44,18 +53,18 @@ public class Alex extends Player {
 
     public void takeDamage(int damage){
         setHealth(health - damage);
-        System.out.println("Player has " + getHealth() + " health left"); }
-    
+        System.out.println("Player has " + getHealth() + " health left!"); }
+   
     public Alex(float x, float y) {
         super(new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24), x, y, "STAND_RIGHT");
         walkSpeed = 2.3f;
     }
-    
+   
 
     public void update() {
         super.update();
-        if (currentHealth <= 0){
-            
+        if (health <= 0){
+           
         }
     }
 

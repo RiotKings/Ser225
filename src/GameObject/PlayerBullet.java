@@ -10,7 +10,7 @@ import java.awt.Color;
 import GameObject.Rectangle;
 
 public class PlayerBullet extends NPC {
-  
+ 
 
     private float vx, vy;
     private static final float Speed = 3;
@@ -48,7 +48,7 @@ public class PlayerBullet extends NPC {
         }
 
         //System.out.println(vx);
-        //System.out.println(vy); 
+        //System.out.println(vy);
 
         x += vx;
         y += vy;
@@ -106,7 +106,7 @@ public class PlayerBullet extends NPC {
         return new Rectangle(x - 3, y - 3, 6, 6);
     }
 
-    public boolean isMarkedForRemoval() { 
-        return markedForRemoval; 
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
     }
 }
