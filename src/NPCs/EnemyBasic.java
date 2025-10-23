@@ -37,7 +37,7 @@ public class EnemyBasic extends NPC {
     private static final float ATTACK_RADIUS = 215f;
     private boolean isAttacking = false;
     private float bulletCooldown = 0f;
-    private static final float BULLET_INTERVAL = 1f;
+    private static final float BULLET_INTERVAL = 2.5f;
     private static final float MUZZLE_OFFSET = 10f;
     private static final int DAMAGE = 1;
 

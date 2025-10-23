@@ -14,7 +14,7 @@ public class PlayerBullet extends NPC {
     private float vx, vy;
     private static final float SPEED = 3f;
     //private static final float BULLET_SIZE = 10f;
-    private static final float Tm = 4.0f;
+    private static final float Tm = 3.5f;
 
     private final int damage;
 
