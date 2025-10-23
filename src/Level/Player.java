@@ -12,8 +12,10 @@ import GameObject.GameObject;
 import GameObject.Rectangle;
 import GameObject.SpriteSheet;
 import Players.Alex;
-import GameObject.Bullet;
 import Utils.Direction;
+import GameObject.PlayerBullet;
+
+import GameObject.Bullet;
 
 public abstract class Player extends GameObject {
     // values that affect player movement
@@ -35,6 +37,8 @@ public abstract class Player extends GameObject {
     protected Direction facingDirection;
     protected Direction lastMovementDirection;
 
+    private static final int PLAYER_BULLET_DAMAGE = 1;
+
     // health system
     protected int currentHealth = 6;  // Starting health (3 hearts)
     protected int maxHealth = 6;      // Max health (3 hearts)
@@ -42,7 +46,7 @@ public abstract class Player extends GameObject {
     // define keys
     protected KeyLocker keyLocker = new KeyLocker();
 
-protected Key Dodge = Key.SPACE;
+    protected Key Dodge = Key.SPACE;
     protected Key MOVE_LEFT_KEY = Key.A;
     protected Key MOVE_RIGHT_KEY = Key.D;
     protected Key MOVE_UP_KEY = Key.W;
@@ -62,7 +66,7 @@ protected Key Dodge = Key.SPACE;
     private static final long DODGE_COOLDOWN = 5000; // milliseconds (1s)
     private static final float DODGE_SPEED = 3.0f; // speed multiplier during dodge
 
-// store direction at start of dodge
+    // store direction at start of dodge
     private float dodgeDirX = 0;
     private float dodgeDirY = 0;
 
@@ -71,10 +75,9 @@ protected Key Dodge = Key.SPACE;
     private double dodgeVelY = 0;
     protected boolean invincible = false;
 
-// Track last facing direction
-private double lastDirectionX = 1;
-private double lastDirectionY = 0;
-
+    // Track last facing direction
+    private double lastDirectionX = 1;
+    private double lastDirectionY = 0;
 
     public boolean isDodging() {
     return isDodging;
@@ -85,11 +88,11 @@ private double lastDirectionY = 0;
     // Shooting
     private static final float STEP_DT = 1f / 60f;
     private static final int FIRE_INTERVAL = 60;
-    private static final float MUZZLE_OFFSET = 10f;
+    private static final float MUZZLE_OFFSET = 30f;
     private static final int BURST_COUNT = 1;
     private static final int BULLET_SIZE = 6;
 
-    private final ArrayList<Bullet> bullets = new ArrayList<>();
+    private final ArrayList<PlayerBullet> bullets = new ArrayList<>();
     private int fireCooldown = 0;
 
     public Player(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
@@ -101,7 +104,7 @@ private double lastDirectionY = 0;
     }
 
     public void update() {
-        double speed = 3.0;
+        double speed = 2.3;
         double dx = 0;
         double dy = 0;
         long currentTime = System.currentTimeMillis();
@@ -116,20 +119,20 @@ private double lastDirectionY = 0;
             y += dodgeVelY;
             return; // skip normal input while dodging
         }
-         if (Keyboard.isKeyDown(MOVE_UP_KEY)) dy -= 3;
-        if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) dy += 3;
-        if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) dx -= 3;
-        if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) dx += 3;
+         if (Keyboard.isKeyDown(MOVE_UP_KEY)) dy -= 2.3;
+        if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) dy += 2.3;
+        if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) dx -= 2.3;
+        if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) dx += 2.3;
 
         if (dx != 0 && dy != 0) {
         dx *= 0.7071;
         dy *= 0.7071;
         }
 
-       
         if (!isLocked) {
-            moveAmountX = 0;
-            moveAmountY = 0;
+            // Store movement for collision-based movement
+            moveAmountX = (float)dx;
+            moveAmountY = (float)dy;
 
             // if player is currently playing through level (has not won or lost)
             // update player's state and current actions, which includes things like determining how much it should move each frame and if its walking or jumping
@@ -270,11 +273,22 @@ private double lastDirectionY = 0;
     }
 
     @Override
-    public void onEndCollisionCheckX(boolean hasCollided, Direction direction, GameObject entityCollidedWith) { }
+public void onEndCollisionCheckX(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
+    // Ignore collisions with our own bullets
+    if (entityCollidedWith instanceof PlayerBullet) {
+        return;
+    }
+    // Continue with normal collision handling if needed
+}
 
-    @Override
-    public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameObject entityCollidedWith) { }
-
+@Override
+public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
+    // Ignore collisions with our own bullets
+    if (entityCollidedWith instanceof PlayerBullet) {
+        return;
+    }
+    // Continue with normal collision handling if needed
+}
     public PlayerState getPlayerState() {
         return playerState;
     }
@@ -349,25 +363,26 @@ private double lastDirectionY = 0;
 
     // Shooting
 
-    // Placeholder fire input: SPACE held. (Swap to Mouse later if desired)
     protected boolean isFireHeld() {
-        return Keyboard.isKeyDown(Key.H);
+        return mouse != null && mouse.isMouseDown();
     }
-
     // Player center - same as EnemyBasic
-    protected float[] getPlayerCenterScreen() {
-        float cxScreen = this.getCalibratedXLocation() + this.getWidth() / 2f;
-        float cyScreen = this.getCalibratedYLocation() + this.getHeight() / 2f;
-        return new float[] { cxScreen, cyScreen };
+    protected float[] getPlayerCenterWorld() {
+        Rectangle pb = this.getBounds();
+        float cx = pb.getX() + pb.getWidth() * 0.5f;
+        float cy = pb.getY() + pb.getHeight() * 0.5f;
+        return new float[] { cx, cy };
     }
 
     // Aim toward the mouse cursor, with fallback if mouse not injected yet
-    protected float[] getAimTargetScreen() {
-        if (mouse != null) {
-            return new float[] { mouse.getMouseX(), mouse.getMouseY() };
+    protected float[] getAimTargetWorld() {
+        if (mouse != null && map != null && map.getCamera() != null) {
+            float wx = mouse.getMouseX() + map.getCamera().getX();
+            float wy = mouse.getMouseY() + map.getCamera().getY();
+            return new float[] { wx, wy };
         }
-        // Fallback: shoot in facing direction if mouse not injected yet
-        float[] c = getPlayerCenterScreen();
+        // Fallback: aim in facing direction
+        float[] c = getPlayerCenterWorld();
         final float OFF = 100f;
         float dx = 0f, dy = 0f;
         switch (this.facingDirection) {
@@ -380,45 +395,50 @@ private double lastDirectionY = 0;
         return new float[] { c[0] + dx, c[1] + dy };
     }
 
-
     public void setMouse(Mouse mouse) {
         this.mouse = mouse;
+    }
+    
+    // Getter for bullets to allow Map class to access them
+    public ArrayList<PlayerBullet> getBullets() {
+        return bullets;
     }
 
     // Shooting
     private void updateFiringAndBullets() {
-        //Fire when cooldown elapsed and player not locked
         if (!isLocked && isFireHeld() && fireCooldown <= 0) {
-            float[] centerScreen = getPlayerCenterScreen();
-            float[] aimScreen    = getAimTargetScreen();
+            float[] c = getPlayerCenterWorld();
+            float[] t = getAimTargetWorld();
 
-            float dxScreen = aimScreen[0] - centerScreen[0];
-            float dyScreen = aimScreen[1] - centerScreen[1];
-            float distScreen = (float) Math.sqrt(dxScreen * dxScreen + dyScreen * dyScreen);
-            if (distScreen < 1e-4f) distScreen = 1f;
+            float dx = t[0] - c[0];
+            float dy = t[1] - c[1];
+            float dist = (float) Math.sqrt(dx * dx + dy * dy);
+            if (dist < 1e-4f) dist = 1f;
 
-            float bx = centerScreen[0] + (dxScreen / distScreen) * MUZZLE_OFFSET;
-            float by = centerScreen[1] + (dyScreen / distScreen) * MUZZLE_OFFSET;
+            float nx = dx / dist;
+            float ny = dy / dist;
+
+            float bx = c[0] + nx * MUZZLE_OFFSET;
+            float by = c[1] + ny * MUZZLE_OFFSET;
 
             for (int i = 0; i < BURST_COUNT; i++) {
-                bullets.add(new Bullet(bx, by, dxScreen, dyScreen));
+                PlayerBullet pb = new PlayerBullet(1001, bx, by, nx, ny, PLAYER_BULLET_DAMAGE);
+                if (map != null) {
+                    pb.setMap(map);
+                    map.addNPC(pb);  // Map owns lifecycle
+                }
+                bullets.add(pb);  // Also add to player's bullet list for drawing
             }
             fireCooldown = FIRE_INTERVAL;
         } else {
             if (fireCooldown > 0) fireCooldown--;
         }
-
-        // Update bullets
-        for (int i = bullets.size() - 1; i >= 0; i--) {
-            Bullet b = bullets.get(i);
-            b.update(STEP_DT);
-
-            if (isOffMap(b)) {
-                bullets.remove(i);
-            }
-        }
+        
+        // Clean up bullets that are marked for removal
+        bullets.removeIf(bullet -> bullet.isMarkedForRemoval());
     }
 
+    /*
     private boolean isOffMap(Bullet b) {
         if (map == null) return false;
         Rectangle rb = b.getBounds();
@@ -432,6 +452,7 @@ private double lastDirectionY = 0;
         if (by < -BULLET_SIZE || by > (h + BULLET_SIZE)) return true;
         return false;
     }
+    */
 
     // Drawing
     @Override
@@ -450,6 +471,7 @@ private double lastDirectionY = 0;
         playerState = PlayerState.DODGING;
         long currentTime = System.currentTimeMillis();
         invincible = true;
+        System.out.println("is invincible");
     // Check cooldown
     if (currentTime >= DODGE_COOLDOWN && !isDodging) {
         dodgeDirX = 0;
@@ -474,8 +496,8 @@ private double lastDirectionY = 0;
             if (hasAnimationLooped == true){
             playerState = PlayerState.STANDING;
             invincible = false;
+            System.out.println("is not invincible");
         }
-
 
         }
         // Handle dodge movement
@@ -505,7 +527,6 @@ private double lastDirectionY = 0;
         y += dodgeDirY * DODGE_SPEED;
         return; 
     }
-
 
     moveAmountX = 0;
     moveAmountY = 0;

@@ -1,5 +1,4 @@
 package Maps;
-
 import java.util.ArrayList;
 
 import Level.EnhancedMapTile;
@@ -14,13 +13,12 @@ import Tilesets.CommonTileset;
 import Scripts.*;
 
 import Utils.Point;
-
-
-public class FirstRoom extends Map {
-    public FirstRoom() {
-        super("Floor1Room0.txt", new CommonTileset());
+public class Floor1Room5 extends Map {
+    public Floor1Room5() {
+        super("Floor1Room5.txt", new CommonTileset());
         this.playerStartPosition = new Point(325, 200);
-    }
+
+}
      @Override
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();

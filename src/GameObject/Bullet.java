@@ -1,57 +1,81 @@
 package GameObject;
 
-import Level.MapEntity;
+import Level.MapEntityStatus;
+import Level.NPC;
+import Level.Player;
 import Engine.GraphicsHandler;
 import java.awt.Color;
-import Level.Player;
-import Players.Alex;
+import GameObject.Rectangle;
 
+public class Bullet extends NPC {
+  
 
-public class Bullet extends MapEntity {
     private float vx, vy;
-    private static final float SPEED = 180f;
-    private boolean active = true;
+    private static final float Speed = 3;
+    private static final int BulletSize = 6;
+    private static final float Tm = 5;
 
-    private Player player;
+    private final int damage;
 
-    public Bullet(float x, float y, float dx, float dy) {
-        super(x, y);
-        float len = (float) Math.sqrt(dx * dx + dy * dy);
-        if (len == 0) len = 1;
-        this.vx = SPEED * dx / len;
-        this.vy = SPEED * dy / len;
+    private static final float STEP_DT = 1 / 60;
 
-        this.player = player; // store reference for collision
-    }
-    
-    public void update(float dt) {
-        // Move bullet
-        x += vx * dt;
-        y += vy * dt;
+    private boolean markedForRemoval = false;
+    private float t = Tm;
 
-        // --- Collision detection with player ---
-        if (player != null && checkCollisionWithPlayer()) {
-            if (!player.isDodging()) {
-            ((Alex) player).takeDamage(5); 
-            this.active = false;
-        }
-            // else: bullet passes through (no removal)
-        }
+    public Bullet(int id, float x, float y, float nx, float ny, int damage) {
+        super(id, x, y);
+        float len = (float) Math.sqrt(nx * nx + ny * ny);
+        if (len < 1e-6f) { nx = 1f; ny = 0f; }
+        else { nx /= len; ny /= len; }
+
+        this.vx = Speed * nx;
+        this.vy = Speed * ny;
+        this.damage = damage;
     }
 
-    private boolean checkCollisionWithPlayer() {
-        
-        float playerX = player.getX();
-        float playerY = player.getY();
-        float playerWidth = player.getWidth();
-        float playerHeight = player.getHeight();
+    @Override
+    public void update(Player player) {
+        if (markedForRemoval) return;
 
-        float bulletSize = 6; // since drawn as 6x6 rectangle
+        //System.out.println(vx);
+        //System.out.println(vy); 
 
-        return (x < playerX + playerWidth &&
-                x + bulletSize > playerX &&
-                y < playerY + playerHeight &&
-                y + bulletSize > playerY);
+        x += vx;
+        y += vy;
+
+        t -= STEP_DT;
+
+        if (t <= 0f) {
+            markedForRemoval = true;
+            this.mapEntityStatus = MapEntityStatus.REMOVED;
+            return;
+        }
+
+/*
+        if (map != null) {
+            int w = map.getWidthPixels();
+            int h = map.getHeightPixels();
+            final int Margin = 6;
+            float cx = x;
+            float cy = y;
+            if (cx < -Margin || cx > (w + Margin) || cy < -Margin || cy > (h + Margin)) {
+                markedForRemoval = true;
+                this.mapEntityStatus = MapEntityStatus.REMOVED;
+                return;
+            }
+        }
+*/
+        if (player != null) {
+            Rectangle br = getBounds();
+            Rectangle pr = player.getBounds();
+            boolean hit = (br.getX1() < pr.getX1() + pr.getWidth()) && (br.getX1() + br.getWidth() > pr.getX1()) && (br.getY1() < pr.getY1() + pr.getHeight()) && (br.getY1() + br.getHeight() > pr.getY1());
+            if (hit) {
+                System.out.println("Hit player for " + damage + " damage!");
+                player.takeDamage(damage);
+                markedForRemoval = true;
+                this.mapEntityStatus = MapEntityStatus.REMOVED;
+            }
+        }
     }
 
     @Override
@@ -62,7 +86,7 @@ public class Bullet extends MapEntity {
             sx -= map.getCamera().getX();
             sy -= map.getCamera().getY();
         }
-        g.drawFilledRectangle(Math.round(sx) - 3, Math.round(sy) - 3, 6, 6, Color.RED);
+        g.drawFilledRectangle(Math.round(getCalibratedXLocation()), Math.round(getCalibratedYLocation()), BulletSize, BulletSize, Color.RED);
     }
 
     @Override
@@ -70,5 +94,7 @@ public class Bullet extends MapEntity {
         return new Rectangle(x - 3, y - 3, 6, 6);
     }
 
-    
+    public boolean isMarkedForRemoval() { 
+        return markedForRemoval; 
+    }
 }

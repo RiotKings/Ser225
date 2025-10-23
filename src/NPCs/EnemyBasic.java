@@ -8,10 +8,10 @@ import GameObject.ImageEffect;
 import GameObject.Rectangle;
 import GameObject.SpriteSheet;
 import GameObject.Bullet;
+import Level.MapEntityStatus;
 
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.ArrayList;
 
 import Builders.FrameBuilder;
 import Engine.ImageLoader;
@@ -26,7 +26,6 @@ public class EnemyBasic extends NPC {
     private float headingChangeIntervalMax = 1.8f;
 
     private float chaseSpeed = 80f;
-
     private Direction wanderDir = Direction.RIGHT;
 
     // Arena bounds
@@ -35,19 +34,21 @@ public class EnemyBasic extends NPC {
     private float inset = 24f;
 
     // Attack
-    private static final float ATTACK_RADIUS = 215f;
+    private static final float AttackRadius = 215f;
     private boolean isAttacking = false;
     private float bulletCooldown = 0f;
-    private static final float BULLET_INTERVAL = 1f;
-    private static final float MUZZLE_OFFSET = 10f;
-    private ArrayList<Bullet> bullets = new ArrayList<>();
-    private static final int ENEMY_BULLET_DAMAGE = 1;
+    private static final float BulletInterval = 2.5f;
+    private static final float MuzzleOffset = 10f;
+    private static final int Damage = 1;
 
-    private static final float STOP_DISTANCE = 5f;
+    private int currentHealth = 3;
+    private int maxHealth = 3;
+
+    private static final float StopDistance = 5;
 
     public EnemyBasic(int id, float x, float y) {
         super(id, x, y, new SpriteSheet(ImageLoader.load("samurai.png"), 22, 16), "STAND_LEFT");
-        System.out.println("[EnemyBasic] spawned at (" + x + "," + y + ")");
+        //System.out.println("[EnemyBasic] spawned at (" + x + "," + y + ")");
     }
 
     public void setBounds(float left, float top, float right, float bottom) {
@@ -81,61 +82,50 @@ public class EnemyBasic extends NPC {
     protected void performAction(Player player) {
         final float STEP_DT = 1f / 60f;
 
-        // Distance to player
-        Rectangle b = getBounds();
-        float px = player.getBounds().getX() + player.getBounds().getWidth() / 2f;
-        float py = player.getBounds().getY() + player.getBounds().getHeight() / 2f;
-        float ex = b.getX() + b.getWidth() / 2f;
-        float ey = b.getY() + b.getHeight() / 2f;
+        if (currentHealth <= 0) {
+            this.setMapEntityStatus(MapEntityStatus.REMOVED);
+            return;
+        } 
+
+        Rectangle eb = getBounds();
+        Rectangle pb = player.getBounds();
+        float ex = eb.getX() + eb.getWidth() * 0.5f;
+        float ey = eb.getY() + eb.getHeight() * 0.5f;
+        float px = pb.getX() + pb.getWidth() * 0.5f;
+        float py = pb.getY() + pb.getHeight() * 0.5f;
+
         float dx = px - ex;
         float dy = py - ey;
-        float dist = (float)Math.sqrt(dx * dx + dy * dy);
+        float dist = (float) Math.sqrt(dx * dx + dy * dy);
 
-        // Attack
-        if (dist <= ATTACK_RADIUS) {
-            isAttacking = true;
-        } else {
-            isAttacking = false;
-        }
+        isAttacking = (dist <= AttackRadius);
 
-        // Face player
-        if (dx < 0) {
-            this.setCurrentAnimationName("STAND_LEFT");
-        } else {
-            this.setCurrentAnimationName("STAND_RIGHT");
-        }
+        this.setCurrentAnimationName(dx < 0 ? "STAND_LEFT" : "STAND_RIGHT");
 
         if (isAttacking) {
-            // Chase
-            if (dist > STOP_DISTANCE) {
-                float nx = dx / dist;
-                float ny = dy / dist;
+            if (dist > StopDistance) {
+                float inv = (dist < 1e-5f) ? 0f : 1f / dist;
+                float nx = dx * inv, ny = dy * inv;
                 float move = chaseSpeed * STEP_DT;
                 tryMove(nx * move, ny * move);
             }
-            // Fire while chasing
+
             bulletCooldown -= STEP_DT;
             if (bulletCooldown <= 0f) {
-            float exScreen = getCalibratedXLocation() + getWidth() / 2f;
-            float eyScreen = getCalibratedYLocation() + getHeight() / 2f;
+                float inv = (dist < 1e-5f) ? 0f : 1f / dist;
+                float nx = dx * inv, ny = dy * inv;
 
-            float pxScreen = player.getCalibratedXLocation() + player.getBounds().getWidth() / 2f;
-            float pyScreen = player.getCalibratedYLocation() + player.getBounds().getHeight() / 2f;
+                float bx = ex + nx * MuzzleOffset;
+                float by = ey + ny * MuzzleOffset;
 
-            float dxScreen = pxScreen - exScreen;
-            float dyScreen = pyScreen - eyScreen;
-            float distScreen = (float)Math.sqrt(dxScreen * dxScreen + dyScreen * dyScreen);
-            if (dist < 1e-4f) dist = 1f;
+                Bullet bullet = new Bullet(1000, bx, by, nx, ny, Damage);
+                bullet.setMap(this.map);
+                map.addNPC(bullet);
 
-            float bx = exScreen + (dxScreen / distScreen) * MUZZLE_OFFSET;
-            float by = eyScreen + (dyScreen / dist) * MUZZLE_OFFSET;
+                bulletCooldown = BulletInterval;
+            }
 
-            bullets.add(new Bullet(bx, by, dxScreen, dyScreen));
-            bulletCooldown = BULLET_INTERVAL;
-        }
         } else {
-
-            // Wander
             timeToNextHeadingChange -= STEP_DT;
             if (timeToNextHeadingChange <= 0f) {
                 wanderDir = pickRandomDir();
@@ -143,7 +133,7 @@ public class EnemyBasic extends NPC {
             }
 
             if (hasBounds) {
-                float x1 = b.getX1(), y1 = b.getY1(), w = b.getWidth(), h = b.getHeight();
+                float x1 = eb.getX1(), y1 = eb.getY1(), w = eb.getWidth(), h = eb.getHeight();
                 if (x1 <= boundLeft + inset)          wanderDir = Direction.RIGHT;
                 if (x1 + w >= boundRight - inset)     wanderDir = Direction.LEFT;
                 if (y1 <= boundTop + inset)           wanderDir = Direction.DOWN;
@@ -158,51 +148,23 @@ public class EnemyBasic extends NPC {
                 case DOWN  -> tryMove(0f, perFrameSpeed);
             }
         }
-
-        for (int i = bullets.size() - 1; i >= 0; i--) {
-            Bullet bullet = bullets.get(i);
-            bullet.update(STEP_DT);
-
-            Rectangle br = bullet.getBounds();
-            Rectangle pr = player.getBounds();
-
-            float bx1 = br.getX1(), by1 = br.getY1();
-            float bx2 = bx1 + br.getWidth(), by2 = by1 + br.getHeight();
-
-            float px1 = pr.getX1(), py1 = pr.getY1();
-            float px2 = px1 + pr.getWidth(), py2 = py1 + pr.getHeight();
-
-            // Inflate upward/sides to cover torso/head
-            final float PAD_X = 4f;
-            final float PAD_UP = 18f;
-            final float PAD_DOWN = 2f;
-
-            px1 -= PAD_X;  px2 += PAD_X;
-            py1 -= PAD_UP; py2 += PAD_DOWN;
-
-            boolean hit = (bx1 < px2) && (bx2 > px1) && (by1 < py2) && (by2 > py1);
-
-            if (hit) {
-                player.takeDamage(ENEMY_BULLET_DAMAGE);
-                System.out.println("[EnemyBasic] Hit! Applied " + ENEMY_BULLET_DAMAGE + " damage to player.");
-                bullets.remove(i);
-                continue;
-            }
-
-            // Off-map cull
-            if (isOffMap(bullet)) {
-                bullets.remove(i);
-            }
-        }
     }
 
-    // Draw bullets
     @Override
     public void draw(GraphicsHandler graphicsHandler) {
         super.draw(graphicsHandler);
-        for (Bullet bullet : bullets) {
-            bullet.draw(graphicsHandler);
-        }
+    }
+    
+    public int getHealth() {
+        return currentHealth;
+    }
+
+    public void setHealth(int health) {
+        this.currentHealth = Math.max(0, Math.min(health, maxHealth));
+    }
+
+    public void takeDamage(int damage) {
+        setHealth(currentHealth - damage);
     }
 
     @Override
@@ -214,9 +176,7 @@ public class EnemyBasic extends NPC {
         return b;
     }
 
-    // Attempt a move
     private void tryMove(float dx, float dy) {
-
         if (dx != 0f) {
             super.moveX(dx);
             if (hasBounds) {
@@ -236,21 +196,6 @@ public class EnemyBasic extends NPC {
                 if (y1 + h > boundBottom) super.moveY(boundBottom - (y1 + h));
             }
         }
-    }
-
-    // Off-map culling for enemy bullets (WORLD space)
-    private boolean isOffMap(Bullet b) {
-        if (map == null) return false;
-
-        Rectangle rb = b.getBounds();
-        float bx = rb.getX() + rb.getWidth() * 0.5f;
-        float by = rb.getY() + rb.getHeight() * 0.5f;
-
-        int w = map.getWidthPixels();
-        int h = map.getHeightPixels();
-        final int MARGIN = 6;
-
-        return (bx < -MARGIN || bx > (w + MARGIN) || by < -MARGIN || by > (h + MARGIN));
     }
 
     private static float randRange(float a, float b) {

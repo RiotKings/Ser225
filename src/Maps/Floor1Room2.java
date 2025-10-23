@@ -3,14 +3,14 @@ package Maps;
 import Level.*;
 import Tilesets.CommonTileset;
 import NPCs.Bug;
-
+import Scripts.DoorScript;
 import Utils.Point;
 import java.util.ArrayList;
 
 public class Floor1Room2 extends Map {
     public Floor1Room2() {
         super("Floor1Room2", new CommonTileset());
-        this.playerStartPosition = new Point(7, 8);
+        this.playerStartPosition = new Point(325, 370);
     }
      @Override
     protected ArrayList<EnhancedMapTile> loadEnhancedMapTiles() {
@@ -44,10 +44,12 @@ public class Floor1Room2 extends Map {
         
     }
 
-    @Override
-    protected ArrayList<Trigger> loadTriggers() {
-        // TEMP FIX: no triggers so editor doesn't crash
-        return new ArrayList<>();
+     @Override
+    public ArrayList<Trigger> loadTriggers() {
+        ArrayList<Trigger> triggers = new ArrayList<>();
+        triggers.add(new Trigger(340, 0, 40, 40, new DoorScript()));
+        return triggers;
+    
     }
 
     @Override

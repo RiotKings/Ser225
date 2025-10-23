@@ -6,6 +6,8 @@ import Engine.ScreenManager;
 import GameObject.Rectangle;
 import Utils.Direction;
 import Utils.Point;
+import GameObject.Bullet;
+import GameObject.PlayerBullet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,6 +59,9 @@ public abstract class Map {
     protected ArrayList<EnhancedMapTile> enhancedMapTiles;
     protected ArrayList<NPC> npcs;
     protected ArrayList<Trigger> triggers;
+
+    protected ArrayList<NPC> pendingNPCAdds = new ArrayList<>();
+    protected boolean isUpdatingNPCs = false;
 
     // current script that is being executed (if any)
     protected Script activeScript;
@@ -306,6 +311,7 @@ public abstract class Map {
     public ArrayList<NPC> getNPCs() {
         return npcs;
     }
+    
     public ArrayList<Trigger> getTriggers() { return triggers; }
 
     public ArrayList<MapTile> getAnimatedMapTiles() {
@@ -518,6 +524,9 @@ public abstract class Map {
         if (textbox.isActive()) {
             textbox.update();
         }
+        
+        // Handle bullet collisions with NPCs
+        handleBulletCollisions(player);
     }
 
     // based on the player's current X position (which in a level can potentially be updated each frame),
@@ -614,5 +623,37 @@ public abstract class Map {
 
     public ArrayList<GameListener> getListeners() {
         return listeners;
+    }
+    
+    // Handle bullet collisions with NPCs
+    private void handleBulletCollisions(Player player) {
+        // Only handle bullet collisions if player exists and is not null
+        if (player == null) {
+            return;
+        }
+        
+        // Get player's bullets directly
+        java.util.ArrayList<GameObject.PlayerBullet> bullets = player.getBullets();
+        
+        // Check each bullet for collision with NPCs
+        for (int i = bullets.size() - 1; i >= 0; i--) {
+            GameObject.PlayerBullet bullet = bullets.get(i);
+            
+            // Check collision with each NPC
+            for (NPC npc : getActiveNPCs()) {
+                if (npc.intersects(bullet)) {
+                    // Bullet hit NPC - deal damage
+                    if (npc instanceof NPCs.Bug) {
+                        NPCs.Bug bug = (NPCs.Bug) npc;
+                        bug.takeDamage(1);
+                        System.out.println("[Map] Bullet hit Bug! Bug health: " + bug.getHealth() + "/" + bug.getMaxHealth());
+                        
+                        // Remove bullet after hit
+                        bullets.remove(i);
+                        break; // Exit NPC loop since bullet is removed
+                    }
+                }
+            }
+        }
     }
 }
