@@ -9,8 +9,8 @@ import NPCs.FloorBoss;
 
 import java.util.ArrayList;
 
-public class BossRoomMap extends Map {
-    public BossRoomMap() {
+public class Floor1BossRoomMap extends Map {
+    public Floor1BossRoomMap() {
         super("Floor1BossFloor.txt", new CommonTileset());
         
         // Set player spawn position in the boss room

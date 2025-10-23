@@ -7,7 +7,13 @@ import Game.GameState;
 import Game.ScreenCoordinator;
 import Level.*;
 
+<<<<<<< HEAD
 import Maps.BossRoomMap;
+=======
+import Maps.TestMap;
+import Maps.Floor1BossRoomMap;
+import Maps.Floor1Room5;
+>>>>>>> 44c944b91fbea287fbe4aa8a9ecbc795b08a9e38
 import Players.Alex;
 import Utils.Direction;
 import Hud.GameHealthHUD;
@@ -19,8 +25,15 @@ import Maps.Floor1Room1;
 import Maps.Floor1Room2;
 import Maps.Floor1Room3;
 import Maps.Floor1Room4;
+<<<<<<< HEAD
 import Maps.Floor1Room6;
 import Maps.Floor1Room7;
+=======
+import Maps.Floor1Room5;// Maps.Floor1Room5;
+import Maps.Floor1Room6;
+import Maps.Floor1Room7;
+import Maps.Floor1BossRoomMap;
+>>>>>>> 44c944b91fbea287fbe4aa8a9ecbc795b08a9e38
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -33,11 +46,62 @@ protected GameOverScreen gameOverScreen;
 protected FlagManager flagManager;
 protected GameHealthHUD healthHUD;
 
+<<<<<<< HEAD
 int MapCount = 0;
 int lastIndex = -1;
 
 public PlayLevelScreen(ScreenCoordinator screenCoordinator) {
 this.screenCoordinator = screenCoordinator;
+=======
+    int MapCount = 0; 
+    int lastIndex = -1;
+
+    public PlayLevelScreen(ScreenCoordinator screenCoordinator) {
+        this.screenCoordinator = screenCoordinator;
+    }
+
+   @Override
+public void initialize() {
+    // setup state
+    flagManager = new FlagManager();
+    flagManager.addFlag("hasLostBall");
+    flagManager.addFlag("hasTalkedToWalrus");
+    flagManager.addFlag("hasTalkedToBug");
+    flagManager.addFlag("hasFoundBall");
+
+    map = new FirstRoom();   // starting room   
+    map.setFlagManager(flagManager);
+
+    // setup player
+    player = new Alex(map.getPlayerStartPosition().x, map.getPlayerStartPosition().y);
+    player.setMap(map);
+    player.setHealth(6);
+
+    // ADD THESE LINES FOR MOUSE SUPPORT:
+    Mouse mouse = Mouse.getInstance();
+    player.setMouse(mouse);
+
+    playLevelScreenState = PlayLevelScreenState.RUNNING;
+    player.setFacingDirection(Direction.LEFT);
+
+    map.setPlayer(player);
+
+    // let map know which key is interact
+    map.getTextbox().setInteractKey(player.getInteractKey());
+
+    // add this screen as a listener
+    map.addListener(this);
+
+    // preload scripts
+    map.preloadScripts();
+
+    // initialize health HUD
+    healthHUD = new GameHealthHUD(player);
+
+    winScreen = new WinScreen(this);
+
+    gameOverScreen = new GameOverScreen(this);
+>>>>>>> 44c944b91fbea287fbe4aa8a9ecbc795b08a9e38
 }
 
 @Override
@@ -72,11 +136,42 @@ map.getTextbox().setInteractKey(player.getInteractKey());
 // add this screen as a listener
 map.addListener(this);
 
+<<<<<<< HEAD
 // preload scripts
 map.preloadScripts();
 
 // initialize health HUD
 healthHUD = new GameHealthHUD(player);
+=======
+        @Override
+    public void changeMap() {
+      
+        Map[] pool = new Map[] {
+            new Floor1Room0(),
+            new Floor1Room1(),
+            new Floor1Room2(),
+            new Floor1Room3(),
+            new Floor1Room4(),
+            new Floor1Room5(), 
+            new Floor1Room6(),
+            new Floor1Room7()
+        };
+
+        // Decide next map
+        Map next;
+        if (MapCount == 5) {
+            next = new Floor1BossRoomMap(); // Floor1BossRoom
+            
+        }else{ int j;
+        do {
+            j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
+        } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
+
+        lastIndex = j;
+        next = pool[j];
+        MapCount++;
+    }
+>>>>>>> 44c944b91fbea287fbe4aa8a9ecbc795b08a9e38
 
 winScreen = new WinScreen(this);
 
