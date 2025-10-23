@@ -349,11 +349,9 @@ public abstract class Player extends GameObject {
 
     // Shooting
 
-    // Placeholder fire input: SPACE held. (Swap to Mouse later if desired)
     protected boolean isFireHeld() {
-        return Keyboard.isKeyDown(Key.H);
-    }
-
+    return mouse != null && mouse.isMouseDown();
+}
     // Player center - same as EnemyBasic
     protected float[] getPlayerCenterWorld() {
         Rectangle pb = this.getBounds();
