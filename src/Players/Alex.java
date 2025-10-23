@@ -28,7 +28,7 @@ public class Alex extends Player {
     }
 
      public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName,
-               int health, int sanity, int knowledge) {
+        int health, int sanity, int knowledge) {
         super(spriteSheet, x, y, startingAnimationName);
         this.health = health;
         this.sanity = sanity;
@@ -53,7 +53,7 @@ public class Alex extends Player {
 
     public void takeDamage(int damage){
         setHealth(health - damage);
-        System.out.println("Player has " + getHealth() + " health left"); }
+        System.out.println("Player has " + getHealth() + " health left!"); }
     
     public Alex(float x, float y) {
         super(new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24), x, y, "STAND_RIGHT");
