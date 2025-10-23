@@ -4,7 +4,7 @@ import Level.*;
 import Tilesets.CommonTileset;
 import NPCs.Bug;
 import NPCs.EnemyBasic;
-
+import Scripts.DoorScript;
 import Utils.Point;
 import java.util.ArrayList;
 
@@ -51,11 +51,12 @@ public class Floor1Room4 extends Map {
     }
 
     @Override
-    protected ArrayList<Trigger> loadTriggers() {
-        // TEMP FIX: no triggers so editor doesn't crash
-        return new ArrayList<>();
+    public ArrayList<Trigger> loadTriggers() {
+        ArrayList<Trigger> triggers = new ArrayList<>();
+        triggers.add(new Trigger(340, 0, 40, 40, new DoorScript()));
+        return triggers;
+    
     }
-
     @Override
     protected void loadScripts() {
         // Add dialogue/triggers here later if needed

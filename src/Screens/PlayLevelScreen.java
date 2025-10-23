@@ -20,7 +20,11 @@ import Maps.FirstRoom;
 import Maps.Floor1Room0;
 import Maps.Floor1Room1;
 import Maps.Floor1Room2;
-import Maps.Floor1Room0;
+import Maps.Floor1Room3;
+import Maps.Floor1Room4;
+//import Maps.Floor1Room5;
+import Maps.Floor1Room6;
+import Maps.Floor1Room7;
 
 
 // This class is for when the RPG game is actually being played
@@ -148,44 +152,44 @@ public class PlayLevelScreen extends Screen implements GameListener {
         RUNNING, LEVEL_COMPLETED, LEVEL_LOST;
     }
 
-    @Override
+        @Override
     public void changeMap() {
         
-        int j = (int)(Math.random() * 3);
-        Map[] maps = new Map[4];
+        Map[] pool = new Map[] {
+            new Floor1Room0(),
+            new Floor1Room1(),
+            new Floor1Room2(),
+            new Floor1Room3(),
+            new Floor1Room4(),
+            // new Floor1Room5(), // not ready
+            new Floor1Room6(),
+            new Floor1Room7()
+        };
 
-        // Levels
-        maps[0] = new Floor1Room0(); 
-        maps[1] = new Floor1Room1(); 
-        maps[2] = new Floor1Room2(); 
-      
-        if (MapCount == 5){
-        //map = Floor1BossRoom
-
-            map.setFlagManager(flagManager);
-            player.setMap(map);
-            map.setPlayer(player);
-            map.addListener(this);
-            map.getTextbox().setInteractKey(player.getInteractKey());
-            map.preloadScripts();
-          
-            player.setLocation(325, 370);
-            System.out.println("roomcount = " + MapCount);
-       }else{
-            map = maps[j];
+        // Decide next map
+        Map next;
+        if (MapCount == 5) {
+            // next = new Floor1BossRoom(); // when you have it
+            next = pool[(int)(Math.random() * pool.length)];  // temp fallback
+        } else {
+            int j = (int)(Math.random() * pool.length);  // 0..(length-1)
+            next = pool[j];
             MapCount++;
-          
-            map.setFlagManager(flagManager);
-            player.setMap(map);
-            map.setPlayer(player);
-            map.addListener(this);
-            map.getTextbox().setInteractKey(player.getInteractKey());
-            map.preloadScripts();
-          
-            player.setLocation(325, 370);
-            System.out.println("roomcount = " + MapCount);
-       } 
+        }
+
+        
+        map = next;
+        map.setFlagManager(flagManager);
+        player.setMap(map);
+        map.setPlayer(player);
+        map.addListener(this);
+        map.getTextbox().setInteractKey(player.getInteractKey());
+        map.preloadScripts();
 
        
+        player.setLocation(325, 370);
+
+        System.out.println("roomcount = " + MapCount);
     }
+
 }
