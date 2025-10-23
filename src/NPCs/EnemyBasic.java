@@ -34,21 +34,21 @@ public class EnemyBasic extends NPC {
     private float inset = 24f;
 
     // Attack
-    private static final float ATTACK_RADIUS = 215f;
+    private static final float AttackRadius = 215f;
     private boolean isAttacking = false;
     private float bulletCooldown = 0f;
-    private static final float BULLET_INTERVAL = 1f;
-    private static final float MUZZLE_OFFSET = 10f;
-    private static final int DAMAGE = 1;
+    private static final float BulletInterval = 2.5f;
+    private static final float MuzzleOffset = 10f;
+    private static final int Damage = 1;
 
     private int currentHealth = 3;
     private int maxHealth = 3;
 
-    private static final float STOP_DISTANCE = 5f;
+    private static final float StopDistance = 5;
 
     public EnemyBasic(int id, float x, float y) {
-        super(id, x, y, new SpriteSheet(ImageLoader.load("samurai.png"), 22, 16), "STAND_RIGHT");
-        System.out.println("[EnemyBasic] spawned at (" + x + "," + y + ")");
+        super(id, x, y, new SpriteSheet(ImageLoader.load("samurai.png"), 22, 16), "STAND_LEFT");
+        //System.out.println("[EnemyBasic] spawned at (" + x + "," + y + ")");
     }
 
     public void setBounds(float left, float top, float right, float bottom) {
@@ -98,12 +98,12 @@ public class EnemyBasic extends NPC {
         float dy = py - ey;
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
 
-        isAttacking = (dist <= ATTACK_RADIUS);
+        isAttacking = (dist <= AttackRadius);
 
         this.setCurrentAnimationName(dx < 0 ? "STAND_LEFT" : "STAND_RIGHT");
 
         if (isAttacking) {
-            if (dist > STOP_DISTANCE) {
+            if (dist > StopDistance) {
                 float inv = (dist < 1e-5f) ? 0f : 1f / dist;
                 float nx = dx * inv, ny = dy * inv;
                 float move = chaseSpeed * STEP_DT;
@@ -115,14 +115,14 @@ public class EnemyBasic extends NPC {
                 float inv = (dist < 1e-5f) ? 0f : 1f / dist;
                 float nx = dx * inv, ny = dy * inv;
 
-                float bx = ex + nx * MUZZLE_OFFSET;
-                float by = ey + ny * MUZZLE_OFFSET;
+                float bx = ex + nx * MuzzleOffset;
+                float by = ey + ny * MuzzleOffset;
 
-                Bullet bullet = new Bullet(1000, bx, by, nx, ny, DAMAGE);
+                Bullet bullet = new Bullet(1000, bx, by, nx, ny, Damage);
                 bullet.setMap(this.map);
                 map.addNPC(bullet);
 
-                bulletCooldown = BULLET_INTERVAL;
+                bulletCooldown = BulletInterval;
             }
 
         } else {

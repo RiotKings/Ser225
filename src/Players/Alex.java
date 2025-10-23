@@ -43,11 +43,8 @@ public class Alex extends Player {
     }
 
     public void takeDamage(int damage){
-        if (!invincible){
-            setHealth(getHealth() - damage);
-            System.out.println("Player took " + damage + " damage. Health: " + getHealth());
-        }
-    }
+        setHealth(health - damage);
+        System.out.println("Player has " + getHealth() + " health left"); }
     
     public Alex(float x, float y) {
         super(new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24), x, y, "STAND_RIGHT");
@@ -65,14 +62,6 @@ public class Alex extends Player {
     public void draw(GraphicsHandler graphicsHandler) {
         super.draw(graphicsHandler);
     }
-
- 
-
-
-
-    
-
-    
 
     @Override
     public HashMap<String, Frame[]> loadAnimations(SpriteSheet spriteSheet) {
