@@ -52,8 +52,10 @@ public class Alex extends Player {
     }
 
     public void takeDamage(int damage){
+        if (invincible = false){
         setHealth(health - damage);
         System.out.println(getHealth()); }
+    }
     
     public Alex(float x, float y) {
         super(new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24), x, y, "STAND_RIGHT");

@@ -69,6 +69,7 @@ protected Key Dodge = Key.SPACE;
     private double dodgeSpeed = 8.0;
     private double dodgeVelX = 0;
     private double dodgeVelY = 0;
+    protected boolean invincible = false;
 
 // Track last facing direction
 private double lastDirectionX = 1;
@@ -321,7 +322,9 @@ private double lastDirectionY = 0;
     }
 
     public void takeDamage(int damage) {
+        if (invincible = false){
         setHealth(currentHealth - damage);
+        }
     }
 
     public void heal(int amount) {
@@ -446,6 +449,7 @@ private double lastDirectionY = 0;
     public void startDodge() {
         playerState = PlayerState.DODGING;
         long currentTime = System.currentTimeMillis();
+        invincible = true;
     // Check cooldown
     if (currentTime >= DODGE_COOLDOWN && !isDodging) {
         dodgeDirX = 0;
@@ -469,6 +473,7 @@ private double lastDirectionY = 0;
             lastDodgeTime = currentTime;
             if (hasAnimationLooped == true){
             playerState = PlayerState.STANDING;
+            invincible = false;
         }
 
 
