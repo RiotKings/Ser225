@@ -2,13 +2,13 @@ package NPCs;
 
 import Level.NPC;
 import Level.Player;
-import Level.MapEntityStatus;
 import Utils.Direction;
 import GameObject.Frame;
 import GameObject.ImageEffect;
 import GameObject.Rectangle;
 import GameObject.SpriteSheet;
 import GameObject.Bullet;
+import Level.MapEntityStatus;
 
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,10 +18,7 @@ import Engine.ImageLoader;
 import Engine.GraphicsHandler;
 
 public class FloorBoss extends NPC {
-    // Enhanced stats for boss
-    private int health = 6; // Boss health set to 6
-    private int maxHealth = 6;
-    
+
     // Wander
     private float speed = 55f;
     private float timeToNextHeadingChange = 0f;
@@ -29,156 +26,181 @@ public class FloorBoss extends NPC {
     private float headingChangeIntervalMax = 1.8f;
 
     private float chaseSpeed = 80f;
-
     private Direction wanderDir = Direction.RIGHT;
 
+    // Arena bounds
+    private float boundLeft, boundTop, boundRight, boundBottom;
+    private boolean hasBounds = false;
+    private float inset = 24f;
 
-    // Attack - Enhanced damage
-    private static final float ATTACK_RADIUS = 215f;
+    // Attack
+    private static final float AttackRadius = 500f;
     private boolean isAttacking = false;
     private float bulletCooldown = 0f;
-    private static final float BULLET_INTERVAL = 1f;
-    private static final float MUZZLE_OFFSET = 50f; // Increased offset to ensure bullets come from boss edge
-    private static final int ENEMY_BULLET_DAMAGE = 2; // Double damage (was 1)
+    private static final float BulletInterval = 2.5f;
+    private static final float MuzzleOffset = 30f;
+    private static final int Damage = 2;
 
-    private static final float STOP_DISTANCE = 5f;
+    private int currentHealth = 6;
+    private int maxHealth = 6;
+
+    private static final float StopDistance = 5;
 
     public FloorBoss(int id, float x, float y) {
         super(id, x, y, new SpriteSheet(ImageLoader.load("samurai.png"), 22, 16), "STAND_LEFT");
-        System.out.println("[FloorBoss] spawned at (" + x + "," + y + ")");
+        //System.out.println("[EnemyBasic] spawned at (" + x + "," + y + ")");
     }
 
+    public void setBounds(float left, float top, float right, float bottom) {
+        this.boundLeft = left;
+        this.boundTop = top;
+        this.boundRight = right;
+        this.boundBottom = bottom;
+        this.hasBounds = true;
+    }
 
     @Override
     public HashMap<String, Frame[]> loadAnimations(SpriteSheet spriteSheet) {
         return new HashMap<String, Frame[]>() {{
             put("STAND_LEFT", new Frame[] {
                 new FrameBuilder(spriteSheet.getSprite(0, 0))
-                    .withScale(9) // 3x bigger than samurai (was 3)
-                    .withBounds(21, 39, 33, 21) // 3x bigger bounds (7*3, 13*3, 11*3, 7*3)
+                    .withScale(9)
+                    .withBounds(7, 13, 11, 7)
                     .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
                     .build()
             });
             put("STAND_RIGHT", new Frame[] {
                 new FrameBuilder(spriteSheet.getSprite(0, 0))
-                    .withScale(9) // 3x bigger than samurai (was 3)
-                    .withBounds(21, 39, 33, 21) // 3x bigger bounds (7*3, 13*3, 11*3, 7*3)
+                    .withScale(9)
+                    .withBounds(7, 13, 11, 7)
                     .build()
             });
         }};
-    }
-
-    // Health system methods
-    public int getHealth() {
-        return health;
-    }
-    
-    public int getMaxHealth() {
-        return maxHealth;
-    }
-    
-    public void setHealth(int health) {
-        this.health = Math.max(0, Math.min(health, maxHealth));
-        if (this.health <= 0) {
-            System.out.println("[FloorBoss] Boss died!");
-        }
-    }
-    
-    public void takeDamage(int damage) {
-        int oldHealth = health;
-        setHealth(health - damage);
-        System.out.println("[FloorBoss] Took " + damage + " damage. Health: " + oldHealth + " -> " + health + "/" + maxHealth);
-        if (health <= 0) {
-            System.out.println("[FloorBoss] Boss has died!");
-        }
-    }
-    
-    public boolean isDead() {
-        return health <= 0;
     }
 
     @Override
     protected void performAction(Player player) {
         final float STEP_DT = 1f / 60f;
 
-        // Check if boss is dead
-        if (health <= 0) {
+        if (currentHealth <= 0) {
             this.setMapEntityStatus(MapEntityStatus.REMOVED);
             return;
-        }
+        } 
 
-        // Distance to player
-        Rectangle b = getBounds();
-        float px = player.getBounds().getX() + player.getBounds().getWidth() / 2f;
-        float py = player.getBounds().getY() + player.getBounds().getHeight() / 2f;
-        float ex = b.getX() + b.getWidth() / 2f;
-        float ey = b.getY() + b.getHeight() / 2f;
+        Rectangle eb = getBounds();
+        Rectangle pb = player.getBounds();
+        float ex = eb.getX() + eb.getWidth() * 0.5f;
+        float ey = eb.getY() + eb.getHeight() * 0.5f;
+        float px = pb.getX() + pb.getWidth() * 0.5f;
+        float py = pb.getY() + pb.getHeight() * 0.5f;
+
         float dx = px - ex;
         float dy = py - ey;
-        float dist = (float)Math.sqrt(dx * dx + dy * dy);
+        float dist = (float) Math.sqrt(dx * dx + dy * dy);
 
-        // Face player
-        if (dx < 0) {
-            this.setCurrentAnimationName("STAND_LEFT");
+        isAttacking = (dist <= AttackRadius);
+
+        this.setCurrentAnimationName(dx < 0 ? "STAND_LEFT" : "STAND_RIGHT");
+
+        if (isAttacking) {
+            if (dist > StopDistance) {
+                float inv = (dist < 1e-5f) ? 0f : 1f / dist;
+                float nx = dx * inv, ny = dy * inv;
+                float move = chaseSpeed * STEP_DT;
+                tryMove(nx * move, ny * move);
+            }
+
+            bulletCooldown -= STEP_DT;
+            if (bulletCooldown <= 0f) {
+                float inv = (dist < 1e-5f) ? 0f : 1f / dist;
+                float nx = dx * inv, ny = dy * inv;
+
+                float bx = ex + nx * MuzzleOffset;
+                float by = ey + ny * MuzzleOffset;
+
+                Bullet bullet = new Bullet(1000, bx, by, nx, ny, Damage);
+                bullet.setMap(this.map);
+                map.addNPC(bullet);
+
+                bulletCooldown = BulletInterval;
+            }
+
         } else {
-            this.setCurrentAnimationName("STAND_RIGHT");
-        }
+            timeToNextHeadingChange -= STEP_DT;
+            if (timeToNextHeadingChange <= 0f) {
+                wanderDir = pickRandomDir();
+                timeToNextHeadingChange = randRange(headingChangeIntervalMin, headingChangeIntervalMax);
+            }
 
-        // ALWAYS chase the player (boss is aggressive)
-        if (dist > STOP_DISTANCE) {
-            float nx = dx / dist;
-            float ny = dy / dist;
-            float move = chaseSpeed * STEP_DT;
-            tryMove(nx * move, ny * move);
-        }
-        
-        // Fire bullets at player
-        bulletCooldown -= STEP_DT;
-        if (bulletCooldown <= 0f) {
-            float inv = (dist < 1e-5f) ? 0f : 1f / dist;
-            float nx = dx * inv, ny = dy * inv;
+            if (hasBounds) {
+                float x1 = eb.getX1(), y1 = eb.getY1(), w = eb.getWidth(), h = eb.getHeight();
+                if (x1 <= boundLeft + inset)          wanderDir = Direction.RIGHT;
+                if (x1 + w >= boundRight - inset)     wanderDir = Direction.LEFT;
+                if (y1 <= boundTop + inset)           wanderDir = Direction.DOWN;
+                if (y1 + h >= boundBottom - inset)    wanderDir = Direction.UP;
+            }
 
-            float bx = ex + nx * MUZZLE_OFFSET;
-            float by = ey + ny * MUZZLE_OFFSET;
-
-            System.out.println("[FloorBoss] Firing bullet from boss center (" + ex + ", " + ey + ") to (" + bx + ", " + by + ")");
-            Bullet bullet = new Bullet(1000, bx, by, nx, ny, ENEMY_BULLET_DAMAGE);
-            bullet.setMap(this.map);
-            map.addNPC(bullet);
-
-            bulletCooldown = BULLET_INTERVAL;
+            float perFrameSpeed = speed * STEP_DT;
+            switch (wanderDir) {
+                case LEFT  -> tryMove(-perFrameSpeed, 0f);
+                case RIGHT -> tryMove(perFrameSpeed, 0f);
+                case UP    -> tryMove(0f, -perFrameSpeed);
+                case DOWN  -> tryMove(0f, perFrameSpeed);
+            }
         }
     }
 
     @Override
     public void draw(GraphicsHandler graphicsHandler) {
-        // Don't draw if dead
-        if (health <= 0) {
-            return;
-        }
         super.draw(graphicsHandler);
+    }
+    
+    public int getHealth() {
+        return currentHealth;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setHealth(int health) {
+        this.currentHealth = Math.max(0, Math.min(health, maxHealth));
+    }
+
+    public void takeDamage(int damage) {
+        setHealth(currentHealth - damage);
     }
 
     @Override
     public Rectangle getBounds() {
         Rectangle b = super.getBounds();
         if (b.getWidth() < 1 || b.getHeight() < 1) {
-            return new Rectangle(b.getX1(), b.getY1(), 60, 60); // 3x bigger than EnemyBasic
+            return new Rectangle(b.getX1(), b.getY1(), 20, 20);
         }
         return b;
     }
 
-    // Attempt a move - no bounds checking for free movement
     private void tryMove(float dx, float dy) {
         if (dx != 0f) {
             super.moveX(dx);
+            if (hasBounds) {
+                Rectangle b = getBounds();
+                float x1 = b.getX1(), w = b.getWidth();
+                if (x1 < boundLeft) super.moveX(boundLeft - x1);
+                if (x1 + w > boundRight) super.moveX(boundRight - (x1 + w));
+            }
         }
 
         if (dy != 0f) {
             super.moveY(dy);
+            if (hasBounds) {
+                Rectangle b = getBounds();
+                float y1 = b.getY1(), h = b.getHeight();
+                if (y1 < boundTop) super.moveY(boundTop - y1);
+                if (y1 + h > boundBottom) super.moveY(boundBottom - (y1 + h));
+            }
         }
     }
-
 
     private static float randRange(float a, float b) {
         return (float) (a + ThreadLocalRandom.current().nextDouble() * (b - a));
