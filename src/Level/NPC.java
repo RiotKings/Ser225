@@ -111,4 +111,9 @@ public class NPC extends MapEntity {
     public void draw(GraphicsHandler graphicsHandler) {
         super.draw(graphicsHandler);
     }
+
+    public void touchedPlayer(Player player) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'touchedPlayer'");
+    }
 }

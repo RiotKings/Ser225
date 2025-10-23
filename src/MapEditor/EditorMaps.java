@@ -5,6 +5,8 @@ import Maps.Floor1Room6;
 import Maps.Floor1Room7;
 import Maps.TestMap;
 import Maps.TitleScreenMap;
+import Maps.Floor1Room5;
+import Maps.Floor1BossRoomMap;
 import Maps.FirstRoom;
 import Maps.Floor1Room0;
 import Maps.Floor1Room1;
@@ -19,13 +21,14 @@ public class EditorMaps {
         return new ArrayList<String>() {{
             add("TestMap");
             add("TitleScreen");
+            add("RegularRoom");
+            add("BossRoom");
             add("FirstRoom");
             add("Floor1Room0");
             add("Floor1Room1");
             add("Floor1Room2");
             add("Floor1Room3");
             add("Floor1Room4");
-
             add("Floor1Room6");
             add("Floor1Room7");
         }};
@@ -37,6 +40,10 @@ public class EditorMaps {
                 return new TestMap();
             case "TitleScreen":
                 return new TitleScreenMap();
+            case "RegularRoom":
+                return new Floor1Room5();
+            case "BossRoom":
+                return new Floor1BossRoomMap();
             case "FirstRoom":
                 return new FirstRoom();
             case "Floor1Room0":
@@ -53,7 +60,6 @@ public class EditorMaps {
                 return new Floor1Room6();
             case "Floor1Room7":
                 return new Floor1Room7();
-
             default:
                 throw new RuntimeException("Unrecognized map name");
         }

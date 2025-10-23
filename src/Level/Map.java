@@ -524,6 +524,9 @@ public abstract class Map {
         if (textbox.isActive()) {
             textbox.update();
         }
+        
+        // Handle bullet collisions with NPCs
+        handleBulletCollisions(player);
     }
 
     // based on the player's current X position (which in a level can potentially be updated each frame),
@@ -620,5 +623,45 @@ public abstract class Map {
 
     public ArrayList<GameListener> getListeners() {
         return listeners;
+    }
+    
+    // Handle bullet collisions with NPCs
+    private void handleBulletCollisions(Player player) {
+        // Only handle bullet collisions if player exists and is not null
+        if (player == null) {
+            return;
+        }
+        
+        // Get player's bullets directly
+        java.util.ArrayList<GameObject.PlayerBullet> bullets = player.getBullets();
+        
+        // Check each bullet for collision with NPCs
+        for (int i = bullets.size() - 1; i >= 0; i--) {
+            GameObject.PlayerBullet bullet = bullets.get(i);
+            
+            // Check collision with each NPC
+            for (NPC npc : getActiveNPCs()) {
+                if (npc.intersects(bullet)) {
+                    // Bullet hit NPC - deal damage
+                    if (npc instanceof NPCs.Bug) {
+                        NPCs.Bug bug = (NPCs.Bug) npc;
+                        bug.takeDamage(1);
+                        System.out.println("[Map] Bullet hit Bug! Bug health: " + bug.getHealth() + "/" + bug.getMaxHealth());
+                        
+                        // Remove bullet after hit
+                        bullets.remove(i);
+                        break; // Exit NPC loop since bullet is removed
+                    } else if (npc instanceof NPCs.FloorBoss) {
+                        NPCs.FloorBoss boss = (NPCs.FloorBoss) npc;
+                        boss.takeDamage(1);
+                        System.out.println("[Map] Bullet hit Boss! Boss health: " + boss.getHealth() + "/" + boss.getMaxHealth());
+                        
+                        // Remove bullet after hit
+                        bullets.remove(i);
+                        break; // Exit NPC loop since bullet is removed
+                    }
+                }
+            }
+        }
     }
 }

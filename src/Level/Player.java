@@ -87,11 +87,11 @@ public abstract class Player extends GameObject {
     // Shooting
     private static final float STEP_DT = 1f / 60f;
     private static final int FIRE_INTERVAL = 60;
-    private static final float MUZZLE_OFFSET = 10f;
+    private static final float MUZZLE_OFFSET = 30f;
     private static final int BURST_COUNT = 1;
     private static final int BULLET_SIZE = 6;
 
-    private final ArrayList<Bullet> bullets = new ArrayList<>();
+    private final ArrayList<PlayerBullet> bullets = new ArrayList<>();
     private int fireCooldown = 0;
 
     public Player(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
@@ -103,7 +103,7 @@ public abstract class Player extends GameObject {
     }
 
     public void update() {
-        double speed = 3.0;
+        double speed = 2.3;
         double dx = 0;
         double dy = 0;
         long currentTime = System.currentTimeMillis();
@@ -118,20 +118,20 @@ public abstract class Player extends GameObject {
             y += dodgeVelY;
             return; // skip normal input while dodging
         }
-         if (Keyboard.isKeyDown(MOVE_UP_KEY)) dy -= 3;
-        if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) dy += 3;
-        if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) dx -= 3;
-        if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) dx += 3;
+         if (Keyboard.isKeyDown(MOVE_UP_KEY)) dy -= 2.3;
+        if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) dy += 2.3;
+        if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) dx -= 2.3;
+        if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) dx += 2.3;
 
         if (dx != 0 && dy != 0) {
         dx *= 0.7071;
         dy *= 0.7071;
         }
 
-       
         if (!isLocked) {
-            moveAmountX = 0;
-            moveAmountY = 0;
+            // Store movement for collision-based movement
+            moveAmountX = (float)dx;
+            moveAmountY = (float)dy;
 
             // if player is currently playing through level (has not won or lost)
             // update player's state and current actions, which includes things like determining how much it should move each frame and if its walking or jumping
@@ -272,11 +272,22 @@ public abstract class Player extends GameObject {
     }
 
     @Override
-    public void onEndCollisionCheckX(boolean hasCollided, Direction direction, GameObject entityCollidedWith) { }
+public void onEndCollisionCheckX(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
+    // Ignore collisions with our own bullets
+    if (entityCollidedWith instanceof PlayerBullet) {
+        return;
+    }
+    // Continue with normal collision handling if needed
+}
 
-    @Override
-    public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameObject entityCollidedWith) { }
-
+@Override
+public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
+    // Ignore collisions with our own bullets
+    if (entityCollidedWith instanceof PlayerBullet) {
+        return;
+    }
+    // Continue with normal collision handling if needed
+}
     public PlayerState getPlayerState() {
         return playerState;
     }
@@ -350,8 +361,8 @@ public abstract class Player extends GameObject {
     // Shooting
 
     protected boolean isFireHeld() {
-    return mouse != null && mouse.isMouseDown();
-}
+        return mouse != null && mouse.isMouseDown();
+    }
     // Player center - same as EnemyBasic
     protected float[] getPlayerCenterWorld() {
         Rectangle pb = this.getBounds();
@@ -384,6 +395,11 @@ public abstract class Player extends GameObject {
     public void setMouse(Mouse mouse) {
         this.mouse = mouse;
     }
+    
+    // Getter for bullets to allow Map class to access them
+    public ArrayList<PlayerBullet> getBullets() {
+        return bullets;
+    }
 
     // Shooting
     private void updateFiringAndBullets() {
@@ -408,11 +424,15 @@ public abstract class Player extends GameObject {
                     pb.setMap(map);
                     map.addNPC(pb);  // Map owns lifecycle
                 }
+                bullets.add(pb);  // Also add to player's bullet list for drawing
             }
             fireCooldown = FIRE_INTERVAL;
         } else {
             if (fireCooldown > 0) fireCooldown--;
         }
+        
+        // Clean up bullets that are marked for removal
+        bullets.removeIf(bullet -> bullet.isMarkedForRemoval());
     }
 
     /*
@@ -435,6 +455,7 @@ public abstract class Player extends GameObject {
     @Override
     public void draw(GraphicsHandler graphicsHandler) {
         super.draw(graphicsHandler);
+        drawPlayerBullets(graphicsHandler);
     }
 
     protected void drawPlayerBullets(GraphicsHandler g) {

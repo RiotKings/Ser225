@@ -28,16 +28,14 @@ public class HealthHUDdemo extends JPanel {
     }
     
     /**
-     * Get the current health
-     * @return Current health value
+     * Get the current health, @return Current health value
      */
     public int getHealth() {
         return currentHealth;
     }
     
     /**
-     * Damage the player
-     * @param amount Amount of damage to take
+     * Damage the player amount of damage to take
      */
     public void takeDamage(int amount) {
         setHealth(currentHealth - amount);

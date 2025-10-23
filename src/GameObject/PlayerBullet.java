@@ -8,9 +8,10 @@ import NPCs.EnemyBasic;
 import Engine.GraphicsHandler;
 import java.awt.Color;
 import GameObject.Rectangle;
+import Utils.Direction;
 
 public class PlayerBullet extends NPC {
-  
+ 
 
     private float vx, vy;
     private static final float Speed = 3;
@@ -26,6 +27,10 @@ public class PlayerBullet extends NPC {
 
     public PlayerBullet(int id, float x, float y, float nx, float ny, int damage) {
         super(id, x, y);
+        
+        // CRITICAL: Make bullets completely uncollidable so they don't push the player
+        this.isUncollidable = true;
+        
         float len = (float) Math.sqrt(nx * nx + ny * ny);
         if (len < 1e-6f) { nx = 1f; ny = 0f; }
         else { nx /= len; ny /= len; }
@@ -48,7 +53,7 @@ public class PlayerBullet extends NPC {
         }
 
         //System.out.println(vx);
-        //System.out.println(vy); 
+        //System.out.println(vy);
 
         x += vx;
         y += vy;
@@ -105,6 +110,33 @@ public class PlayerBullet extends NPC {
             }
         }
     }
+    
+    // Override collision methods to prevent PlayerBullets from colliding with the player
+    @Override
+    public void onEndCollisionCheckX(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
+        // Don't collide with player - bullets should pass through
+        if (entityCollidedWith instanceof Player) {
+            return;
+        }
+        super.onEndCollisionCheckX(hasCollided, direction, entityCollidedWith);
+    }
+
+    @Override
+    public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
+        // Don't collide with player - bullets should pass through
+        if (entityCollidedWith instanceof Player) {
+            return;
+        }
+        super.onEndCollisionCheckY(hasCollided, direction, entityCollidedWith);
+    }
+
+    // Prevent any interaction with player
+    @Override
+    public void touchedPlayer(Player player) {
+        // PlayerBullets should NOT interact with player
+        // Do nothing - bullets pass through player
+    }
+    
     @Override
     public void draw(GraphicsHandler g) {
         float sx = x;
@@ -121,7 +153,7 @@ public class PlayerBullet extends NPC {
         return new Rectangle(x - 3, y - 3, 6, 6);
     }
 
-    public boolean isMarkedForRemoval() { 
-        return markedForRemoval; 
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
     }
 }

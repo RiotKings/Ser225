@@ -17,6 +17,7 @@ public class MenuScreen extends Screen {
     protected ScreenCoordinator screenCoordinator;
     protected int currentMenuItemHovered = 0;
     protected int menuItemSelected = -1;
+    protected SpriteFont title;
     protected SpriteFont playGame;
     protected SpriteFont credits;
     protected Map background;
@@ -34,6 +35,9 @@ public class MenuScreen extends Screen {
 
     @Override
     public void initialize() {
+        title = new SpriteFont("SUMMONS OF CTHULHU", 175, 50, "Arial", 35, Color.white);
+        title.setOutlineColor(Color.black);
+        title.setOutlineThickness(3);
         playGame = new SpriteFont("PLAY GAME", 200, 123, "Arial", 30, new Color(49, 207, 240));
         playGame.setOutlineColor(Color.black);
         playGame.setOutlineThickness(3);
@@ -45,6 +49,7 @@ public class MenuScreen extends Screen {
         keyPressTimer = 0;
         menuItemSelected = -1;
         keyLocker.lockKey(Key.SPACE);
+        keyLocker.lockKey(Key.ENTER);          // <-- ADDED (prevents accidental auto-press)
         startTitleMusic();
     }
 
@@ -81,9 +86,15 @@ public class MenuScreen extends Screen {
             pointerLocationY = 230;
         }
 
+        // unlock keys when released
         if (Keyboard.isKeyUp(Key.SPACE)) {
             keyLocker.unlockKey(Key.SPACE);
         }
+        if (Keyboard.isKeyUp(Key.ENTER)) {      // <-- ADDED
+            keyLocker.unlockKey(Key.ENTER);
+        }
+
+        // SPACE selects
         if (!keyLocker.isKeyLocked(Key.SPACE) && Keyboard.isKeyDown(Key.SPACE)) {
             menuItemSelected = currentMenuItemHovered;
             if (menuItemSelected == 0) {
@@ -94,10 +105,24 @@ public class MenuScreen extends Screen {
                 screenCoordinator.setGameState(GameState.CREDITS);
             }
         }
+
+        // ENTER selects (same behavior as SPACE)  <-- ADDED
+        if (!keyLocker.isKeyLocked(Key.ENTER) && Keyboard.isKeyDown(Key.ENTER)) {
+            menuItemSelected = currentMenuItemHovered;
+            if (menuItemSelected == 0) {
+                stopTitleMusic();
+                screenCoordinator.setGameState(GameState.LEVEL);
+            } else if (menuItemSelected == 1) {
+                stopTitleMusic();
+                screenCoordinator.setGameState(GameState.CREDITS);
+            }
+            keyLocker.lockKey(Key.ENTER);
+        }
     }
 
     public void draw(GraphicsHandler graphicsHandler) {
         background.draw(graphicsHandler);
+        title.draw(graphicsHandler);
         playGame.draw(graphicsHandler);
         credits.draw(graphicsHandler);
         graphicsHandler.drawFilledRectangleWithBorder(
@@ -105,6 +130,7 @@ public class MenuScreen extends Screen {
             new Color(49, 207, 240), Color.black, 2
         );
     }
+
 
     private void startTitleMusic() {
         try {
