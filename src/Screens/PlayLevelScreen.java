@@ -25,10 +25,10 @@ import Maps.Floor1Room1;
 import Maps.Floor1Room2;
 import Maps.Floor1Room3;
 import Maps.Floor1Room4;
-//import Maps.Floor1Room5;
+import Maps.RegularRoomMap;// Maps.Floor1Room5;
 import Maps.Floor1Room6;
 import Maps.Floor1Room7;
-
+import Maps.BossRoomMap;
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -56,7 +56,7 @@ public void initialize() {
     flagManager.addFlag("hasTalkedToBug");
     flagManager.addFlag("hasFoundBall");
 
-    map = new FirstRoom();   
+    map = new FirstRoom();   // starting room   
     map.setFlagManager(flagManager);
 
     // setup player
@@ -163,7 +163,7 @@ public void initialize() {
             new Floor1Room2(),
             new Floor1Room3(),
             new Floor1Room4(),
-            // new Floor1Room5(), // not ready
+            new RegularRoomMap(), // Floor1Room5(), 
             new Floor1Room6(),
             new Floor1Room7()
         };
@@ -171,8 +171,8 @@ public void initialize() {
         // Decide next map
         Map next;
         if (MapCount == 5) {
-            // next = new Floor1BossRoom(); // when you have it
-            next = pool[(int)(Math.random() * pool.length)];  // temp fallback
+            next = new BossRoomMap(); // Floor1BossRoom
+            
         } else {
             int j = (int)(Math.random() * pool.length);  // 0..(length-1)
             next = pool[j];
