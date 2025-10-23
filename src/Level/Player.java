@@ -103,7 +103,7 @@ public abstract class Player extends GameObject {
     }
 
     public void update() {
-        double speed = 3.0;
+        double speed = 2.3;
         double dx = 0;
         double dy = 0;
         long currentTime = System.currentTimeMillis();
@@ -118,20 +118,20 @@ public abstract class Player extends GameObject {
             y += dodgeVelY;
             return; // skip normal input while dodging
         }
-         if (Keyboard.isKeyDown(MOVE_UP_KEY)) dy -= 3;
-        if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) dy += 3;
-        if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) dx -= 3;
-        if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) dx += 3;
+         if (Keyboard.isKeyDown(MOVE_UP_KEY)) dy -= 2.3;
+        if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) dy += 2.3;
+        if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) dx -= 2.3;
+        if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) dx += 2.3;
 
         if (dx != 0 && dy != 0) {
         dx *= 0.7071;
         dy *= 0.7071;
         }
 
-       
         if (!isLocked) {
-            moveAmountX = 0;
-            moveAmountY = 0;
+            // Store movement for collision-based movement
+            moveAmountX = (float)dx;
+            moveAmountY = (float)dy;
 
             // if player is currently playing through level (has not won or lost)
             // update player's state and current actions, which includes things like determining how much it should move each frame and if its walking or jumping

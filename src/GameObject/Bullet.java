@@ -42,9 +42,13 @@ public class Bullet extends NPC {
 
         x += vx;
         y += vy;
+        
+        // Decrement timer
+        t -= STEP_DT;
 
         if (t <= 0f) {
             markedForRemoval = true;
+            this.mapEntityStatus = MapEntityStatus.REMOVED;
             return;
         }
 
@@ -56,6 +60,7 @@ public class Bullet extends NPC {
             float cy = y;
             if (cx < -Margin || cx > (w + Margin) || cy < -Margin || cy > (h + Margin)) {
                 markedForRemoval = true;
+                this.mapEntityStatus = MapEntityStatus.REMOVED;
                 return;
             }
         }
@@ -75,12 +80,6 @@ public class Bullet extends NPC {
 
     @Override
     public void draw(GraphicsHandler g) {
-        float sx = x;
-        float sy = y;
-        if (map != null && map.getCamera() != null) {
-            sx -= map.getCamera().getX();
-            sy -= map.getCamera().getY();
-        }
         g.drawFilledRectangle(Math.round(getCalibratedXLocation()), Math.round(getCalibratedYLocation()), 7, 7, Color.RED);
     }
 

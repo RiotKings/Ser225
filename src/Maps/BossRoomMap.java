@@ -5,6 +5,7 @@ import Level.MapTile;
 import Level.NPC;
 import Tilesets.CommonTileset;
 import Utils.Point;
+import NPCs.FloorBoss;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,14 @@ public class BossRoomMap extends Map {
     public ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
         
-        // No boss - empty room for free movement
+        // Add the FloorBoss to the center of the room
+        MapTile bossTile = getMapTile(12, 8); // Center of the room (24x20)
+        if (bossTile != null) {
+            FloorBoss boss = new FloorBoss(1, bossTile.getLocation().x, bossTile.getLocation().y);
+        
+            npcs.add(boss);
+        }
+        
         return npcs;
     }
 }

@@ -11,7 +11,6 @@ import GameObject.SpriteSheet;
 import GameObject.Bullet;
 
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 import Builders.FrameBuilder;
@@ -20,8 +19,8 @@ import Engine.GraphicsHandler;
 
 public class FloorBoss extends NPC {
     // Enhanced stats for boss
-    private int health = 20; // Double the HP (samurai has 10)
-    private int maxHealth = 20;
+    private int health = 6; // Boss health set to 6
+    private int maxHealth = 6;
     
     // Wander
     private float speed = 55f;
@@ -33,18 +32,13 @@ public class FloorBoss extends NPC {
 
     private Direction wanderDir = Direction.RIGHT;
 
-    // Arena bounds
-    private float boundLeft, boundTop, boundRight, boundBottom;
-    private boolean hasBounds = false;
-    private float inset = 24f;
 
     // Attack - Enhanced damage
     private static final float ATTACK_RADIUS = 215f;
     private boolean isAttacking = false;
     private float bulletCooldown = 0f;
     private static final float BULLET_INTERVAL = 1f;
-    private static final float MUZZLE_OFFSET = 10f;
-    private ArrayList<Bullet> bullets = new ArrayList<>();
+    private static final float MUZZLE_OFFSET = 35f; // 3x bigger offset for 3x bigger boss
     private static final int ENEMY_BULLET_DAMAGE = 2; // Double damage (was 1)
 
     private static final float STOP_DISTANCE = 5f;
@@ -54,14 +48,6 @@ public class FloorBoss extends NPC {
         System.out.println("[FloorBoss] spawned at (" + x + "," + y + ")");
     }
 
-    public void setBounds(float left, float top, float right, float bottom) {
-        this.boundLeft = left;
-        this.boundTop = top;
-        this.boundRight = right;
-        this.boundBottom = bottom;
-        this.hasBounds = true;
-        System.out.println("[FloorBoss] Bounds set: left=" + left + ", top=" + top + ", right=" + right + ", bottom=" + bottom);
-    }
 
     @Override
     public HashMap<String, Frame[]> loadAnimations(SpriteSheet spriteSheet) {
@@ -149,62 +135,20 @@ public class FloorBoss extends NPC {
         // Fire bullets at player
         bulletCooldown -= STEP_DT;
         if (bulletCooldown <= 0f) {
-            float exScreen = getCalibratedXLocation() + getWidth() / 2f;
-            float eyScreen = getCalibratedYLocation() + getHeight() / 2f;
+            float inv = (dist < 1e-5f) ? 0f : 1f / dist;
+            float nx = dx * inv, ny = dy * inv;
 
-            float pxScreen = player.getCalibratedXLocation() + player.getBounds().getWidth() / 2f;
-            float pyScreen = player.getCalibratedYLocation() + player.getBounds().getHeight() / 2f;
+            float bx = ex + nx * MUZZLE_OFFSET;
+            float by = ey + ny * MUZZLE_OFFSET;
 
-            float dxScreen = pxScreen - exScreen;
-            float dyScreen = pyScreen - eyScreen;
-            float distScreen = (float)Math.sqrt(dxScreen * dxScreen + dyScreen * dyScreen);
-            if (distScreen < 1e-4f) distScreen = 1f;
+            Bullet bullet = new Bullet(1000, bx, by, nx, ny, ENEMY_BULLET_DAMAGE);
+            bullet.setMap(this.map);
+            map.addNPC(bullet);
 
-            float bx = exScreen + (dxScreen / distScreen) * MUZZLE_OFFSET;
-            float by = eyScreen + (dyScreen / distScreen) * MUZZLE_OFFSET;
-
-            bullets.add(new Bullet(bx, by, dxScreen, dyScreen));
             bulletCooldown = BULLET_INTERVAL;
-        }
-
-        for (int i = bullets.size() - 1; i >= 0; i--) {
-            Bullet bullet = bullets.get(i);
-            bullet.update(STEP_DT);
-
-            Rectangle br = bullet.getBounds();
-            Rectangle pr = player.getBounds();
-
-            float bx1 = br.getX1(), by1 = br.getY1();
-            float bx2 = bx1 + br.getWidth(), by2 = by1 + br.getHeight();
-
-            float px1 = pr.getX1(), py1 = pr.getY1();
-            float px2 = px1 + pr.getWidth(), py2 = py1 + pr.getHeight();
-
-            // Inflate upward/sides to cover torso/head
-            final float PAD_X = 4f;
-            final float PAD_UP = 18f;
-            final float PAD_DOWN = 2f;
-
-            px1 -= PAD_X;  px2 += PAD_X;
-            py1 -= PAD_UP; py2 += PAD_DOWN;
-
-            boolean hit = (bx1 < px2) && (bx2 > px1) && (by1 < py2) && (by2 > py1);
-
-            if (hit) {
-                player.takeDamage(ENEMY_BULLET_DAMAGE);
-                System.out.println("[FloorBoss] Hit! Applied " + ENEMY_BULLET_DAMAGE + " damage to player.");
-                bullets.remove(i);
-                continue;
-            }
-
-            // Off-map cull
-            if (isOffMap(bullet)) {
-                bullets.remove(i);
-            }
         }
     }
 
-    // Draw bullets
     @Override
     public void draw(GraphicsHandler graphicsHandler) {
         // Don't draw if dead
@@ -212,9 +156,6 @@ public class FloorBoss extends NPC {
             return;
         }
         super.draw(graphicsHandler);
-        for (Bullet bullet : bullets) {
-            bullet.draw(graphicsHandler);
-        }
     }
 
     @Override
@@ -226,51 +167,17 @@ public class FloorBoss extends NPC {
         return b;
     }
 
-    // Attempt a move - uses bounds checking like EnemyBasic
+    // Attempt a move - no bounds checking for free movement
     private void tryMove(float dx, float dy) {
         if (dx != 0f) {
             super.moveX(dx);
-            if (hasBounds) {
-                Rectangle b = getBounds();
-                float x1 = b.getX1(), w = b.getWidth();
-                if (x1 < boundLeft) {
-                    super.moveX(boundLeft - x1);
-                }
-                if (x1 + w > boundRight) {
-                    super.moveX(boundRight - (x1 + w));
-                }
-            }
         }
 
         if (dy != 0f) {
             super.moveY(dy);
-            if (hasBounds) {
-                Rectangle b = getBounds();
-                float y1 = b.getY1(), h = b.getHeight();
-                if (y1 < boundTop) {
-                    super.moveY(boundTop - y1);
-                }
-                if (y1 + h > boundBottom) {
-                    super.moveY(boundBottom - (y1 + h));
-                }
-            }
         }
     }
 
-    // Off-map culling for enemy bullets (WORLD space)
-    private boolean isOffMap(Bullet b) {
-        if (map == null) return false;
-
-        Rectangle rb = b.getBounds();
-        float bx = rb.getX() + rb.getWidth() * 0.5f;
-        float by = rb.getY() + rb.getHeight() * 0.5f;
-
-        int w = map.getWidthPixels();
-        int h = map.getHeightPixels();
-        final int MARGIN = 6;
-
-        return (bx < -MARGIN || bx > (w + MARGIN) || by < -MARGIN || by > (h + MARGIN));
-    }
 
     private static float randRange(float a, float b) {
         return (float) (a + ThreadLocalRandom.current().nextDouble() * (b - a));

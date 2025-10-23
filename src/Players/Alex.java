@@ -15,6 +15,7 @@ import java.util.HashMap;
 public class Alex extends Player {
     private int knowledge;
     private int sanity;
+    private boolean invincible = false;
     
     public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName) {
         super(spriteSheet, x, y, startingAnimationName); 
@@ -56,7 +57,7 @@ public class Alex extends Player {
 
     public void update() {
         super.update();
-        if (health <= 0){
+        if (currentHealth <= 0){
             
         }
     }
