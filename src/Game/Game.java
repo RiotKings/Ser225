@@ -9,8 +9,7 @@ import Engine.ScreenManager;
  * From this point on the ScreenCoordinator class will dictate what the game does
  */
 public class Game {
-
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         new Game();
     }
 
