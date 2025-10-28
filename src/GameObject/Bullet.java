@@ -10,7 +10,7 @@ public class Bullet extends NPC {
   
 
     private float vx, vy;
-    private static final float Speed = 3;
+    private static final float Speed = 5;
     private static final int BulletSize = 10;
     private static final float Tm = 5;
 
@@ -43,14 +43,14 @@ public class Bullet extends NPC {
         y += vy;
 
         t -= STEP_DT;
-
+/*
         if (t <= 0f) {
             markedForRemoval = true;
             this.mapEntityStatus = MapEntityStatus.REMOVED;
             return;
         }
+*/
 
-/*
         if (map != null) {
             int w = map.getWidthPixels();
             int h = map.getHeightPixels();
@@ -63,7 +63,7 @@ public class Bullet extends NPC {
                 return;
             }
         }
-*/
+
         if (player != null) {
             Rectangle br = getBounds();
             Rectangle pr = player.getBounds();
