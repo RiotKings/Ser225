@@ -15,8 +15,8 @@ public class PlayerBullet extends NPC {
  
 
     private float vx, vy;
-    private static final float Speed = 3;
-    private static final int BulletSize = 4;
+    private static final float Speed = 5;
+    private static final int BulletSize = 10;
     private static final float Tm = 3;
 
     private final int damage;
@@ -29,7 +29,6 @@ public class PlayerBullet extends NPC {
     public PlayerBullet(int id, float x, float y, float nx, float ny, int damage) {
         super(id, x, y);
         
-        // CRITICAL: Make bullets completely uncollidable so they don't push the player
         this.isUncollidable = true;
         
         float len = (float) Math.sqrt(nx * nx + ny * ny);
