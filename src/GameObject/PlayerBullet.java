@@ -44,7 +44,7 @@ public class PlayerBullet extends NPC {
     @Override
     public void update(Player player) {
         if (markedForRemoval) return;
-
+/*
         t -= STEP_DT;
 
         if (t <= 0f) {
@@ -52,13 +52,13 @@ public class PlayerBullet extends NPC {
             this.mapEntityStatus = MapEntityStatus.REMOVED;
             return;
         }
-
+*/
         //System.out.println(vx);
         //System.out.println(vy);
 
         x += vx;
         y += vy;
-/*
+
         if (map != null) {
             int w = map.getWidthPixels();
             int h = map.getHeightPixels();
@@ -67,10 +67,11 @@ public class PlayerBullet extends NPC {
             float cy = y;
             if (cx < -Margin || cx > (w + Margin) || cy < -Margin || cy > (h + Margin)) {
                 markedForRemoval = true;
+                this.mapEntityStatus = MapEntityStatus.REMOVED;
                 return;
             }
         }
-*/
+
         if (map != null) {
             Rectangle br = getBounds();
             var npcs = map.getNPCs();
@@ -86,7 +87,7 @@ public class PlayerBullet extends NPC {
                     boolean hit = (br.getX1() < er.getX1() + er.getWidth() + PAD_X * 2) && (br.getX1() + br.getWidth() > er.getX1() - PAD_X) && (br.getY1() < er.getY1() + er.getHeight() + PAD_UP + PAD_DOWN) && (br.getY1() + br.getHeight() > er.getY1() - PAD_UP);
                     if (hit) {
                         enemy.takeDamage(damage);
-                        System.out.println("Hit enemy for " + damage + " damage!");
+                        //System.out.println("Hit enemy for " + damage + " damage!");
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
                         break;
@@ -102,7 +103,7 @@ public class PlayerBullet extends NPC {
                     boolean hitbug = (br.getX1() < bugr.getX1() + bugr.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bugr.getX1() - PAD_X1) && (br.getY1() < bugr.getY1() + bugr.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bugr.getY1() - PAD_UP1);
                     if (hitbug) {
                         bug.takeDamage(damage);
-                        System.out.println("Hit bug for " + damage + " damage!");
+                        //System.out.println("Hit bug for " + damage + " damage!");
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
                         break;
@@ -118,7 +119,7 @@ public class PlayerBullet extends NPC {
                     boolean hitbug = (br.getX1() < bossr.getX1() + bossr.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bossr.getX1() - PAD_X1) && (br.getY1() < bossr.getY1() + bossr.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bossr.getY1() - PAD_UP1);
                     if (hitbug) {
                         floorBoss.takeDamage(damage);
-                        System.out.println("Hit boss for " + damage + " damage!");
+                        //System.out.println("Hit boss for " + damage + " damage!");
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
                         break;
