@@ -11,7 +11,7 @@ public class Bullet extends NPC {
 
     private float vx, vy;
     private static final float Speed = 3;
-    private static final int BulletSize = 6;
+    private static final int BulletSize = 10;
     private static final float Tm = 5;
 
     private final int damage;
