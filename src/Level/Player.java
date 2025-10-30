@@ -62,8 +62,8 @@ public abstract class Player extends GameObject {
     private long lastDodgeTime = 0;
     
 
-    private static final long DODGE_DURATION = 5; // milliseconds (0.3s)
-    private static final long DODGE_COOLDOWN = 3000; // milliseconds (1s)
+    private static final long DODGE_DURATION = 0; // milliseconds (0.3s)
+    private static final long DODGE_COOLDOWN = 2000; // milliseconds (1s)
     private static final float DODGE_SPEED = 3.0f; // speed multiplier during dodge
 
     // store direction at start of dodge
