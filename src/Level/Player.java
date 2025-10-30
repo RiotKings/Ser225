@@ -62,8 +62,8 @@ public abstract class Player extends GameObject {
     private long lastDodgeTime = 0;
     
 
-    private static final long DODGE_DURATION = 300; // milliseconds (0.3s)
-    private static final long DODGE_COOLDOWN = 5000; // milliseconds (1s)
+    private static final long DODGE_DURATION = 1000; // milliseconds (0.3s)
+    private static final long DODGE_COOLDOWN = 3000; // milliseconds (1s)
     private static final float DODGE_SPEED = 3.0f; // speed multiplier during dodge
 
     // store direction at start of dodge
@@ -109,6 +109,8 @@ public abstract class Player extends GameObject {
         double dx = 0;
         double dy = 0;
         long currentTime = System.currentTimeMillis();
+
+        updateDodge();
         
         
         if (isDodging && currentTime - dodgeStartTime > DODGE_DURATION) {
@@ -467,53 +469,66 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
         }
     }
 
-    public void startDodge() {
-        playerState = PlayerState.DODGING;
-        invincible = true;
-        System.out.println("is invincible");
-        long currentTime = System.currentTimeMillis();
-    // Check cooldown
-    if (currentTime >= DODGE_COOLDOWN && !isDodging) {
-        dodgeDirX = 0;
-        dodgeDirY = 0;
-        if (Keyboard.isKeyDown(MOVE_LEFT_KEY)){
-              moveAmountX -= 2.5;
-        }
-        if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) {
-              moveAmountX += 2.5;
-        }
-        if (Keyboard.isKeyDown(MOVE_UP_KEY)){
-              moveAmountY -= 2.5;
-        }
-        if (Keyboard.isKeyDown(MOVE_DOWN_KEY)){
-              moveAmountY += 2.5;
-        }
+    public void startDodge() { 
+    long currentTime = System.currentTimeMillis(); 
 
-        if (dodgeDirX != 0 || dodgeDirY != 0) {
-            isDodging = true;
-            dodgeStartTime = currentTime;
-            lastDodgeTime = currentTime;
-            if (hasAnimationLooped == true){
-            playerState = PlayerState.STANDING;
-            invincible = false;
-            System.out.println("is not invincible");
-        }
-
-        }
-        // Handle dodge movement
-        if (isDodging) {
-            // Move faster in dodge direction
-            x += dodgeDirX * DODGE_SPEED;
-            y += dodgeDirY * DODGE_SPEED;
-            return; 
-        }
-        
-        if (hasAnimationLooped == true){
-            playerState = PlayerState.STANDING;
-            invincible = false;
-            System.out.println("Is not invincible");
-        }
+    // 🟡 Check cooldown first
+    if (isDodging || currentTime - lastDodgeTime < DODGE_COOLDOWN) {
+        return; // still cooling down or currently dodging
     }
+
+    // 🟢 Start dodge
+    playerState = PlayerState.DODGING; 
+    invincible = true; 
+    isDodging = true;
+    dodgeStartTime = currentTime;
+    System.out.println("is invincible"); 
+
+    // 🟢 Apply movement instantly
+    if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) { 
+        moveAmountX -= 2.5;
+    } 
+    if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) { 
+        moveAmountX += 2.5; 
+    } 
+    if (Keyboard.isKeyDown(MOVE_UP_KEY)) { 
+        moveAmountY -= 2.5; 
+    } 
+    if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) { 
+        moveAmountY += 2.5; 
+    } 
+
+    if (hasAnimationLooped == true){
+        isDodging = false;
+        invincible = false;
+        playerState = PlayerState.STANDING;
+        lastDodgeTime = System.currentTimeMillis();
+        System.out.println("Dodge ended from animation loop");
+    }
+}
+
+    public void updateDodge() {
+    if (!isDodging) return;
+
+    long currentTime = System.currentTimeMillis();
+    long elapsed = currentTime - dodgeStartTime;
+
+    
+
+    // End dodge after duration
+    if (elapsed >= DODGE_DURATION) {
+        isDodging = false;
+        invincible = false;
+        System.out.println("Is not invincible");
+        playerState = PlayerState.STANDING;
+        lastDodgeTime = currentTime; // start cooldown *after* dodge ends
+        System.out.println("Dodge ended, cooldown started");
+    }
+}
+
+
+        public boolean canDodge() {
+            return !isDodging && (System.currentTimeMillis() - lastDodgeTime >= DODGE_COOLDOWN);
 }
         public void handlePlayerInput() {
         long currentTime = System.currentTimeMillis();
