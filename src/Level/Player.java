@@ -62,7 +62,7 @@ public abstract class Player extends GameObject {
     private long lastDodgeTime = 0;
     
 
-    private static final long DODGE_DURATION = 1000; // milliseconds (0.3s)
+    private static final long DODGE_DURATION = 5; // milliseconds (0.3s)
     private static final long DODGE_COOLDOWN = 3000; // milliseconds (1s)
     private static final float DODGE_SPEED = 3.0f; // speed multiplier during dodge
 
@@ -484,7 +484,7 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     dodgeStartTime = currentTime;
     System.out.println("is invincible"); 
 
-    // 🟢 Apply movement instantly
+    
     if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) { 
         moveAmountX -= 2.5;
     } 
@@ -501,6 +501,7 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     if (hasAnimationLooped == true){
         isDodging = false;
         invincible = false;
+        System.out.println("is not invincible");
         playerState = PlayerState.STANDING;
         lastDodgeTime = System.currentTimeMillis();
         System.out.println("Dodge ended from animation loop");
@@ -516,14 +517,14 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     
 
     // End dodge after duration
-    if (elapsed >= DODGE_DURATION) {
+    /*if (elapsed >= DODGE_DURATION) {
         isDodging = false;
         invincible = false;
         System.out.println("Is not invincible");
         playerState = PlayerState.STANDING;
         lastDodgeTime = currentTime; // start cooldown *after* dodge ends
         System.out.println("Dodge ended, cooldown started");
-    }
+    } */
 }
 
 
