@@ -43,13 +43,12 @@ public class Bullet extends NPC {
         y += vy;
 
         t -= STEP_DT;
-/*
+
         if (t <= 0f) {
             markedForRemoval = true;
             this.mapEntityStatus = MapEntityStatus.REMOVED;
             return;
         }
-*/
 
         if (map != null) {
             int w = map.getWidthPixels();
