@@ -159,6 +159,16 @@ public class PlayLevelScreen extends Screen implements GameListener {
             new Floor1Room7()
         };
 
+        //clear player's bullets before changing maps
+if (player != null && player.getBullets() != null) {
+    player.getBullets().clear();
+}
+
+        // clear all NPCs (including bullets) from the old map
+if (map != null) {
+    map.getNPCs().clear();
+}
+
         // Decide next map
         Map next;
         if (MapCount == 5) {
