@@ -43,7 +43,7 @@ public class PlayerBullet extends NPC {
     @Override
     public void update(Player player) {
         if (markedForRemoval) return;
-/*
+
         t -= STEP_DT;
 
         if (t <= 0f) {
@@ -51,7 +51,7 @@ public class PlayerBullet extends NPC {
             this.mapEntityStatus = MapEntityStatus.REMOVED;
             return;
         }
-*/
+
         //System.out.println(vx);
         //System.out.println(vy);
 
@@ -81,9 +81,9 @@ public class PlayerBullet extends NPC {
                 if (npc instanceof EnemyBasic enemy){
                     Rectangle er = enemy.getBounds();
 
-                    final float PAD_X = 4f, PAD_UP = 18f, PAD_DOWN = 2f;
+                    final float PAD_X = 4f, PAD_UP = 30, PAD_DOWN = 2f;
 
-                    boolean hit = (br.getX1() < er.getX1() + er.getWidth() + PAD_X * 2) && (br.getX1() + br.getWidth() > er.getX1() - PAD_X) && (br.getY1() < er.getY1() + er.getHeight() + PAD_UP + PAD_DOWN) && (br.getY1() + br.getHeight() > er.getY1() - PAD_UP);
+                    boolean hit = (br.getX1() < er.getX1() + er.getWidth() + PAD_X) && (br.getX1() + br.getWidth() > er.getX1() - PAD_X) && br.getY1() < (er.getY1() + er.getHeight() + PAD_UP) && (br.getY1() + br.getHeight() > er.getY1() - PAD_UP);
                     if (hit) {
                         enemy.takeDamage(damage);
                         //System.out.println("Hit enemy for " + damage + " damage!");
@@ -128,10 +128,8 @@ public class PlayerBullet extends NPC {
         }
     }
     
-    // Override collision methods to prevent PlayerBullets from colliding with the player
     @Override
     public void onEndCollisionCheckX(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
-        // Don't collide with player - bullets should pass through
         if (entityCollidedWith instanceof Player) {
             return;
         }
@@ -140,14 +138,12 @@ public class PlayerBullet extends NPC {
 
     @Override
     public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
-        // Don't collide with player - bullets should pass through
         if (entityCollidedWith instanceof Player) {
             return;
         }
         super.onEndCollisionCheckY(hasCollided, direction, entityCollidedWith);
     }
 
-    // Prevent any interaction with player
     @Override
     public void touchedPlayer(Player player) {
         // PlayerBullets should NOT interact with player
