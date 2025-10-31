@@ -4,6 +4,7 @@ import Level.MapEntityStatus;
 import Level.NPC;
 import Level.Player;
 import NPCs.Bug;
+import NPCs.Zombie;
 import NPCs.EnemyBasic;
 import NPCs.FloorBoss;
 import Engine.GraphicsHandler;
@@ -113,12 +114,28 @@ public class PlayerBullet extends NPC {
 
                     Rectangle bossr = floorBoss.getBounds();
 
-                    final float PAD_X1 = 12f, PAD_UP1 = 54f, PAD_DOWN1 = 6f;
+                    final float PAD_X1 = 0f, PAD_UP1 = 0f, PAD_DOWN1 = 0f;
 
                     boolean hitbug = (br.getX1() < bossr.getX1() + bossr.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bossr.getX1() - PAD_X1) && (br.getY1() < bossr.getY1() + bossr.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bossr.getY1() - PAD_UP1);
                     if (hitbug) {
                         floorBoss.takeDamage(damage);
                         //System.out.println("Hit boss for " + damage + " damage!");
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
+                }
+                else if (npc instanceof Zombie zombie){
+                    if (zombie.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                    Rectangle zombier = zombie.getBounds();
+
+                    final float PAD_X1 = 6f, PAD_UP1 = 30f, PAD_DOWN1 = 3f;
+
+                    boolean hitzombie = (br.getX1() < zombier.getX1() + zombier.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > zombier.getX1() - PAD_X1) && (br.getY1() < zombier.getY1() + zombier.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > zombier.getY1() - PAD_UP1);
+                    if (hitzombie){
+                        zombie.takeDamage(damage);
+
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
                         break;
