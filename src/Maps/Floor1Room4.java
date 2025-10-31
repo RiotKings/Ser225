@@ -32,8 +32,6 @@ public class Floor1Room4 extends Map {
         if (bugTile1 != null)
             npcs.add(new Bug(1, bugTile1.getLocation()));
 
-
-
         // Add EnemyBasic NPC
         MapTile enemyTile1 = getMapTile(10, 7);  // Spawn at a different location
         if (enemyTile1 != null) {

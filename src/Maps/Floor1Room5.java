@@ -35,7 +35,8 @@ public class Floor1Room5 extends Map {
             // Set bounds for the enemy to wander within (whole map bounds)
             enemy0.setBounds(0, 0, getWidthPixels(), getHeightPixels());
             npcs.add(enemy0);
-
+            
+        // Add EnemyBasic NPC
         MapTile enemyTile1 = getMapTile(10, 4);  // Spawn at a different location
         if (enemyTile1 != null) {
             EnemyBasic enemy1 = new EnemyBasic(2, enemyTile1.getLocation().x, enemyTile1.getLocation().y);
