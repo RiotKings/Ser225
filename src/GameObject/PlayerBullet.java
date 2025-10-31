@@ -4,6 +4,7 @@ import Level.MapEntityStatus;
 import Level.NPC;
 import Level.Player;
 import NPCs.Bug;
+import NPCs.Zombie;
 import NPCs.EnemyBasic;
 import NPCs.FloorBoss;
 import Engine.GraphicsHandler;
@@ -43,7 +44,7 @@ public class PlayerBullet extends NPC {
     @Override
     public void update(Player player) {
         if (markedForRemoval) return;
-/*
+
         t -= STEP_DT;
 
         if (t <= 0f) {
@@ -51,7 +52,7 @@ public class PlayerBullet extends NPC {
             this.mapEntityStatus = MapEntityStatus.REMOVED;
             return;
         }
-*/
+
         //System.out.println(vx);
         //System.out.println(vy);
 
@@ -81,9 +82,9 @@ public class PlayerBullet extends NPC {
                 if (npc instanceof EnemyBasic enemy){
                     Rectangle er = enemy.getBounds();
 
-                    final float PAD_X = 4f, PAD_UP = 18f, PAD_DOWN = 2f;
+                    final float PAD_X = 4f, PAD_UP = 30, PAD_DOWN = 2f;
 
-                    boolean hit = (br.getX1() < er.getX1() + er.getWidth() + PAD_X * 2) && (br.getX1() + br.getWidth() > er.getX1() - PAD_X) && (br.getY1() < er.getY1() + er.getHeight() + PAD_UP + PAD_DOWN) && (br.getY1() + br.getHeight() > er.getY1() - PAD_UP);
+                    boolean hit = (br.getX1() < er.getX1() + er.getWidth() + PAD_X) && (br.getX1() + br.getWidth() > er.getX1() - PAD_X) && br.getY1() < (er.getY1() + er.getHeight() + PAD_UP) && (br.getY1() + br.getHeight() > er.getY1() - PAD_UP);
                     if (hit) {
                         enemy.takeDamage(damage);
                         //System.out.println("Hit enemy for " + damage + " damage!");
@@ -113,7 +114,7 @@ public class PlayerBullet extends NPC {
 
                     Rectangle bossr = floorBoss.getBounds();
 
-                    final float PAD_X1 = 12f, PAD_UP1 = 54f, PAD_DOWN1 = 6f;
+                    final float PAD_X1 = 0f, PAD_UP1 = 0f, PAD_DOWN1 = 0f;
 
                     boolean hitbug = (br.getX1() < bossr.getX1() + bossr.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bossr.getX1() - PAD_X1) && (br.getY1() < bossr.getY1() + bossr.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bossr.getY1() - PAD_UP1);
                     if (hitbug) {
@@ -124,14 +125,28 @@ public class PlayerBullet extends NPC {
                         break;
                     }
                 }
+                else if (npc instanceof Zombie zombie){
+                    if (zombie.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                    Rectangle zombier = zombie.getBounds();
+
+                    final float PAD_X1 = 6f, PAD_UP1 = 30f, PAD_DOWN1 = 3f;
+
+                    boolean hitzombie = (br.getX1() < zombier.getX1() + zombier.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > zombier.getX1() - PAD_X1) && (br.getY1() < zombier.getY1() + zombier.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > zombier.getY1() - PAD_UP1);
+                    if (hitzombie){
+                        zombie.takeDamage(damage);
+
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
+                }
             }
         }
     }
     
-    // Override collision methods to prevent PlayerBullets from colliding with the player
     @Override
     public void onEndCollisionCheckX(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
-        // Don't collide with player - bullets should pass through
         if (entityCollidedWith instanceof Player) {
             return;
         }
@@ -140,14 +155,12 @@ public class PlayerBullet extends NPC {
 
     @Override
     public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameObject entityCollidedWith) {
-        // Don't collide with player - bullets should pass through
         if (entityCollidedWith instanceof Player) {
             return;
         }
         super.onEndCollisionCheckY(hasCollided, direction, entityCollidedWith);
     }
 
-    // Prevent any interaction with player
     @Override
     public void touchedPlayer(Player player) {
         // PlayerBullets should NOT interact with player
