@@ -3,6 +3,7 @@ package Maps;
 import Level.*;
 import Tilesets.CommonTileset;
 import NPCs.Bug;
+import NPCs.Zombie;
 import NPCs.EnemyBasic;
 import Scripts.DoorScript;
 import Utils.Point;
@@ -25,15 +26,13 @@ public class Floor1Room4 extends Map {
         ArrayList<NPC> npcs = new ArrayList<>();
 
         // Add Bug NPC
-        MapTile bugTile0 = getMapTile(3, 3);
-        if (bugTile0 != null)
-            npcs.add(new Bug(1, bugTile0.getLocation()));
+        MapTile zombieTile0 = getMapTile(3, 3);
+        if (zombieTile0 != null)
+            npcs.add(new Zombie(1, zombieTile0.getLocation()));
         // Add Bug NPC
         MapTile bugTile1 = getMapTile(8, 3);
         if (bugTile1 != null)
             npcs.add(new Bug(1, bugTile1.getLocation()));
-
-
 
         // Add EnemyBasic NPC
         MapTile enemyTile1 = getMapTile(10, 7);  // Spawn at a different location

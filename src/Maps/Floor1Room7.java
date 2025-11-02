@@ -33,9 +33,9 @@ public class Floor1Room7 extends Map {
             npcs.add(new Bug(1, bugTile.getLocation()));
         
         // Add EnemyBasic NPC
-        MapTile enemyTile = getMapTile(15, 7);  // Spawn at a different location
-        if (enemyTile != null) {
-            EnemyBasic enemy = new EnemyBasic(2, enemyTile.getLocation().x, enemyTile.getLocation().y);
+        MapTile enemyTile0 = getMapTile(12, 2);  // Spawn at a different location
+        if (enemyTile0 != null) {
+            EnemyBasic enemy = new EnemyBasic(2, enemyTile0.getLocation().x, enemyTile0.getLocation().y);
             // Set bounds for the enemy to wander within (whole map bounds)
             enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
             npcs.add(enemy);

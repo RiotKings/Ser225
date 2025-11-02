@@ -135,41 +135,41 @@ public class Alex extends Player {
                             .build()
             });
             put("DODGE_LEFT", new Frame[] {
-                    new FrameBuilder(spriteSheet.getSprite(2, 0), 14)
+                    new FrameBuilder(spriteSheet.getSprite(2, 0), 9)
                             .withScale(3)
                             .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
                             .withBounds(6, 12, 12, 7)
                             .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 1), 14)
+                    new FrameBuilder(spriteSheet.getSprite(2, 1), 9)
                             .withScale(3)
                             .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
                             .withBounds(6, 12, 12, 7)
                             .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 2), 14)
+                    new FrameBuilder(spriteSheet.getSprite(2, 2), 9)
                             .withScale(3)
                             .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
                             .withBounds(6, 12, 12, 7)
                             .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 3), 14)
+                    new FrameBuilder(spriteSheet.getSprite(2, 3), 9)
                             .withScale(3)
                             .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
                             .withBounds(6, 12, 12, 7)
                             .build()
             });
             put("DODGE_RIGHT", new Frame[]{
-                    new FrameBuilder(spriteSheet.getSprite(2, 0), 14)
+                    new FrameBuilder(spriteSheet.getSprite(2, 0), 9)
                             .withScale(3)
                             .withBounds(6, 12, 12, 7)
                             .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 1), 14)
+                    new FrameBuilder(spriteSheet.getSprite(2, 1), 9)
                             .withScale(3)
                             .withBounds(6, 12, 12, 7)
                             .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 2), 14)
+                    new FrameBuilder(spriteSheet.getSprite(2, 2), 9)
                             .withScale(3)
                             .withBounds(6, 12, 12, 7)
                             .build(),
-                    new FrameBuilder(spriteSheet.getSprite(2, 3), 14)
+                    new FrameBuilder(spriteSheet.getSprite(2, 3), 9)
                             .withScale(3)
                             .withBounds(6, 12, 12, 7)
                             .build()

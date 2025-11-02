@@ -663,6 +663,13 @@ public abstract class Map {
                         // Remove bullet after hit
                         bullets.remove(i);
                         break; // Exit NPC loop since bullet is removed
+                    } else if (npc instanceof NPCs.Zombie) {
+                        NPCs.Zombie zombie = (NPCs.Zombie) npc;
+                        zombie.takeDamage(1);
+                        System.out.println("[Map] Bullet hit Zombie! Zombie health: " + zombie.getHealth() + "/" + zombie.getMaxHealth());
+
+                        bullets.remove(i);
+                        break;
                     }
                 }
             }

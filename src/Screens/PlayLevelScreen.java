@@ -150,19 +150,30 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
     @Override
     public void changeMap() {
-       if (map.getEnemyCount() == 0){
-            Map[] pool = new Map[] {
-                new Floor1Room0(),
-                new Floor1Room1(),
-                new Floor1Room2(),
-                new Floor1Room3(),
-                new Floor1Room4(),
-                new Floor1Room5(), 
-                new Floor1Room6(),
-                new Floor1Room7()
-            };
+        if (map.getEnemyCount() == 0){
+        Map[] pool = new Map[] {
+            new Floor1Room0(),
+            new Floor1Room1(),
+            new Floor1Room2(),
+            new Floor1Room3(),
+            new Floor1Room4(),
+            new Floor1Room5(), 
+            new Floor1Room6(),
+            new Floor1Room7()
+        };
 
-            // Decide next map
+            
+                //clear player's bullets before changing maps
+        if (player != null && player.getBullets() != null) {
+            player.getBullets().clear();
+        }
+
+                // clear all NPCs (including bullets) from the old map
+        if (map != null) {
+            map.getNPCs().clear();
+        }
+                
+        // Decide next map
             Map next;
             if (MapCount == 5) {
                 next = new Floor1BossRoomMap(); // Floor1BossRoom
