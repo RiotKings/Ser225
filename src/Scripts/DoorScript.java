@@ -9,6 +9,7 @@ import ScriptActions.LockPlayerScriptAction;
 import ScriptActions.ScriptAction;
 import ScriptActions.UnlockPlayerScriptAction;
 
+
 public class DoorScript extends Script {
 
     @Override

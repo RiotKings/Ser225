@@ -90,6 +90,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
             case RUNNING:
                 player.update();
                 map.update(player);
+                
                 if (player.getHealth() <= 0) {
                     onLose();
                 }
@@ -146,44 +147,48 @@ public class PlayLevelScreen extends Screen implements GameListener {
         RUNNING, LEVEL_COMPLETED, LEVEL_LOST;
     }
 
+
     @Override
     public void changeMap() {
-        Map[] pool = new Map[] {
-            new Floor1Room0(),
-            new Floor1Room1(),
-            new Floor1Room2(),
-            new Floor1Room3(),
-            new Floor1Room4(),
-            new Floor1Room5(), 
-            new Floor1Room6(),
-            new Floor1Room7()
-        };
+       if (map.getEnemyCount() == 0){
+            Map[] pool = new Map[] {
+                new Floor1Room0(),
+                new Floor1Room1(),
+                new Floor1Room2(),
+                new Floor1Room3(),
+                new Floor1Room4(),
+                new Floor1Room5(), 
+                new Floor1Room6(),
+                new Floor1Room7()
+            };
 
-        // Decide next map
-        Map next;
-        if (MapCount == 5) {
-            next = new Floor1BossRoomMap(); // Floor1BossRoom
-        } else { 
-            int j;
-            do {
-                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
-            } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
+            // Decide next map
+            Map next;
+            if (MapCount == 5) {
+                next = new Floor1BossRoomMap(); // Floor1BossRoom
+            } else { 
+                int j;
+                do {
+                    j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
+                } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
 
-            lastIndex = j;
-            next = pool[j];
-            MapCount++;
+                lastIndex = j;
+                next = pool[j];
+                MapCount++;
+                
+            }
+
+            map = next;
+            map.setFlagManager(flagManager);
+            player.setMap(map);
+            map.setPlayer(player);
+            map.addListener(this);
+            map.getTextbox().setInteractKey(player.getInteractKey());
+            map.preloadScripts();
+
+            player.setLocation(325, 370);
+
+            System.out.println("roomcount = " + MapCount);
         }
-
-        map = next;
-        map.setFlagManager(flagManager);
-        player.setMap(map);
-        map.setPlayer(player);
-        map.addListener(this);
-        map.getTextbox().setInteractKey(player.getInteractKey());
-        map.preloadScripts();
-
-        player.setLocation(325, 370);
-
-        System.out.println("roomcount = " + MapCount);
     }
 }

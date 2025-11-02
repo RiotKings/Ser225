@@ -20,6 +20,7 @@ public class FirstRoom extends Map {
     public FirstRoom() {
         super("Floor1Room0.txt", new CommonTileset());
         this.playerStartPosition = new Point(325, 200);
+        this.setEnemyCount(0);
     }
      @Override
     protected ArrayList<NPC> loadNPCs() {

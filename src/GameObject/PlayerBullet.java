@@ -89,12 +89,16 @@ public class PlayerBullet extends NPC {
                         //System.out.println("Hit enemy for " + damage + " damage!");
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        
+                        map.decreaseEnemyCount();
+                        System.out.println("enemy count = " +map.getEnemyCount());
                         break;
                     }
                 }
                 else if (npc instanceof Bug bug) {
-                    if (bug.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
-
+                    if (bug.getMapEntityStatus() == MapEntityStatus.REMOVED) {
+                        continue;
+                    }
                     Rectangle bugr = bug.getBounds();
 
                     final float PAD_X1 = 4f, PAD_UP1 = 8f, PAD_DOWN1 = 2f;
@@ -105,6 +109,8 @@ public class PlayerBullet extends NPC {
                         //System.out.println("Hit bug for " + damage + " damage!");
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        map.decreaseEnemyCount();
+                        System.out.println("enemy count = " +map.getEnemyCount());
                         break;
                     }
                 }
@@ -121,6 +127,8 @@ public class PlayerBullet extends NPC {
                         //System.out.println("Hit boss for " + damage + " damage!");
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        map.decreaseEnemyCount();
+                        System.out.println("enemy count = " +map.getEnemyCount());
                         break;
                     }
                 }
