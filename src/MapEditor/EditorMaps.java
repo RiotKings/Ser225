@@ -14,6 +14,20 @@ import Maps.Floor1Room2;
 import Maps.Floor1Room3;
 import Maps.Floor1Room4;
 
+import Maps.TreasureRoom;
+import Maps.Floor1Room8;
+import Maps.Floor1Room9;
+import Maps.Floor1Room10;
+import Maps.Floor1Room11;
+import Maps.Floor1Room12;
+import Maps.Floor1Room13;
+import Maps.Floor1Room14;
+import Maps.Floor1Room15;
+import Maps.Floor1Room16;
+import Maps.Floor1Room17;
+import Maps.Floor1Room18;
+
+
 import java.util.ArrayList;
 
 public class EditorMaps {
@@ -21,6 +35,7 @@ public class EditorMaps {
         return new ArrayList<String>() {{
             add("TestMap");
             add("TitleScreen");
+            // initial rooms
             add("RegularRoom");
             add("BossRoom");
             add("FirstRoom");
@@ -31,6 +46,19 @@ public class EditorMaps {
             add("Floor1Room4");
             add("Floor1Room6");
             add("Floor1Room7");
+            //new rooms 
+            add("TreasureRoom");
+            add("Floor1Room8");
+            add("Floor1Room9");
+            add("Floor1Room10");
+            add("Floor1Room12");
+            add("Floor1Room13");
+            add("Floor1Room14");
+            add("Floor1Room15");
+            add("Floor1Room16");
+            add("Floor1Room17");
+            add("Floor1Room18");
+
         }};
     }
 
@@ -38,6 +66,8 @@ public class EditorMaps {
         switch(mapName) {
             case "TestMap":
                 return new TestMap();
+            case "TreasureRoom":
+                return new TreasureRoom();
             case "TitleScreen":
                 return new TitleScreenMap();
             case "RegularRoom":
@@ -60,6 +90,28 @@ public class EditorMaps {
                 return new Floor1Room6();
             case "Floor1Room7":
                 return new Floor1Room7();
+            case "Floor1Room8":
+                return new Floor1Room8();
+            case "Floor1Room9":
+                return new Floor1Room9();
+            case "Floor1Room10":
+                return new Floor1Room10();
+            case "Floor1Room11":
+                return new Floor1Room11();
+            case "Floor1Room12":
+                return new Floor1Room12();
+            case "Floor1Room13":
+                return new Floor1Room13();
+            case "Floor1Room14":
+                return new Floor1Room14();
+            case "Floor1Room15":
+                return new Floor1Room15();
+            case "Floor1Room16":
+                return new Floor1Room16();
+            case "Floor1Room17":
+                return new Floor1Room17();
+            case "Floor1Room18":
+                return new Floor1Room18();    
             default:
                 throw new RuntimeException("Unrecognized map name");
         }

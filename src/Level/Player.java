@@ -581,7 +581,11 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     invincible = false;
 }
 
-    
+    /*  Aquired items 
+
+    boolean Item1;
+
+    */
 
     // Uncomment this to have game draw player's bounds to make it easier to visualize
     /* 
