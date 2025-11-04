@@ -166,7 +166,7 @@ public class EnemyBasic extends NPC {
     public void takeDamage(int damage) {
         setHealth(currentHealth - damage);
     }
-
+ 
     @Override
     public Rectangle getBounds() {
         Rectangle b = super.getBounds();
