@@ -33,7 +33,7 @@ public class Mine extends NPC {
     private boolean playerDetected = false;
     private long detectStartTime = 0;
     private boolean hasExploded = false;
-    private static final long EXPLOSION_DELAY_MS = 5_000; // 10 seconds
+    private static final long EXPLOSION_DELAY_MS = 8_000; // 8 seconds
 
     // Stuck prevention
     private int stuckCounter = 0;
