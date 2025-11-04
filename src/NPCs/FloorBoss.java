@@ -37,7 +37,7 @@ public class FloorBoss extends NPC {
     private static final float AttackRadius = 500f;
     private boolean isAttacking = false;
     private float bulletCooldown = 0f;
-    private static final float BulletInterval = 2.5f;
+    private static final float BulletInterval = 2f;
     private static final float MuzzleOffset = 30f;
     private static final int Damage = 2;
 

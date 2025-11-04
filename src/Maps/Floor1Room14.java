@@ -8,9 +8,9 @@ import Scripts.DoorScript;
 import Utils.Point;
 import java.util.ArrayList;
 
-public class Floor1Room7 extends Map {
+public class Floor1Room14 extends Map {
 
-    public Floor1Room7() {
+    public Floor1Room14() {
         super("Floor1Room7.txt", new CommonTileset());
 
         MapTile center = getMapTile(10, 7);

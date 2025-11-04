@@ -15,17 +15,17 @@ import Level.Player;
 import Utils.Direction;
 import Utils.Point;
 
-public class Bug extends NPC {
+public class Zombie extends NPC {
     private int totalAmountMoved = 0;
     private Direction direction = Direction.RIGHT;
-    private float speed = 1.5f; // Increased speed for chasing
+    private float speed = .5f; // Increased speed for chasing
 
-    private int currentHealth = 2;
-    private int maxHealth = 2;
+    private int currentHealth = 4;
+    private int maxHealth = 4;
     
     // Chasing behavior variables
-    private float detectionRange = 150f; // Range at which bug starts chasing player
-    private float attackRange = 50f; // Range at which bug can damage player (increased)
+    private float detectionRange = 300f; // Range at which zombie starts chasing player
+    private float attackRange = 50f; // Range at which zombie can damage player (increased)
     private long lastDamageTime = 0;
     private long damageCooldown = 1000; // 1 second cooldown between damage
     
@@ -36,11 +36,11 @@ public class Bug extends NPC {
     private static final int STUCK_THRESHOLD = 30; // frames before considering stuck
     private static final long POSITION_CHECK_INTERVAL = 100; // ms between position checks
     
-    public Bug(int id, Point location) {
-        super(id, location.x, location.y, new SpriteSheet(ImageLoader.load("Bug.png"), 24, 15), "WALK_RIGHT");
+    public Zombie(int id, Point location) {
+        super(id, location.x, location.y, new SpriteSheet(ImageLoader.load("Zombie.png"), 24, 24), "WALK_RIGHT");
     }
 
-    // Chasing behavior - bug will chase player when in range
+    // Chasing behavior - zombie will chase player when in range
     @Override
     public void performAction(Player player) {
         if (currentHealth <= 0) {
@@ -51,17 +51,17 @@ public class Bug extends NPC {
         // Calculate distance to player
         float playerX = player.getX();
         float playerY = player.getY();
-        float bugX = this.getX();
-        float bugY = this.getY();
+        float zombieX = this.getX();
+        float zombieY = this.getY();
         
         float distanceToPlayer = (float) Math.sqrt(
-            (playerX - bugX) * (playerX - bugX) + 
-            (playerY - bugY) * (playerY - bugY)
+            (playerX - zombieX) * (playerX - zombieX) + 
+            (playerY - zombieY) * (playerY - zombieY)
         );
         
         // Debug output every 60 frames (about once per second)
         if (System.currentTimeMillis() % 1000 < 50) {
-            System.out.println("Bug position: (" + bugX + ", " + bugY + "), Player position: (" + playerX + ", " + playerY + "), Distance: " + distanceToPlayer);
+            System.out.println("Zombie position: (" + zombieX + ", " + zombieY + "), Player position: (" + playerX + ", " + playerY + "), Distance: " + distanceToPlayer);
         }
 
         // If player is within detection range, chase them
@@ -74,7 +74,7 @@ public class Bug extends NPC {
 
         // Check if bug is close enough to damage player
         if (distanceToPlayer <= attackRange) {
-            System.out.println("Bug is within attack range! Distance: " + distanceToPlayer + ", Attack Range: " + attackRange);
+            System.out.println("Zombie is within attack range! Distance: " + distanceToPlayer + ", Attack Range: " + attackRange);
             damagePlayer(player);
         }
 
@@ -89,15 +89,15 @@ public class Bug extends NPC {
     private void chasePlayer(Player player, float distanceToPlayer) {
         float playerX = player.getX();
         float playerY = player.getY();
-        float bugX = this.getX();
-        float bugY = this.getY();
+        float zombieX = this.getX();
+        float zombieY = this.getY();
 
         // Check if bug is stuck
         checkIfStuck();
         
         // Calculate direction to player
-        float dx = playerX - bugX;
-        float dy = playerY - bugY;
+        float dx = playerX - zombieX;
+        float dy = playerY - zombieY;
         
         // Normalize direction
         if (Math.abs(dx) > 0.1f || Math.abs(dy) > 0.1f) {
@@ -168,11 +168,11 @@ public class Bug extends NPC {
         long currentTime = System.currentTimeMillis();
         System.out.println("damagePlayer called! Cooldown check: " + (currentTime - lastDamageTime) + " >= " + damageCooldown);
         if (currentTime - lastDamageTime >= damageCooldown) {
-            player.takeDamage(1);
+            player.takeDamage(2);
             lastDamageTime = currentTime;
-            System.out.println("Bug damaged player! Player health: " + player.getHealth());
+            System.out.println("Zombie damaged player! Player health: " + player.getHealth());
         } else {
-            System.out.println("Bug damage on cooldown, time remaining: " + (damageCooldown - (currentTime - lastDamageTime)));
+            System.out.println("Zombie damage on cooldown, time remaining: " + (damageCooldown - (currentTime - lastDamageTime)));
         }
     }
     
@@ -203,12 +203,12 @@ public class Bug extends NPC {
     private void tryAlternativeMovement(Player player) {
         float playerX = player.getX();
         float playerY = player.getY();
-        float bugX = this.getX();
-        float bugY = this.getY();
+        float zombieX = this.getX();
+        float zombieY = this.getY();
         
         // Try different movement strategies when stuck
-        float dx = playerX - bugX;
-        float dy = playerY - bugY;
+        float dx = playerX - zombieX;
+        float dy = playerY - zombieY;
         
         // Strategy 1: Try moving only horizontally
         if (Math.abs(dx) > 0.1f) {
@@ -244,37 +244,55 @@ public class Bug extends NPC {
         return new HashMap<String, Frame[]>() {{
             put("STAND_LEFT", new Frame[] {
                 new FrameBuilder(spriteSheet.getSprite(0, 0))
-                    .withScale(2)
-                    .withBounds(3, 5, 18, 7)
+                    .withScale(3)
+                    .withBounds(6, 12, 12, 7)
                     .build()
             });
             put("STAND_RIGHT", new Frame[] {
                 new FrameBuilder(spriteSheet.getSprite(0, 0))
-                    .withScale(2)
-                    .withBounds(3, 5, 18, 7)
+                    .withScale(3)
+                    .withBounds(6, 12, 12, 7)
                     .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
                     .build()
            });
            put("WALK_LEFT", new Frame[] {
-                new FrameBuilder(spriteSheet.getSprite(0, 0), 8)
-                        .withScale(2)
-                        .withBounds(3, 5, 18, 7)
+                new FrameBuilder(spriteSheet.getSprite(1, 0), 8)
+                        .withScale(3)
+                        .withBounds(6, 12, 12, 7)
                         .build(),
-                new FrameBuilder(spriteSheet.getSprite(0, 1), 8)
-                        .withScale(2)
-                        .withBounds(3, 5, 18, 7)
+                new FrameBuilder(spriteSheet.getSprite(1, 1), 8)
+                        .withScale(3)
+                        .withBounds(6, 12, 12, 7)
+                        .build(),
+                new FrameBuilder(spriteSheet.getSprite(1, 2), 8)
+                        .withScale(3)
+                        .withBounds(6, 6, 12, 7)
+                        .build(),
+                new FrameBuilder(spriteSheet.getSprite(1, 2), 8)
+                        .withScale(3)
+                        .withBounds(6, 6, 12, 7)
                         .build()
             });
             put("WALK_RIGHT", new Frame[] {
-                new FrameBuilder(spriteSheet.getSprite(0, 0), 8)
-                        .withScale(2)
+                new FrameBuilder(spriteSheet.getSprite(1, 0), 8)
+                        .withScale(3)
                         .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
-                        .withBounds(3, 5, 18, 7)
+                        .withBounds(6, 12, 12, 7)
                         .build(),
-                new FrameBuilder(spriteSheet.getSprite(0, 1), 8)
-                        .withScale(2)
+                new FrameBuilder(spriteSheet.getSprite(1, 1), 8)
+                        .withScale(3)
                         .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
-                        .withBounds(3, 5, 18, 7)
+                        .withBounds(6, 12, 12, 7)
+                        .build(),
+                new FrameBuilder(spriteSheet.getSprite(1, 2), 8)
+                        .withScale(3)
+                        .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
+                        .withBounds(6, 12, 12, 7)
+                        .build(),
+                new FrameBuilder(spriteSheet.getSprite(1, 2), 8)
+                        .withScale(3)
+                        .withImageEffect(ImageEffect.FLIP_HORIZONTAL)
+                        .withBounds(6, 12, 12, 7)
                         .build()
             });
         }};
@@ -289,7 +307,7 @@ public class Bug extends NPC {
         return currentHealth;
     }
 
-    public  int getMaxHealth() {
+    public int getMaxHealth() {
         return maxHealth;
     }
 

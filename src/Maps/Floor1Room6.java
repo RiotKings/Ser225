@@ -3,6 +3,7 @@ package Maps;
 import Level.*;
 import Tilesets.CommonTileset;
 import NPCs.Bug;
+import NPCs.Mine;
 import NPCs.EnemyBasic;
 import Scripts.DoorScript;
 import Utils.Point;
@@ -20,6 +21,7 @@ public class Floor1Room6 extends Map {
             MapTile fallback = getMapTile(2, 2);
             this.playerStartPosition = (fallback != null) ? fallback.getLocation() : new Point(0, 0);
         }
+        this.setEnemyCount(5);
     }
 
     @Override
@@ -39,7 +41,11 @@ public class Floor1Room6 extends Map {
             enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
             npcs.add(enemy);
         }
-        
+
+        // Add mine NPC
+        MapTile mineTile = getMapTile(8, 3);
+        if (mineTile != null) 
+            npcs.add(new Mine(1, mineTile.getLocation()));
         return npcs;
     }
 

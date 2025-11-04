@@ -34,6 +34,7 @@ import Maps.Floor1Room3;
 import Maps.Floor1Room4;
 import Maps.Floor1Room6;
 import Maps.Floor1Room7;
+import Maps.TreasureRoom;
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -108,6 +109,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
             case RUNNING:
                 player.update();
                 map.update(player);
+                
                 if (player.getHealth() <= 0) {
                     onLose();
                 }
@@ -166,8 +168,10 @@ public class PlayLevelScreen extends Screen implements GameListener {
         RUNNING, LEVEL_COMPLETED, LEVEL_LOST;
     }
 
+
     @Override
     public void changeMap() {
+        if (map.getEnemyCount() == 0){
         Map[] pool = new Map[] {
             new Floor1Room0(),
             new Floor1Room1(),
@@ -176,45 +180,65 @@ public class PlayLevelScreen extends Screen implements GameListener {
             new Floor1Room4(),
             new Floor1Room5(), 
             new Floor1Room6(),
-            new Floor1Room7()
+            new Floor1Room7(),
+            /*
+             new Floor1Room8(),
+             new Floor1Room9(),
+             new Floor1Room10(),
+             new Floor1Room11(),
+             new Floor1Room12(),
+             new Floor1Room13(),
+             new Floor1Room14(),
+             new Floor1Room15(),
+             new Floor1Room16(),
+             new Floor1Room17(),
+             new Floor1Room18(),
+        
+             */
         };
 
-        //clear player's bullets before changing maps
-    if (player != null && player.getBullets() != null) {
-        player.getBullets().clear();
-    }
-
-    // clear all NPCs (including bullets) from the old map
-    if (map != null) {
-        map.getNPCs().clear();
-    }
-
-        // Decide next map
-        Map next;
-        if (MapCount == 5) {
-            next = new Floor1BossRoomMap(); // Floor1BossRoom
-        } else { 
-            int j;
-            do {
-                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
-            } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
-
-            lastIndex = j;
-            next = pool[j];
-            MapCount++;
+            
+                //clear player's bullets before changing maps
+        if (player != null && player.getBullets() != null) {
+            player.getBullets().clear();
         }
 
-        map = next;
-        map.setFlagManager(flagManager);
-        player.setMap(map);
-        map.setPlayer(player);
-        map.addListener(this);
-        map.getTextbox().setInteractKey(player.getInteractKey());
-        map.preloadScripts();
+                // clear all NPCs (including bullets) from the old map
+        if (map != null) {
+            map.getNPCs().clear();
+        }
+                
+        // Decide next map
+            Map next;
+            if (MapCount == 6) {
+                next = new Floor1BossRoomMap(); // Floor1BossRoom
+            }else 
+            if (MapCount == 3) {
+                next = new TreasureRoom(); // Floor1BossRoom
+            } else { 
+                int j;
+                do {
+                    j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
+                } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
 
-        player.setLocation(325, 370);
+                lastIndex = j;
+                next = pool[j];
+                MapCount++;
+                
+            }
 
-        System.out.println("roomcount = " + MapCount);
+            map = next;
+            map.setFlagManager(flagManager);
+            player.setMap(map);
+            map.setPlayer(player);
+            map.addListener(this);
+            map.getTextbox().setInteractKey(player.getInteractKey());
+            map.preloadScripts();
+
+            player.setLocation(325, 370);
+
+            System.out.println("roomcount = " + MapCount);
+        }
     }
 
         private void startBackgroundMusic() {
