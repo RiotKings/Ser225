@@ -666,6 +666,14 @@ public abstract class Map {
 
                         bullets.remove(i);
                         break;
+                    } else if (npc instanceof NPCs.Mine){
+                        NPCs.Mine mine = (NPCs.Mine) npc;
+                        mine.takeDamage(1);
+                        System.out.println("[Map] Bullet hit Mine! Mine health: " + mine.getHealth() + "/" + mine.getMaxHealth());
+
+                        bullets.remove(i);
+                        break;
+
                     }
                 }
             }
