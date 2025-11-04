@@ -289,7 +289,7 @@ public class Bug extends NPC {
         return currentHealth;
     }
 
-    public int getMaxHealth() {
+    public  int getMaxHealth() {
         return maxHealth;
     }
 

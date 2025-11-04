@@ -13,6 +13,7 @@ public class Floor1Room4 extends Map {
     public Floor1Room4() {
         super("Floor1Room4", new CommonTileset());
         this.playerStartPosition = new Point(5, 5);
+        this.setEnemyCount(7);
     }
      @Override
     protected ArrayList<EnhancedMapTile> loadEnhancedMapTiles() {
@@ -32,8 +33,6 @@ public class Floor1Room4 extends Map {
         MapTile bugTile1 = getMapTile(8, 3);
         if (bugTile1 != null)
             npcs.add(new Bug(1, bugTile1.getLocation()));
-
-
 
         // Add EnemyBasic NPC
         MapTile enemyTile1 = getMapTile(10, 7);  // Spawn at a different location
