@@ -50,6 +50,8 @@ public class Mine extends NPC {
     public void performAction(Player player) {
         if (currentHealth <= 0) {
             this.setMapEntityStatus(MapEntityStatus.REMOVED);
+            map.decreaseEnemyCount();
+            System.out.println("enemy count = " +map.getEnemyCount());
             return;
         }
 
@@ -113,6 +115,8 @@ public class Mine extends NPC {
 
         // Remove mine after explosion
         this.setMapEntityStatus(MapEntityStatus.REMOVED);
+        map.decreaseEnemyCount();
+        System.out.println("enemy count = " +map.getEnemyCount());
     }
 
     private void patrolBehavior() {

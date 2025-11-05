@@ -51,7 +51,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new FirstRoom(); // starting room
+        map = new Floor1Room6(); // starting room
         map.setFlagManager(flagManager);
 
         // setup player
@@ -195,6 +195,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
             }else 
             if (MapCount == 3) {
                 next = new TreasureRoom(); // Floor1BossRoom
+                MapCount++;
                 
             } else { 
                 int j;

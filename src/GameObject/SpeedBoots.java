@@ -18,7 +18,7 @@ public class SpeedBoots extends Item {
 
    private static Frame makeFrame() {
     return new FrameBuilder(ImageLoader.load("SpeedBoots.png"))
-            .withScale(0.1f)
+            .withScale(0.15f)
             .build();
 }
 

@@ -12,7 +12,7 @@ public class Floor1Room3 extends Map {
     public Floor1Room3() {
         super("Floor1Room3", new CommonTileset());
         this.playerStartPosition = new Point(5, 5);
-        this.setEnemyCount(7);
+        this.setEnemyCount(3);
     }
      @Override
     protected ArrayList<EnhancedMapTile> loadEnhancedMapTiles() {
