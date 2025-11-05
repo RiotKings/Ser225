@@ -13,6 +13,10 @@ import Scripts.TestMap.LostBallScript;
 import Tilesets.CommonTileset;
 import Scripts.*;
 
+import Engine.Item;
+
+
+
 import Utils.Point;
 
 public class TreasureRoom extends Map{
@@ -42,6 +46,10 @@ public class TreasureRoom extends Map{
     }
     @Override
     protected void loadScripts() { }
+
+    public void SpawItem(){
+        
+    }
 
 }
 

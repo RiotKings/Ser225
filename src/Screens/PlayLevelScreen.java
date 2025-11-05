@@ -195,6 +195,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
             }else 
             if (MapCount == 3) {
                 next = new TreasureRoom(); // Floor1BossRoom
+                
             } else { 
                 int j;
                 do {

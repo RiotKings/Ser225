@@ -1,205 +1,82 @@
 package Engine;
 
-import java.awt.image.BufferedImage;
-import java.awt.*;
+import Engine.GraphicsHandler;
+import GameObject.Frame;
+import GameObject.Rectangle;
+import Level.MapEntityStatus;
+import Level.NPC;
+import Level.Player;
 
 /**
- * Represents an item that can exist in game
- * Items can be collected, have different types, and display sprites
+ * Abstract base class for items the player can pick up.
+ * - Formatted as an NPC (extends NPC)
+ * - No animations (single Frame only)
+ * - Disappears on contact with Player
+ * - Flips a boolean 'collected' when picked up
  */
-public class Item {
-    protected float x, y;
-    protected int width, height;
-    protected BufferedImage image;
-    protected Rectangle bounds;
-    protected ItemType itemType;
-    protected String name;
-    protected String description;
-    protected boolean isCollected;
-    protected int value; 
-    
-    // Constructor for items with default sprite
-    public Item(float x, float y, ItemType itemType, String name) {
-        this.x = x;
-        this.y = y;
-        this.itemType = itemType;
-        this.name = name;
-        this.description = "";
-        this.isCollected = false;
-        this.value = itemType.getDefaultValue();
-        
-        // Load default sprite based on item type
-        this.image = ImageLoader.load(itemType.getSpritePath());
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        this.bounds = new Rectangle((int)x, (int)y, width, height);
-    }
-    
-    // Constructor for items with custom sprite
-    public Item(float x, float y, ItemType itemType, String name, String spritePath) {
-        this.x = x;
-        this.y = y;
-        this.itemType = itemType;
-        this.name = name;
-        this.description = "";
-        this.isCollected = false;
-        this.value = itemType.getDefaultValue();
-        
-        this.image = ImageLoader.load(spritePath);
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        this.bounds = new Rectangle((int)x, (int)y, width, height);
-    }
-    
-    // Constructor with all parameters
-    public Item(float x, float y, ItemType itemType, String name, String description, int value, String spritePath) {
-        this.x = x;
-        this.y = y;
-        this.itemType = itemType;
-        this.name = name;
-        this.description = description;
-        this.isCollected = false;
-        this.value = value;
-        
-        this.image = ImageLoader.load(spritePath);
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        this.bounds = new Rectangle((int)x, (int)y, width, height);
-    }
-    
-    public void update() {
-        // Items typically don't need to update unless they animate or move
-        // Override this in specific item subclasses if needed
-        if (isCollected) {
-            // Potential collection animation here
-        }
-    }
-    
-    public void draw(GraphicsHandler graphicsHandler) {
-        
-        if (!isCollected && image != null) {
-            graphicsHandler.drawImage(image, (int)x, (int)y);
-        }
-    }
-    
-    // Method to handle item collection
-    public void collect() {
-        this.isCollected = true;
-        onCollected();
-    }
-    
-    // Override this method in subclasses to add specific collection effects
-    protected void onCollected() {
-        // Default behavior - could play sound, add particles, etc.
-        System.out.println(name + " collected!");
-    }
-    
-    // Check if this item collides with another object
-    public boolean checkCollision(float otherX, float otherY, int otherWidth, int otherHeight) {
-        if (isCollected) return false;
-        
-        updateBounds();
-        Rectangle otherBounds = new Rectangle((int)otherX, (int)otherY, otherWidth, otherHeight);
-        return bounds.intersects(otherBounds);
-    }
-    
-    // Update bounds based on current position
-    private void updateBounds() {
-        bounds.x = (int)x;
-        bounds.y = (int)y;
-    }
-    
-    // Get the bounds of this item
-    public Rectangle getBounds() {
-        updateBounds();
-        return bounds;
-    }
-    
-    // Getters and Setters
-    public ItemType getItemType() {
-        return itemType;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public String getDescription() {
-        return description;
-    }
-    
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
-    public boolean isCollected() {
-        return isCollected;
-    }
-    
-    public void setCollected(boolean collected) {
-        this.isCollected = collected;
-    }
-    
-    public int getValue() {
-        return value;
-    }
-    
-    public void setValue(int value) {
-        this.value = value;
-    }
-    
-    // Position getters and setters
-    public float getX() {
-        return x;
-    }
-    
-    public void setX(float x) {
-        this.x = x;
-    }
-    
-    public float getY() {
-        return y;
-    }
-    
-    public void setY(float y) {
-        this.y = y;
-    }
-    
-    public int getWidth() {
-        return width;
-    }
-    
-    public int getHeight() {
-        return height;
-    }
-}
+public abstract class Item extends NPC {
 
-// Enum to define different types of items
-enum ItemType {
-    COIN("coin.png", 10),
-    HEALTH_POTION("health_potion.png", 25),
-    KEY("key.png", 0),
-    POWER_UP("power_up.png", 50),
-    WEAPON("weapon.png", 100),
-    COLLECTIBLE("collectible.png", 20);
-    
-    private final String spritePath;
-    private final int defaultValue;
-    
-    ItemType(String spritePath, int defaultValue) {
-        this.spritePath = spritePath;
-        this.defaultValue = defaultValue;
+    protected boolean collected = false;
+
+    public Item(int id, float x, float y, Frame frame) {
+        // Use the NPC constructor that takes a single Frame, no animations
+        super(id, x, y, frame);
+        this.isUncollidable = false; // make sure it collides with the player
     }
-    
-    public String getSpritePath() {
-        return spritePath;
+
+    /**
+     * Items don't do anything per-frame by default.
+     * They just sit there until collected.
+     */
+    @Override
+    protected void performAction(Player player) {
+        // no movement / AI for items
     }
-    
-    public int getDefaultValue() {
-        return defaultValue;
+
+    /**
+     * Called by the engine when the player collides with this NPC.
+     * Here we:
+     *  - mark as collected
+     *  - call onCollect hook for subclasses
+     *  - remove from map so it disappears
+     */
+    @Override
+    public void touchedPlayer(Player player) {
+        if (collected) return;  // already picked up, ignore
+
+        collected = true;
+        onCollect(player);                  // let subclass do something (heal, add key, etc.)
+        this.mapEntityStatus = MapEntityStatus.REMOVED;  // remove from map
+    }
+
+    /**
+     * Hook for subclasses to define what happens when the item is collected.
+     * Example: player.heal(2), set a flag, increase score, etc.
+     */
+    protected abstract void onCollect(Player player);
+
+    public boolean isCollected() {
+        return collected;
+    }
+
+    /**
+     * Only draw the item if it hasn't been collected yet.
+     * Once collected, it visually disappears.
+     */
+    @Override
+    public void draw(GraphicsHandler graphicsHandler) {
+        if (!collected) {
+            super.draw(graphicsHandler);
+        }
+        // if collected, do nothing (invisible)
+    }
+
+    /**
+     * Optional: you can override bounds if you want a different hitbox.
+     * Otherwise, it uses the default from MapEntity/NPC's Frame.
+     */
+    @Override
+    public Rectangle getBounds() {
+        return super.getBounds();
     }
 }

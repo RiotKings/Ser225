@@ -20,7 +20,12 @@ import GameObject.Bullet;
 public abstract class Player extends GameObject {
     // values that affect player movement
     // these should be set in a subclass
-    protected float walkSpeed = 0;
+   
+    private boolean hasSpeedBoots = false;
+    protected float baseWalkSpeed = 2.3f;
+    protected float walkSpeed = 2.3f;
+
+
     protected int interactionRange = 1;
     protected Direction currentWalkingXDirection;
     protected Direction currentWalkingYDirection;
@@ -105,7 +110,7 @@ public abstract class Player extends GameObject {
     }
 
     public void update() {
-        double speed = 2.3;
+        double speed = walkSpeed;
         double dx = 0;
         double dy = 0;
         long currentTime = System.currentTimeMillis();
@@ -580,12 +585,35 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     }
     invincible = false;
 }
+    
+    // --- Acquired items flags (all item booleans live here) ---
+   
+    private boolean SpeedBoots = false;
 
-    /*  Aquired items 
+    public boolean hasSpeedBoots() {
+    return hasSpeedBoots;
+}
 
-    boolean Item1;
+    public void setHasSpeedBoots (boolean hasBoots) {
+        this.hasSpeedBoots = hasSpeedBoots;
 
-    */
+        // Apply/remove speed bonus here so ALL speed logic stays in Player
+        if (hasBoots) {
+            // change this multiplier to whatever feels good
+            this.walkSpeed = baseWalkSpeed * 1.5f;
+        } else {
+            this.walkSpeed = baseWalkSpeed;
+        }
+    }
+
+
+
+    // add more later, e.g. private boolean hasKey; etc.
+
+
+
+
+
 
     // Uncomment this to have game draw player's bounds to make it easier to visualize
     /* 

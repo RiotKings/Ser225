@@ -13,6 +13,9 @@ import Scripts.TestMap.LostBallScript;
 import Tilesets.CommonTileset;
 import Scripts.*;
 
+import GameObject.SpeedBoots;
+
+
 import Utils.Point;
 
 
@@ -25,6 +28,7 @@ public class FirstRoom extends Map {
      @Override
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
+        // Add item NPC
         
         return npcs;
     }

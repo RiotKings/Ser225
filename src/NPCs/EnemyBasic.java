@@ -84,6 +84,7 @@ public class EnemyBasic extends NPC {
 
         if (currentHealth <= 0) {
             this.setMapEntityStatus(MapEntityStatus.REMOVED);
+            
             return;
         } 
 
