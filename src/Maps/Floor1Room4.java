@@ -24,7 +24,7 @@ public class Floor1Room4 extends Map {
 
         ArrayList<NPC> npcs = new ArrayList<>();
 
-        // Add Bug NPC
+        // Add Zombie NPC
         MapTile zombieTile0 = getMapTile(3, 3);
         if (zombieTile0 != null)
             npcs.add(new Zombie(1, zombieTile0.getLocation()));

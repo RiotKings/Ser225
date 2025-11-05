@@ -141,6 +141,14 @@ public class PlayLevelScreen extends Screen implements GameListener {
         screenCoordinator.setGameState(GameState.MENU);
     }
 
+    @Override
+    public void onScreenSizeChanged() {
+        // Update map camera and midpoints when screen size changes (e.g., fullscreen)
+        if (map != null) {
+            map.updateScreenSize();
+        }
+    }
+
     // This enum represents the different states this screen can be in
     private enum PlayLevelScreenState {
         RUNNING, LEVEL_COMPLETED, LEVEL_LOST;
@@ -171,7 +179,7 @@ if (map != null) {
 
         // Decide next map
         Map next;
-        if (MapCount == 5) {
+        if (MapCount == 6) {
             next = new Floor1BossRoomMap(); // Floor1BossRoom
         } else { 
             int j;

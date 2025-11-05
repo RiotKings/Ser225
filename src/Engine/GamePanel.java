@@ -25,7 +25,9 @@ public class GamePanel extends JPanel {
 	
 	private Mouse mouse;
 	private Hud.Crosshair crosshair;
-
+	
+	// Reference to GameWindow for fullscreen toggle
+	private GameWindow gameWindow;
 
 	private Key showFPSKey = Key.G;
 	private SpriteFont fpsDisplayLabel;
@@ -72,11 +74,19 @@ public class GamePanel extends JPanel {
 		GameLoop gameLoop = new GameLoop(this);
 		gameLoopProcess = new Thread(gameLoop.getGameLoopProcess());
 	}
+	
+	/**
+	 * Sets the reference to GameWindow for fullscreen toggle support
+	 */
+	public void setGameWindow(GameWindow gameWindow) {
+		this.gameWindow = gameWindow;
+	}
 
 	// this is called later after instantiation, and will initialize screenManager
 	public void setupGame() {
-		setBackground(Colors.CORNFLOWER_BLUE);
-		screenManager.initialize(new Rectangle(getX(), getY(), getWidth(), getHeight()));
+		setBackground(Color.black); // Changed from CORNFLOWER_BLUE to black
+		// Keep screen manager at original game dimensions for consistent rendering
+		screenManager.initialize(new Rectangle(0, 0, Config.GAME_WINDOW_WIDTH, Config.GAME_WINDOW_HEIGHT));
 	}
 
 	// this starts the timer (the game loop is started here)
@@ -111,7 +121,24 @@ public class GamePanel extends JPanel {
 		this.doPaint = doPaint;
 	}
 
+	/**
+	 * Updates screen bounds based on current panel size
+	 * Called when window is resized or enters/exits fullscreen
+	 * Note: We keep the game rendering at original dimensions but center it on screen
+	 */
+	public void updateScreenBounds() {
+		// Don't update screen bounds - keep game at original dimensions for centering
+		// The screen will be centered in the draw method instead
+		// But update window dimensions for offset calculations
+		ScreenManager.setWindowDimensions(getWidth(), getHeight());
+	}
+
 	public void update() {
+		// Check for fullscreen toggle (F11 key)
+		if (gameWindow != null) {
+			gameWindow.updateFullscreen();
+		}
+		
 		updatePauseState();
 		updateShowFPSState();
 
@@ -146,7 +173,27 @@ public class GamePanel extends JPanel {
 	}
 
 	public void draw() {			
-		// draw current game state
+		// Calculate center offset to center the game content on screen
+		int gameWidth = Config.GAME_WINDOW_WIDTH;
+		int gameHeight = Config.GAME_WINDOW_HEIGHT;
+		int windowWidth = getWidth();
+		int windowHeight = getHeight();
+		
+		// Store window dimensions in ScreenManager for offset calculations
+		ScreenManager.setWindowDimensions(windowWidth, windowHeight);
+		
+		int offsetX = (windowWidth - gameWidth) / 2;
+		int offsetY = (windowHeight - gameHeight) / 2;
+		
+		// Draw black background for entire window
+		Graphics2D g2d = (Graphics2D) graphicsHandler.getGraphics();
+		g2d.setColor(Color.black);
+		g2d.fillRect(0, 0, windowWidth, windowHeight);
+		
+		// Translate graphics context to center the game content
+		g2d.translate(offsetX, offsetY);
+		
+		// Draw game content at original dimensions (centered)
 		screenManager.draw(graphicsHandler);
 
 		// if game is paused, draw pause gfx over Screen gfx
@@ -159,9 +206,12 @@ public class GamePanel extends JPanel {
 			fpsDisplayLabel.draw(graphicsHandler);
 		}
 		
-		  // draw crosshair LAST so it’s above map/player/overlays
-   		 if (crosshair != null) crosshair.draw(graphicsHandler);
-
+		// Reset translation before drawing HUD elements like crosshair
+		g2d.translate(-offsetX, -offsetY);
+		
+		// draw crosshair LAST so it's above map/player/overlays
+		// Crosshair should be drawn in window coordinates, not translated coordinates
+   		if (crosshair != null) crosshair.draw(graphicsHandler);
 	}
 
 	@Override
