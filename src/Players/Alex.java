@@ -70,6 +70,9 @@ public class Alex extends Player {
         if (super.getHealth() <= 0){
             // Player is dead - game over logic can go here
         }
+        if(hasSpeedBoots){
+                walkSpeed = 3.3f;
+        }
     }
 
     public void draw(GraphicsHandler graphicsHandler) {

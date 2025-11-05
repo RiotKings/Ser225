@@ -21,8 +21,8 @@ public abstract class Player extends GameObject {
     // values that affect player movement
     // these should be set in a subclass
    
-    private boolean hasSpeedBoots = false;
-    protected float baseWalkSpeed = 2.3f;
+
+    
     protected float walkSpeed = 2.3f;
 
 
@@ -586,26 +586,16 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     invincible = false;
 }
     
-    // --- Acquired items flags (all item booleans live here) ---
-   
-    private boolean SpeedBoots = false;
+   // --- Acquired items ---
+public boolean hasSpeedBoots = false;
 
-    public boolean hasSpeedBoots() {
+public boolean hasSpeedBoots() {
     return hasSpeedBoots;
 }
 
-    public void setHasSpeedBoots (boolean hasBoots) {
-        this.hasSpeedBoots = hasSpeedBoots;
-
-        // Apply/remove speed bonus here so ALL speed logic stays in Player
-        if (hasBoots) {
-            // change this multiplier to whatever feels good
-            this.walkSpeed = baseWalkSpeed * 1.5f;
-        } else {
-            this.walkSpeed = baseWalkSpeed;
-        }
-    }
-
+public void setHasSpeedBoots(boolean hasSpeedBoots) {
+    this.hasSpeedBoots = hasSpeedBoots;
+}
 
 
     // add more later, e.g. private boolean hasKey; etc.

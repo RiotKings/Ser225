@@ -29,7 +29,11 @@ public class FirstRoom extends Map {
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
         // Add item NPC
-        
+        MapTile bootsTile = getMapTile(8, 4);
+        if (bootsTile != null) {
+            SpeedBoots boots = new SpeedBoots(100, bootsTile.getLocation().x, bootsTile.getLocation().y);
+            npcs.add(boots);
+        }
         return npcs;
     }
 
