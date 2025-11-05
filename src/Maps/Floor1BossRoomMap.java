@@ -30,6 +30,7 @@ public class Floor1BossRoomMap extends Map {
         } else {
             this.playerStartPosition = new Point(384, 576); // Fallback position for 24x20 room
         }
+        this.setEnemyCount(1);
     }
     
     @Override

@@ -45,6 +45,8 @@ public class Bug extends NPC {
     public void performAction(Player player) {
         if (currentHealth <= 0) {
             this.setMapEntityStatus(MapEntityStatus.REMOVED);
+            map.decreaseEnemyCount();
+            System.out.println("enemy count = " +map.getEnemyCount());
             return;
         }
 
@@ -329,7 +331,7 @@ public class Bug extends NPC {
         return currentHealth;
     }
 
-    public int getMaxHealth() {
+    public  int getMaxHealth() {
         return maxHealth;
     }
 

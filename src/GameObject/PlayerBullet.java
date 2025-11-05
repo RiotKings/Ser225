@@ -5,6 +5,7 @@ import Level.NPC;
 import Level.Player;
 import NPCs.Bug;
 import NPCs.Zombie;
+import NPCs.Mine;
 import NPCs.EnemyBasic;
 import NPCs.FloorBoss;
 import Engine.GraphicsHandler;
@@ -94,8 +95,9 @@ public class PlayerBullet extends NPC {
                     }
                 }
                 else if (npc instanceof Bug bug) {
-                    if (bug.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
-
+                    if (bug.getMapEntityStatus() == MapEntityStatus.REMOVED) {
+                        continue;
+                    }
                     Rectangle bugr = bug.getBounds();
 
                     final float PAD_X1 = 4f, PAD_UP1 = 8f, PAD_DOWN1 = 2f;
@@ -130,11 +132,27 @@ public class PlayerBullet extends NPC {
 
                     Rectangle zombier = zombie.getBounds();
 
-                    final float PAD_X1 = 6f, PAD_UP1 = 30f, PAD_DOWN1 = 3f;
+                    final float PAD_X1 = 3f, PAD_UP1 = 2f, PAD_DOWN1 = 1f;
 
                     boolean hitzombie = (br.getX1() < zombier.getX1() + zombier.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > zombier.getX1() - PAD_X1) && (br.getY1() < zombier.getY1() + zombier.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > zombier.getY1() - PAD_UP1);
                     if (hitzombie){
                         zombie.takeDamage(damage);
+
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
+                }
+                else if (npc instanceof Mine mine){
+                    if (mine.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                    Rectangle miner = mine.getBounds();
+
+                    final float PAD_X1 = 6f, PAD_UP1 = 30f, PAD_DOWN1 = 3f;
+
+                    boolean hitmine = (br.getX1() < miner.getX1() + miner.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > miner.getX1() - PAD_X1) && (br.getY1() < miner.getY1() + miner.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > miner.getY1() - PAD_UP1);
+                    if (hitmine){
+                        mine.takeDamage(damage);
 
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;

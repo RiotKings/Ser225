@@ -13,6 +13,9 @@ import Scripts.TestMap.LostBallScript;
 import Tilesets.CommonTileset;
 import Scripts.*;
 
+import GameObject.SpeedBoots;
+
+
 import Utils.Point;
 
 
@@ -20,11 +23,12 @@ public class FirstRoom extends Map {
     public FirstRoom() {
         super("Floor1Room0.txt", new CommonTileset());
         this.playerStartPosition = new Point(325, 200);
+        this.setEnemyCount(0);
     }
      @Override
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
-        
+        // Add item NPC
         return npcs;
     }
 

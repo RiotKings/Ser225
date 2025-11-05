@@ -16,6 +16,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import NPCs.Bug;
+import NPCs.EnemyBasic;
+import NPCs.FloorBoss;
+
 /*
     This class is for defining a map that is used for a specific level
     The map class handles/manages a lot of different things, including:
@@ -697,9 +701,34 @@ public abstract class Map {
 
                         bullets.remove(i);
                         break;
+                    } else if (npc instanceof NPCs.Mine){
+                        NPCs.Mine mine = (NPCs.Mine) npc;
+                        mine.takeDamage(1);
+                        System.out.println("[Map] Bullet hit Mine! Mine health: " + mine.getHealth() + "/" + mine.getMaxHealth());
+
+                        bullets.remove(i);
+                        break;
+
                     }
                 }
             }
         }
     }
+
+    //EnemyCount  
+    int EnemyCount = 0;
+      
+    public int getEnemyCount(){
+
+        return EnemyCount;
+    }
+
+    public void setEnemyCount(int x){
+        EnemyCount = x;
+    }
+    public void decreaseEnemyCount(){
+        EnemyCount = EnemyCount -1;
+    }
+
+    
 }

@@ -21,7 +21,12 @@ import Engine.ScreenManager;
 public abstract class Player extends GameObject {
     // values that affect player movement
     // these should be set in a subclass
-    protected float walkSpeed = 0;
+   
+
+    
+    protected float walkSpeed = 2.3f;
+
+
     protected int interactionRange = 1;
     protected Direction currentWalkingXDirection;
     protected Direction currentWalkingYDirection;
@@ -106,7 +111,7 @@ public abstract class Player extends GameObject {
     }
 
     public void update() {
-        double speed = 2.3;
+        double speed = walkSpeed;
         double dx = 0;
         double dy = 0;
         long currentTime = System.currentTimeMillis();
@@ -599,8 +604,25 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     }
     invincible = false;
 }
-
     
+   // --- Acquired items ---
+public boolean hasSpeedBoots = false;
+
+public boolean hasSpeedBoots() {
+    return hasSpeedBoots;
+}
+
+public void setHasSpeedBoots(boolean hasSpeedBoots) {
+    this.hasSpeedBoots = hasSpeedBoots;
+}
+
+
+    // add more later, e.g. private boolean hasKey; etc.
+
+
+
+
+
 
     // Uncomment this to have game draw player's bounds to make it easier to visualize
     /* 

@@ -60,7 +60,8 @@ public class Alex extends Player {
     
     public Alex(float x, float y) {
         super(new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24), x, y, "STAND_RIGHT");
-        walkSpeed = 2.3f;
+        
+     
     }
     
 
@@ -68,6 +69,9 @@ public class Alex extends Player {
         super.update();
         if (super.getHealth() <= 0){
             // Player is dead - game over logic can go here
+        }
+        if(hasSpeedBoots){
+                walkSpeed = 3.3f;
         }
     }
 
