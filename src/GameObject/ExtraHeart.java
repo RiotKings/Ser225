@@ -18,7 +18,7 @@ public class ExtraHeart extends Item {
 
    private static Frame makeFrame() {
     return new FrameBuilder(ImageLoader.load("ExtraHeart.png"))
-            .withScale(0.15f)
+            .withScale(0.025f)
             .build();
 }
 

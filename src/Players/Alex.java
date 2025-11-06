@@ -70,10 +70,11 @@ public class Alex extends Player {
             // Player is dead - game over logic can go here
         }
         if(hasSpeedBoots){
-                walkSpeed = 3.3f;
+                walkSpeed = 4f;
         }
         if(hasExtraHeart){
                 maxHealth = maxHealth + 1;
+                hasExtraHeart = false;
         }
         if(hasDoubleDamage){
                 PLAYER_BULLET_DAMAGE = PLAYER_BULLET_DAMAGE * 2;
