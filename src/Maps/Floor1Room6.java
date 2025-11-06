@@ -21,7 +21,7 @@ public class Floor1Room6 extends Map {
             MapTile fallback = getMapTile(2, 2);
             this.playerStartPosition = (fallback != null) ? fallback.getLocation() : new Point(0, 0);
         }
-        this.setEnemyCount(2);
+        this.setEnemyCount(3);
     }
 
     @Override
@@ -29,12 +29,12 @@ public class Floor1Room6 extends Map {
         ArrayList<NPC> npcs = new ArrayList<>();
         
         // Add Bug NPC
-        MapTile bugTile = getMapTile(11, 7);
+        MapTile bugTile = getMapTile(5, 3);
         if (bugTile != null) 
             npcs.add(new Bug(1, bugTile.getLocation()));
         
         // Add EnemyBasic NPC
-        MapTile enemyTile = getMapTile(15, 7);  // Spawn at a different location
+        MapTile enemyTile = getMapTile(10, 3);  // Spawn at a different location
         if (enemyTile != null) {
             EnemyBasic enemy = new EnemyBasic(2, enemyTile.getLocation().x, enemyTile.getLocation().y);
             // Set bounds for the enemy to wander within (whole map bounds)

@@ -159,6 +159,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
     @Override
     public void changeMap() {
+        System.out.println("Attempting to change map. Enemy count: " + map.getEnemyCount());
         if (map.getEnemyCount() == 0){
         Map[] pool = new Map[] {
             new Floor1Room0(),

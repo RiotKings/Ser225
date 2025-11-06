@@ -86,6 +86,11 @@ public abstract class Player extends GameObject {
     private double lastDirectionY = 0;
     protected boolean invincible = false;
 
+    // Shield system variables
+    private boolean hasShield = false;
+    private long shieldStartTime = 0;
+    private long shieldDuration = 0; // Duration in milliseconds
+
     public boolean isDodging() {
     return isDodging;
     }
@@ -117,6 +122,7 @@ public abstract class Player extends GameObject {
         long currentTime = System.currentTimeMillis();
 
         updateDodge();
+        updateShield(currentTime);
         
         
         if (isDodging && currentTime - dodgeStartTime > DODGE_DURATION) {
@@ -524,7 +530,10 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
 
     if (hasAnimationLooped == true){
         isDodging = false;
-        invincible = false;
+        // Only set invincible to false if shield is not active
+        if (!hasShield) {
+            invincible = false;
+        }
         System.out.println("is not invincible");
         playerState = PlayerState.STANDING;
         lastDodgeTime = System.currentTimeMillis();
@@ -602,7 +611,10 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     if (Keyboard.isKeyUp(Key.SPACE)) {
         keyLocker.unlockKey(Key.SPACE);
     }
-    invincible = false;
+    // Only set invincible to false if shield is not active and not dodging
+    if (!hasShield && !isDodging) {
+        invincible = false;
+    }
 }
     
    // --- Acquired items ---
@@ -616,6 +628,38 @@ public void setHasSpeedBoots(boolean hasSpeedBoots) {
     this.hasSpeedBoots = hasSpeedBoots;
 }
 
+// Shield methods
+public void activateShield(long duration) {
+    this.hasShield = true;
+    this.shieldStartTime = System.currentTimeMillis();
+    this.shieldDuration = duration;
+    this.invincible = true;
+    System.out.println("Shield activated for " + (duration / 1000) + " seconds!");
+}
+
+public void updateShield(long currentTime) {
+    if (hasShield) {
+        long elapsed = currentTime - shieldStartTime;
+        if (elapsed >= shieldDuration) {
+            // Shield expired
+            hasShield = false;
+            shieldStartTime = 0;
+            shieldDuration = 0;
+            // Only set invincible to false if not dodging
+            if (!isDodging) {
+                invincible = false;
+            }
+            System.out.println("Shield expired!");
+        } else {
+            // Shield is active
+            invincible = true;
+        }
+    }
+}
+
+public boolean hasShield() {
+    return hasShield;
+}
 
     // add more later, e.g. private boolean hasKey; etc.
 
