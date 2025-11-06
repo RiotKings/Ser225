@@ -51,7 +51,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new Floor1Room6(); // starting room
+        map = new FirstRoom(); // starting room
         map.setFlagManager(flagManager);
 
         // setup player
@@ -162,17 +162,17 @@ public class PlayLevelScreen extends Screen implements GameListener {
             new Floor1Room6(),
             new Floor1Room7(),
             /*
-             new Floor1Room8(),
-             new Floor1Room9(),
-             new Floor1Room10(),
-             new Floor1Room11(),
-             new Floor1Room12(),
-             new Floor1Room13(),
-             new Floor1Room14(),
-             new Floor1Room15(),
-             new Floor1Room16(),
-             new Floor1Room17(),
-             new Floor1Room18(),
+            new Floor1Room8(),
+            new Floor1Room9(),
+            new Floor1Room10(),
+            new Floor1Room11(),
+            new Floor1Room12(),
+            new Floor1Room13(),
+            new Floor1Room14(),
+            new Floor1Room15(),
+            new Floor1Room16(),
+            new Floor1Room17(),
+            new Floor1Room18(),
         
              */
         };
@@ -190,14 +190,16 @@ public class PlayLevelScreen extends Screen implements GameListener {
                 
         // Decide next map
             Map next;
-            if (MapCount == 6) {
-                next = new Floor1BossRoomMap(); // Floor1BossRoom
-            }else 
             if (MapCount == 3) {
-                next = new TreasureRoom(); // Floor1BossRoom
-                MapCount++;
-                
-            } else { 
+                next = new TreasureRoom(); // Treasure 
+            }else 
+            if (MapCount == 6) {
+                next = new TreasureRoom(); // Treasure
+                MapCount++;  
+            } else {
+            if (MapCount == 7) {
+                next = new Floor1BossRoomMap(); // Floor1BossRoom
+            }
                 int j;
                 do {
                     j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);

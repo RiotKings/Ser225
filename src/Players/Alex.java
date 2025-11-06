@@ -71,7 +71,7 @@ public class Alex extends Player {
             // Player is dead - game over logic can go here
         }
         if(hasSpeedBoots){
-                walkSpeed = 3.3f;
+                walkSpeed = 4f;
         }
     }
 
