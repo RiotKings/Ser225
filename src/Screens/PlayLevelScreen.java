@@ -1,5 +1,13 @@
 package Screens;
 
+import java.io.File;
+import java.net.URL;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 import Engine.GraphicsHandler;
 import Engine.Mouse;
 import Engine.Screen;
@@ -12,6 +20,10 @@ import Maps.Floor1Room5;
 import Players.Alex;
 import Utils.Direction;
 import Hud.GameHealthHUD;
+
+import javax.sound.sampled.*;
+import java.io.File;
+import java.net.URL;
 
 //Levels
 import Maps.FirstRoom;
@@ -34,6 +46,10 @@ public class PlayLevelScreen extends Screen implements GameListener {
     protected GameOverScreen gameOverScreen;
     protected FlagManager flagManager;
     protected GameHealthHUD healthHUD;
+
+    private Clip bgmClip;
+    private int loopStartFrame = -1;
+    private int loopEndFrame   = -1;
 
     int MapCount = 0; 
     int lastIndex = -1;
@@ -82,6 +98,8 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
         winScreen = new WinScreen(this);
         gameOverScreen = new GameOverScreen(this);
+
+        startBackgroundMusic();
     }
 
     public void update() {
@@ -99,10 +117,12 @@ public class PlayLevelScreen extends Screen implements GameListener {
             // if level has been completed, bring up level cleared screen
             case LEVEL_COMPLETED:
                 winScreen.update();
+                stopBackgroundMusic();
                 break;
             // if player has lost, bring up game over screen
             case LEVEL_LOST:
                 gameOverScreen.update();
+                stopBackgroundMusic();
         }
     }
 
@@ -141,6 +161,14 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
     public void goBackToMenu() {
         screenCoordinator.setGameState(GameState.MENU);
+    }
+
+    @Override
+    public void onScreenSizeChanged() {
+        // Update map camera and midpoints when screen size changes (e.g., fullscreen)
+        if (map != null) {
+            map.updateScreenSize();
+        }
     }
 
     // This enum represents the different states this screen can be in
@@ -223,5 +251,52 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
             System.out.println("roomcount = " + MapCount);
         }
+    }
+
+        private void startBackgroundMusic() {
+        try {
+            URL url = new File("Resources/background_music.wav").toURI().toURL();
+            AudioInputStream in = AudioSystem.getAudioInputStream(url);
+
+            AudioFormat base = in.getFormat();
+            AudioFormat decoded = new AudioFormat(
+                    AudioFormat.Encoding.PCM_SIGNED,
+                    base.getSampleRate(),
+                    16,
+                    base.getChannels(),
+                    base.getChannels() * 2,
+                    base.getSampleRate(),
+                    false
+            );
+            AudioInputStream din = AudioSystem.getAudioInputStream(decoded, in);
+
+            bgmClip = AudioSystem.getClip();
+            bgmClip.open(din);
+
+            float frameRate = decoded.getFrameRate();
+            int totalFrames = (int) bgmClip.getFrameLength();
+            int startMs = 0;
+            int endMs   = 40000;
+            loopStartFrame = Math.max(0, (int) (startMs / 1000f * frameRate));
+            loopEndFrame   = Math.min(totalFrames - 1, (int) (endMs   / 1000f * frameRate));
+
+            bgmClip.setLoopPoints(loopStartFrame, loopEndFrame);
+            bgmClip.setFramePosition(loopStartFrame);
+            bgmClip.loop(Clip.LOOP_CONTINUOUSLY);
+            bgmClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopBackgroundMusic() {
+        try {
+            if (bgmClip != null) {
+                bgmClip.stop();
+                bgmClip.flush();
+                bgmClip.close();
+            }
+        } catch (Exception ignored) {}
+        bgmClip = null;
     }
 }

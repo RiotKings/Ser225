@@ -73,6 +73,9 @@ public class Alex extends Player {
         if(hasSpeedBoots){
                 walkSpeed = 4f;
         }
+        if(hasExtraHeart){
+                maxHealth = maxHealth + 1;
+        }
     }
 
     public void draw(GraphicsHandler graphicsHandler) {

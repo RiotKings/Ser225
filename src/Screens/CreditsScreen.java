@@ -58,4 +58,12 @@ public class CreditsScreen extends Screen {
         createdByLabel3.draw(graphicsHandler);
         returnInstructionsLabel.draw(graphicsHandler);
     }
+
+    @Override
+    public void onScreenSizeChanged() {
+        // Update background map camera when screen size changes (e.g., fullscreen)
+        if (background != null) {
+            background.updateScreenSize();
+        }
+    }
 }
