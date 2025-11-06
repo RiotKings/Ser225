@@ -7,74 +7,63 @@ import Level.MapEntityStatus;
 import Level.NPC;
 import Level.Player;
 
-/**
- * Abstract base class for items the player can pick up.
- * - Formatted as an NPC (extends NPC)
- * - No animations (single Frame only)
- * - Disappears on contact with Player
- * - Flips a boolean 'collected' when picked up
- */
 public abstract class Item extends NPC {
 
-    protected boolean collected = false;
-
     public Item(int id, float x, float y, Frame frame) {
-        // Use the NPC constructor that takes a single Frame, no animations
         super(id, x, y, frame);
-        this.isUncollidable = false; // make sure it collides with the player
+
+        // IMPORTANT:
+        //  - We don't want this to act like a solid obstacle.
+        //  - We'll do our own overlap check with the player (like bullets do).
+        this.isUncollidable = true;
     }
 
-    /**
-     * Items don't do anything per-frame by default.
-     * They just sit there until collected.
-     */
+    // We don't use performAction for items
     @Override
     protected void performAction(Player player) {
-        // no movement / AI for items
+        // no AI / movement by default
     }
 
-    /**
-     * Called by the engine when the player collides with this NPC.
-     * Here we:
-     *  - mark as collected
-     *  - call onCollect hook for subclasses
-     *  - remove from map so it disappears
-     */
+    // Do our own collision with the player, like Bullet / PlayerBullet
     @Override
-    public void touchedPlayer(Player player) {
-        if (collected) return;  // already picked up, ignore
+    public void update(Player player) {
+        // If we've already been removed, don't do anything
+        if (this.mapEntityStatus == MapEntityStatus.REMOVED) {
+            return;
+        }
 
-        collected = true;
-        onCollect(player);                  // let subclass do something (heal, add key, etc.)
-        this.mapEntityStatus = MapEntityStatus.REMOVED;  // remove from map
+        if (player != null) {
+            Rectangle ir = getBounds();
+            Rectangle pr = player.getBounds();
+
+            boolean overlaps =
+                    ir.getX1() < pr.getX1() + pr.getWidth() &&
+                    ir.getX1() + ir.getWidth() > pr.getX1() &&
+                    ir.getY1() < pr.getY1() + pr.getHeight() &&
+                    ir.getY1() + ir.getHeight() > pr.getY1();
+
+            if (overlaps) {
+                // Tell subclass to apply its effect (update player boolean, etc.)
+                onCollect(player);
+
+                // Remove this item from the map so it disappears
+                this.mapEntityStatus = MapEntityStatus.REMOVED;
+                return;
+            }
+        }
+
+        // Still let MapEntity handle animation/camera stuff
+        super.update();
     }
 
-    /**
-     * Hook for subclasses to define what happens when the item is collected.
-     * Example: player.heal(2), set a flag, increase score, etc.
-     */
+    // Subclasses implement what happens on pickup (set player booleans here)
     protected abstract void onCollect(Player player);
 
-    public boolean isCollected() {
-        return collected;
-    }
-
-    /**
-     * Only draw the item if it hasn't been collected yet.
-     * Once collected, it visually disappears.
-     */
     @Override
-    public void draw(GraphicsHandler graphicsHandler) {
-        if (!collected) {
-            super.draw(graphicsHandler);
-        }
-        // if collected, do nothing (invisible)
+    public void draw(GraphicsHandler g) {
+        super.draw(g);
     }
 
-    /**
-     * Optional: you can override bounds if you want a different hitbox.
-     * Otherwise, it uses the default from MapEntity/NPC's Frame.
-     */
     @Override
     public Rectangle getBounds() {
         return super.getBounds();

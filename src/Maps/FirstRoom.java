@@ -29,7 +29,6 @@ public class FirstRoom extends Map {
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
         // Add item NPC
-        
         return npcs;
     }
 

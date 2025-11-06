@@ -131,6 +131,13 @@ public class MenuScreen extends Screen {
         );
     }
 
+    @Override
+    public void onScreenSizeChanged() {
+        // Update background map camera when screen size changes (e.g., fullscreen)
+        if (background != null) {
+            background.updateScreenSize();
+        }
+    }
 
     private void startTitleMusic() {
         try {

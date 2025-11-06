@@ -51,6 +51,7 @@ public class EditorMaps {
             add("Floor1Room8");
             add("Floor1Room9");
             add("Floor1Room10");
+            add("Floor1Room11");
             add("Floor1Room12");
             add("Floor1Room13");
             add("Floor1Room14");

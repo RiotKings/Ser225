@@ -6,12 +6,14 @@ import NPCs.Bug;
 import Scripts.DoorScript;
 import Utils.Point;
 import java.util.ArrayList;
+import Engine.Item;
+import GameObject.DoubleDamage;
 
 public class Floor1Room2 extends Map {
     public Floor1Room2() {
         super("Floor1Room2", new CommonTileset());
         this.playerStartPosition = new Point(325, 370);
-        this.setEnemyCount(8);
+        this.setEnemyCount(4);
     }
      @Override
     protected ArrayList<EnhancedMapTile> loadEnhancedMapTiles() {
@@ -21,7 +23,7 @@ public class Floor1Room2 extends Map {
     @Override
     protected ArrayList<NPC> loadNPCs() {
       
-          ArrayList<NPC> npcs = new ArrayList<>();
+        ArrayList<NPC> npcs = new ArrayList<>();
         
        // Add Bug NPC
         MapTile bugTile0 = getMapTile(4, 2);
@@ -42,7 +44,6 @@ public class Floor1Room2 extends Map {
         
         return npcs;
         // TEMP FIX: disable NPCs for Map Editor stability
-        
     }
 
      @Override
@@ -50,7 +51,6 @@ public class Floor1Room2 extends Map {
         ArrayList<Trigger> triggers = new ArrayList<>();
         triggers.add(new Trigger(340, 0, 40, 40, new DoorScript()));
         return triggers;
-    
     }
 
     @Override

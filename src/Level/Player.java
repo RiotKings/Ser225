@@ -16,13 +16,12 @@ import Utils.Direction;
 import GameObject.PlayerBullet;
 
 import GameObject.Bullet;
+import Engine.ScreenManager;
 
 public abstract class Player extends GameObject {
     // values that affect player movement
     // these should be set in a subclass
    
-    private boolean hasSpeedBoots = false;
-    protected float baseWalkSpeed = 2.3f;
     protected float walkSpeed = 2.3f;
 
 // Add near the top with other fields
@@ -48,8 +47,8 @@ public void setKnowledgeSystem(KnowledgeSystem knowledgeSystem) {
     protected Direction facingDirection;
     protected Direction lastMovementDirection;
 
-    private static final int PLAYER_BULLET_DAMAGE = 1;
-
+    protected int PLAYER_BULLET_DAMAGE = 1;
+    
     // health system
     protected int currentHealth = 6;  // Starting health (3 hearts)
     protected int maxHealth = 6;      // Max health (3 hearts)
@@ -91,6 +90,11 @@ public void setKnowledgeSystem(KnowledgeSystem knowledgeSystem) {
     private double lastDirectionY = 0;
     protected boolean invincible = false;
 
+    // Shield system variables
+    private boolean hasShield = false;
+    private long shieldStartTime = 0;
+    private long shieldDuration = 0; // Duration in milliseconds
+
     public boolean isDodging() {
     return isDodging;
     }
@@ -122,6 +126,7 @@ public void setKnowledgeSystem(KnowledgeSystem knowledgeSystem) {
         long currentTime = System.currentTimeMillis();
 
         updateDodge();
+        updateShield(currentTime);
         
         
         if (isDodging && currentTime - dodgeStartTime > DODGE_DURATION) {
@@ -419,9 +424,27 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     // Aim toward the mouse cursor, with fallback if mouse not injected yet
     protected float[] getAimTargetWorld() {
         if (mouse != null && map != null && map.getCamera() != null) {
-            float wx = mouse.getMouseX() + map.getCamera().getX();
-            float wy = mouse.getMouseY() + map.getCamera().getY();
-            return new float[] { wx, wy };
+            // Get mouse coordinates relative to panel
+            int mouseX = mouse.getMouseX();
+            int mouseY = mouse.getMouseY();
+            
+            // Adjust for screen offset (to account for centering)
+            int offsetX = ScreenManager.getScreenOffsetX();
+            int offsetY = ScreenManager.getScreenOffsetY();
+            
+            // Convert to screen-space coordinates (within the game area)
+            int screenX = mouseX - offsetX;
+            int screenY = mouseY - offsetY;
+            
+            // Check if coordinates are within game area bounds
+            if (screenX >= 0 && screenX <= ScreenManager.getScreenWidth() &&
+                screenY >= 0 && screenY <= ScreenManager.getScreenHeight()) {
+                // Use map's coordinate conversion (handles special cases like scaling)
+                float[] worldCoords = map.screenToWorldCoordinates(screenX, screenY);
+                if (worldCoords != null) {
+                    return worldCoords;
+                }
+            }
         }
         // Fallback: aim in facing direction
         float[] c = getPlayerCenterWorld();
@@ -540,7 +563,10 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
 
     if (hasAnimationLooped == true){
         isDodging = false;
-        invincible = false;
+        // Only set invincible to false if shield is not active
+        if (!hasShield) {
+            invincible = false;
+        }
         System.out.println("is not invincible");
         playerState = PlayerState.STANDING;
         lastDodgeTime = System.currentTimeMillis();
@@ -618,30 +644,72 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     if (Keyboard.isKeyUp(Key.SPACE)) {
         keyLocker.unlockKey(Key.SPACE);
     }
-    invincible = false;
+    // Only set invincible to false if shield is not active and not dodging
+    if (!hasShield && !isDodging) {
+        invincible = false;
+    }
 }
     
-    // --- Acquired items flags (all item booleans live here) ---
-   
-    private boolean SpeedBoots = false;
+   // --- Acquired items ---
+public boolean hasSpeedBoots = false;
+public boolean hasExtraHeart = false;
+public boolean hasDoubleDamage = false;
 
-    public boolean hasSpeedBoots() {
+public boolean hasSpeedBoots() {
     return hasSpeedBoots;
 }
 
-    public void setHasSpeedBoots (boolean hasBoots) {
-        this.hasSpeedBoots = hasSpeedBoots;
+public boolean hasDoubleDamage() {
+    return hasDoubleDamage;
+}
+public boolean hasExtraHeart(){
+    return hasExtraHeart;
+}
 
-        // Apply/remove speed bonus here so ALL speed logic stays in Player
-        if (hasBoots) {
-            // change this multiplier to whatever feels good
-            this.walkSpeed = baseWalkSpeed * 1.5f;
+public void setHasSpeedBoots(boolean hasSpeedBoots) {
+    this.hasSpeedBoots = hasSpeedBoots;
+}
+
+public void setHasExtraHeart(boolean hasExtraHeart){
+    this.hasExtraHeart = hasExtraHeart;
+}
+
+public void setHasDoubleDamage(boolean hasDoubleDamage){
+    this.hasDoubleDamage = hasDoubleDamage;
+}
+
+// Shield methods
+public void activateShield(long duration) {
+    this.hasShield = true;
+    this.shieldStartTime = System.currentTimeMillis();
+    this.shieldDuration = duration;
+    this.invincible = true;
+    System.out.println("Shield activated for " + (duration / 1000) + " seconds!");
+}
+
+public void updateShield(long currentTime) {
+    if (hasShield) {
+        long elapsed = currentTime - shieldStartTime;
+        if (elapsed >= shieldDuration) {
+            // Shield expired
+            hasShield = false;
+            shieldStartTime = 0;
+            shieldDuration = 0;
+            // Only set invincible to false if not dodging
+            if (!isDodging) {
+                invincible = false;
+            }
+            System.out.println("Shield expired!");
         } else {
-            this.walkSpeed = baseWalkSpeed;
+            // Shield is active
+            invincible = true;
         }
     }
+}
 
-
+public boolean hasShield() {
+    return hasShield;
+}
 
     // add more later, e.g. private boolean hasKey; etc.
 

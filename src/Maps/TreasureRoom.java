@@ -1,6 +1,7 @@
 package Maps;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import Level.EnhancedMapTile;
 import Level.Map;
@@ -14,21 +15,25 @@ import Tilesets.CommonTileset;
 import Scripts.*;
 
 import Engine.Item;
-
-
+import GameObject.SpeedBoots;
+import GameObject.ExtraHeart;
 
 import Utils.Point;
+import GameObject.DoubleDamage;
 
 public class TreasureRoom extends Map{
     public TreasureRoom() {
         super("TreasureRoom.txt", new CommonTileset());
-        this.playerStartPosition = new Point(325, 200);
+        this.playerStartPosition = new Point(400, 300);
         this.setEnemyCount(0);
     }
      @Override
     protected ArrayList<NPC> loadNPCs() {
-        ArrayList<NPC> npcs = new ArrayList<>();
         
+        
+        ArrayList<NPC> npcs = new ArrayList<>();
+        spawnRandomItem(npcs);
+
         return npcs;
     }
 
@@ -49,6 +54,33 @@ public class TreasureRoom extends Map{
 
     public void SpawItem(){
         
+    }
+     // Spawn a random item from a pool, similar to how changeMap chooses a random map
+    private void spawnRandomItem(ArrayList<NPC> npcs) {
+        // Choose which tile the item appears on in the TreasureRoom
+        // (change these col/row to wherever you want the chest/loot to be)
+        MapTile itemTile = getMapTile(7, 4);
+        if (itemTile == null) {
+            return;
+        }
+
+        float x = itemTile.getLocation().x;
+        float y = itemTile.getLocation().y;
+
+        // Build a pool of possible item NPCs.
+        NPC[] pool = new NPC[] {
+            new SpeedBoots(1000, x, y),
+            new ExtraHeart(1,x,y),
+            new DoubleDamage(2,x,y)
+            // , new SomeOtherItem(1001, x, y)
+            // , new AnotherItem(1002, x, y)
+
+        };
+
+        int j = ThreadLocalRandom.current().nextInt(pool.length);
+        NPC chosenItem = pool[j];
+
+        npcs.add(chosenItem);
     }
 
 }

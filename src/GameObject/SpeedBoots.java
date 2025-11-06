@@ -16,12 +16,10 @@ public class SpeedBoots extends Item {
         super(id, x, y, makeFrame());
     }
 
-    // Single-frame (no animation)
-    private static Frame makeFrame() {
-        SpriteSheet sheet = new SpriteSheet(ImageLoader.load("SpeedBoots.png"), 16, 16);
-        return new FrameBuilder(sheet.getSprite(0, 0))
-                .withScale(2)
-                .build();
+   private static Frame makeFrame() {
+    return new FrameBuilder(ImageLoader.load("SpeedBoots.png"))
+            .withScale(0.15f)
+            .build();
     }
 
     @Override

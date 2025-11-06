@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Floor1Room16 extends Map {
 
     public Floor1Room16() {
-        super("Floor1Room7.txt", new CommonTileset());
+        super("Floor1Room16.txt", new CommonTileset());
 
         MapTile center = getMapTile(10, 7);
         if (center != null) {
@@ -20,7 +20,8 @@ public class Floor1Room16 extends Map {
             MapTile fallback = getMapTile(2, 2);
             this.playerStartPosition = (fallback != null) ? fallback.getLocation() : new Point(0, 0);
         }
-        this.setEnemyCount(5);
+        this.setEnemyCount(3);
+        this.setEnemyCount(2);
     }
 
     @Override
@@ -40,6 +41,13 @@ public class Floor1Room16 extends Map {
             enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
             npcs.add(enemy);
         }
+         MapTile enemyTile1 = getMapTile(2, 2);  // Spawn at a different location
+        if (enemyTile0 != null) {
+            EnemyBasic enemy = new EnemyBasic(2, enemyTile1.getLocation().x, enemyTile1.getLocation().y);
+            // Set bounds for the enemy to wander within (whole map bounds)
+            enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
+            npcs.add(enemy);
+        }
         
         return npcs;
     }
@@ -52,7 +60,7 @@ public class Floor1Room16 extends Map {
      @Override
     public ArrayList<Trigger> loadTriggers() {
         ArrayList<Trigger> triggers = new ArrayList<>();
-        triggers.add(new Trigger(290, 50, 40, 40, new DoorScript()));
+        triggers.add(new Trigger(340, 0, 40, 40, new DoorScript()));
         return triggers;
     
     }
