@@ -67,7 +67,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new FirstRoom(); // starting room
+        map = new TreasureRoom(); // starting room
         map.setFlagManager(flagManager);
 
         // setup player
@@ -220,14 +220,15 @@ public class PlayLevelScreen extends Screen implements GameListener {
             Map next;
             if (MapCount == 3) {
                 next = new TreasureRoom(); // Treasure 
-                MapCount++;
+                
             }else 
             if (MapCount == 6) {
                 next = new TreasureRoom(); // Treasure
-                MapCount++;  
+                
             } else {
             if (MapCount == 7) {
                 next = new Floor1BossRoomMap(); // Floor1BossRoom
+                
             }
                 int j;
                 do {
@@ -236,10 +237,8 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
                 lastIndex = j;
                 next = pool[j];
-                MapCount++;
-                
             }
-
+            MapCount++;
             map = next;
             map.setFlagManager(flagManager);
             player.setMap(map);

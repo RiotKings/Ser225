@@ -75,6 +75,7 @@ public class Alex extends Player {
         }
         if(hasExtraHeart){
                 maxHealth = maxHealth + 1;
+                hasExtraHeart = false;
         }
     }
 
