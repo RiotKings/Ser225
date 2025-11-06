@@ -20,6 +20,7 @@ import GameObject.ExtraHeart;
 
 import Utils.Point;
 import GameObject.DoubleDamage;
+import GameObject.Shield;
 
 public class TreasureRoom extends Map{
     public TreasureRoom() {
@@ -71,7 +72,8 @@ public class TreasureRoom extends Map{
         NPC[] pool = new NPC[] {
             new SpeedBoots(1000, x, y),
             new ExtraHeart(1,x,y),
-            new DoubleDamage(2,x,y)
+            new DoubleDamage(2,x,y),
+            new Shield(1003,x,y),
             // , new SomeOtherItem(1001, x, y)
             // , new AnotherItem(1002, x, y)
 
