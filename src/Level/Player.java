@@ -607,13 +607,22 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     
    // --- Acquired items ---
 public boolean hasSpeedBoots = false;
+public boolean hasExtraHeart = false;
 
 public boolean hasSpeedBoots() {
     return hasSpeedBoots;
 }
 
+public boolean hasExtraHeart(){
+    return hasExtraHeart;
+}
+
 public void setHasSpeedBoots(boolean hasSpeedBoots) {
     this.hasSpeedBoots = hasSpeedBoots;
+}
+
+public void setHasExtraHeart(boolean hasExtraHeart){
+    this.hasExtraHeart = hasExtraHeart;
 }
 
 
