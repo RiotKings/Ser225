@@ -94,6 +94,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
     public int getMouseY() {
         return mouseY;
     }
+    
     public boolean isMouseDown() {
     return mousedown;
     }

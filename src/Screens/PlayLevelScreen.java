@@ -67,7 +67,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new FirstRoom(); // starting room
+        map = new Floor1Room6(); // starting room
         map.setFlagManager(flagManager);
 
         // setup player
@@ -163,6 +163,14 @@ public class PlayLevelScreen extends Screen implements GameListener {
         screenCoordinator.setGameState(GameState.MENU);
     }
 
+    @Override
+    public void onScreenSizeChanged() {
+        // Update map camera and midpoints when screen size changes (e.g., fullscreen)
+        if (map != null) {
+            map.updateScreenSize();
+        }
+    }
+
     // This enum represents the different states this screen can be in
     private enum PlayLevelScreenState {
         RUNNING, LEVEL_COMPLETED, LEVEL_LOST;
@@ -215,6 +223,8 @@ public class PlayLevelScreen extends Screen implements GameListener {
             }else 
             if (MapCount == 3) {
                 next = new TreasureRoom(); // Floor1BossRoom
+                MapCount++;
+                
             } else { 
                 int j;
                 do {

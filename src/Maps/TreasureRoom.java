@@ -1,6 +1,7 @@
 package Maps;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import Level.EnhancedMapTile;
 import Level.Map;
@@ -13,6 +14,8 @@ import Scripts.TestMap.LostBallScript;
 import Tilesets.CommonTileset;
 import Scripts.*;
 
+import Engine.Item;
+import GameObject.SpeedBoots;
 import Utils.Point;
 
 public class TreasureRoom extends Map{
@@ -23,8 +26,11 @@ public class TreasureRoom extends Map{
     }
      @Override
     protected ArrayList<NPC> loadNPCs() {
-        ArrayList<NPC> npcs = new ArrayList<>();
         
+        
+        ArrayList<NPC> npcs = new ArrayList<>();
+        spawnRandomItem(npcs);
+
         return npcs;
     }
 
@@ -42,6 +48,35 @@ public class TreasureRoom extends Map{
     }
     @Override
     protected void loadScripts() { }
+
+    public void SpawItem(){
+        
+    }
+     // Spawn a random item from a pool, similar to how changeMap chooses a random map
+    private void spawnRandomItem(ArrayList<NPC> npcs) {
+        // Choose which tile the item appears on in the TreasureRoom
+        // (change these col/row to wherever you want the chest/loot to be)
+        MapTile itemTile = getMapTile(7, 4);
+        if (itemTile == null) {
+            return;
+        }
+
+        float x = itemTile.getLocation().x;
+        float y = itemTile.getLocation().y;
+
+        // Build a pool of possible item NPCs.
+        // Right now you only have SpeedBoots, but you can add more later.
+        NPC[] pool = new NPC[] {
+            new SpeedBoots(1000, x, y)
+            // , new SomeOtherItem(1001, x, y)
+            // , new AnotherItem(1002, x, y)
+        };
+
+        int j = ThreadLocalRandom.current().nextInt(pool.length);
+        NPC chosenItem = pool[j];
+
+        npcs.add(chosenItem);
+    }
 
 }
 

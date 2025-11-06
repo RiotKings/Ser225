@@ -591,6 +591,20 @@ public abstract class Map {
         setupMap();
     }
 
+    /**
+     * Updates screen-dependent values when screen size changes (e.g., fullscreen toggle)
+     * This updates the midpoints used for camera following and recreates the camera with new dimensions
+     */
+    public void updateScreenSize() {
+        this.xMidPoint = ScreenManager.getScreenWidth() / 2;
+        this.yMidPoint = ScreenManager.getScreenHeight() / 2;
+        
+        // Recreate camera with new screen dimensions
+        if (camera != null) {
+            this.camera = new Camera((int)camera.getX(), (int)camera.getY(), tileset.getScaledSpriteWidth(), tileset.getScaledSpriteHeight(), this);
+        }
+    }
+
     public void draw(GraphicsHandler graphicsHandler) {
         camera.draw(graphicsHandler);
     }
@@ -600,6 +614,23 @@ public abstract class Map {
         if (textbox.isActive()) {
             textbox.draw(graphicsHandler);
         }
+    }
+    
+    /**
+     * Converts screen coordinates to world coordinates
+     * Override this method in maps with special transformations (e.g., scaling)
+     * @param screenX Screen X coordinate (relative to game area, after centering offset)
+     * @param screenY Screen Y coordinate (relative to game area, after centering offset)
+     * @return World coordinates [worldX, worldY], or null if conversion failed
+     */
+    public float[] screenToWorldCoordinates(int screenX, int screenY) {
+        if (camera != null) {
+            // Standard conversion: screen coords + camera position = world coords
+            float wx = screenX + camera.getX();
+            float wy = screenY + camera.getY();
+            return new float[] { wx, wy };
+        }
+        return null;
     }
 
     public FlagManager getFlagManager() { return flagManager; }

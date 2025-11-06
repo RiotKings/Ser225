@@ -50,6 +50,8 @@ public class Mine extends NPC {
     public void performAction(Player player) {
         if (currentHealth <= 0) {
             this.setMapEntityStatus(MapEntityStatus.REMOVED);
+            map.decreaseEnemyCount();
+            System.out.println("enemy count = " +map.getEnemyCount());
             return;
         }
 
@@ -92,7 +94,7 @@ public class Mine extends NPC {
      */
     private void explode() {
         // Number of bullets and radius
-        int numBullets = 24;
+        int numBullets = 30;
         float bulletSpeed = 150f;
         float centerX = getX();
         float centerY = getY();
@@ -113,6 +115,8 @@ public class Mine extends NPC {
 
         // Remove mine after explosion
         this.setMapEntityStatus(MapEntityStatus.REMOVED);
+        map.decreaseEnemyCount();
+        System.out.println("enemy count = " +map.getEnemyCount());
     }
 
     private void patrolBehavior() {

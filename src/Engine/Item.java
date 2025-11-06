@@ -1,205 +1,71 @@
 package Engine;
 
-import java.awt.image.BufferedImage;
-import java.awt.*;
+import Engine.GraphicsHandler;
+import GameObject.Frame;
+import GameObject.Rectangle;
+import Level.MapEntityStatus;
+import Level.NPC;
+import Level.Player;
 
-/**
- * Represents an item that can exist in game
- * Items can be collected, have different types, and display sprites
- */
-public class Item {
-    protected float x, y;
-    protected int width, height;
-    protected BufferedImage image;
-    protected Rectangle bounds;
-    protected ItemType itemType;
-    protected String name;
-    protected String description;
-    protected boolean isCollected;
-    protected int value; 
-    
-    // Constructor for items with default sprite
-    public Item(float x, float y, ItemType itemType, String name) {
-        this.x = x;
-        this.y = y;
-        this.itemType = itemType;
-        this.name = name;
-        this.description = "";
-        this.isCollected = false;
-        this.value = itemType.getDefaultValue();
-        
-        // Load default sprite based on item type
-        this.image = ImageLoader.load(itemType.getSpritePath());
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        this.bounds = new Rectangle((int)x, (int)y, width, height);
+public abstract class Item extends NPC {
+
+    public Item(int id, float x, float y, Frame frame) {
+        super(id, x, y, frame);
+
+        // IMPORTANT:
+        //  - We don't want this to act like a solid obstacle.
+        //  - We'll do our own overlap check with the player (like bullets do).
+        this.isUncollidable = true;
     }
-    
-    // Constructor for items with custom sprite
-    public Item(float x, float y, ItemType itemType, String name, String spritePath) {
-        this.x = x;
-        this.y = y;
-        this.itemType = itemType;
-        this.name = name;
-        this.description = "";
-        this.isCollected = false;
-        this.value = itemType.getDefaultValue();
-        
-        this.image = ImageLoader.load(spritePath);
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        this.bounds = new Rectangle((int)x, (int)y, width, height);
+
+    // We don't use performAction for items
+    @Override
+    protected void performAction(Player player) {
+        // no AI / movement by default
     }
-    
-    // Constructor with all parameters
-    public Item(float x, float y, ItemType itemType, String name, String description, int value, String spritePath) {
-        this.x = x;
-        this.y = y;
-        this.itemType = itemType;
-        this.name = name;
-        this.description = description;
-        this.isCollected = false;
-        this.value = value;
-        
-        this.image = ImageLoader.load(spritePath);
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        this.bounds = new Rectangle((int)x, (int)y, width, height);
-    }
-    
-    public void update() {
-        // Items typically don't need to update unless they animate or move
-        // Override this in specific item subclasses if needed
-        if (isCollected) {
-            // Potential collection animation here
+
+    // Do our own collision with the player, like Bullet / PlayerBullet
+    @Override
+    public void update(Player player) {
+        // If we've already been removed, don't do anything
+        if (this.mapEntityStatus == MapEntityStatus.REMOVED) {
+            return;
         }
-    }
-    
-    public void draw(GraphicsHandler graphicsHandler) {
-        
-        if (!isCollected && image != null) {
-            graphicsHandler.drawImage(image, (int)x, (int)y);
+
+        if (player != null) {
+            Rectangle ir = getBounds();
+            Rectangle pr = player.getBounds();
+
+            boolean overlaps =
+                    ir.getX1() < pr.getX1() + pr.getWidth() &&
+                    ir.getX1() + ir.getWidth() > pr.getX1() &&
+                    ir.getY1() < pr.getY1() + pr.getHeight() &&
+                    ir.getY1() + ir.getHeight() > pr.getY1();
+
+            if (overlaps) {
+                // Tell subclass to apply its effect (update player boolean, etc.)
+                onCollect(player);
+
+                // Remove this item from the map so it disappears
+                this.mapEntityStatus = MapEntityStatus.REMOVED;
+                return;
+            }
         }
+
+        // Still let MapEntity handle animation/camera stuff
+        super.update();
     }
-    
-    // Method to handle item collection
-    public void collect() {
-        this.isCollected = true;
-        onCollected();
+
+    // Subclasses implement what happens on pickup (set player booleans here)
+    protected abstract void onCollect(Player player);
+
+    @Override
+    public void draw(GraphicsHandler g) {
+        super.draw(g);
     }
-    
-    // Override this method in subclasses to add specific collection effects
-    protected void onCollected() {
-        // Default behavior - could play sound, add particles, etc.
-        System.out.println(name + " collected!");
-    }
-    
-    // Check if this item collides with another object
-    public boolean checkCollision(float otherX, float otherY, int otherWidth, int otherHeight) {
-        if (isCollected) return false;
-        
-        updateBounds();
-        Rectangle otherBounds = new Rectangle((int)otherX, (int)otherY, otherWidth, otherHeight);
-        return bounds.intersects(otherBounds);
-    }
-    
-    // Update bounds based on current position
-    private void updateBounds() {
-        bounds.x = (int)x;
-        bounds.y = (int)y;
-    }
-    
-    // Get the bounds of this item
+
+    @Override
     public Rectangle getBounds() {
-        updateBounds();
-        return bounds;
-    }
-    
-    // Getters and Setters
-    public ItemType getItemType() {
-        return itemType;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public String getDescription() {
-        return description;
-    }
-    
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
-    public boolean isCollected() {
-        return isCollected;
-    }
-    
-    public void setCollected(boolean collected) {
-        this.isCollected = collected;
-    }
-    
-    public int getValue() {
-        return value;
-    }
-    
-    public void setValue(int value) {
-        this.value = value;
-    }
-    
-    // Position getters and setters
-    public float getX() {
-        return x;
-    }
-    
-    public void setX(float x) {
-        this.x = x;
-    }
-    
-    public float getY() {
-        return y;
-    }
-    
-    public void setY(float y) {
-        this.y = y;
-    }
-    
-    public int getWidth() {
-        return width;
-    }
-    
-    public int getHeight() {
-        return height;
-    }
-}
-
-// Enum to define different types of items
-enum ItemType {
-    COIN("coin.png", 10),
-    HEALTH_POTION("health_potion.png", 25),
-    KEY("key.png", 0),
-    POWER_UP("power_up.png", 50),
-    WEAPON("weapon.png", 100),
-    COLLECTIBLE("collectible.png", 20);
-    
-    private final String spritePath;
-    private final int defaultValue;
-    
-    ItemType(String spritePath, int defaultValue) {
-        this.spritePath = spritePath;
-        this.defaultValue = defaultValue;
-    }
-    
-    public String getSpritePath() {
-        return spritePath;
-    }
-    
-    public int getDefaultValue() {
-        return defaultValue;
+        return super.getBounds();
     }
 }

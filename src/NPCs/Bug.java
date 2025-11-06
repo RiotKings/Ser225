@@ -40,11 +40,13 @@ public class Bug extends NPC {
         super(id, location.x, location.y, new SpriteSheet(ImageLoader.load("Bug.png"), 24, 15), "WALK_RIGHT");
     }
 
-    // Chasing behavior - bug will chase player when in range
+    // Chasing behavior - bug will always chase the player
     @Override
     public void performAction(Player player) {
         if (currentHealth <= 0) {
             this.setMapEntityStatus(MapEntityStatus.REMOVED);
+            map.decreaseEnemyCount();
+            System.out.println("enemy count = " +map.getEnemyCount());
             return;
         }
 
@@ -64,13 +66,8 @@ public class Bug extends NPC {
             System.out.println("Bug position: (" + bugX + ", " + bugY + "), Player position: (" + playerX + ", " + playerY + "), Distance: " + distanceToPlayer);
         }
 
-        // If player is within detection range, chase them
-        if (distanceToPlayer <= detectionRange) {
-            chasePlayer(player, distanceToPlayer);
-        } else {
-            // Default patrol behavior when player is not in range
-            patrolBehavior();
-        }
+        // Always chase the player regardless of distance
+        chasePlayer(player, distanceToPlayer);
 
         // Check if bug is close enough to damage player
         if (distanceToPlayer <= attackRange) {
@@ -83,6 +80,51 @@ public class Bug extends NPC {
             currentAnimationName = "WALK_RIGHT";
         } else {
             currentAnimationName = "WALK_LEFT";
+        }
+        
+        // Ensure bug stays within map boundaries
+        clampToMapBounds();
+    }
+    
+    /**
+     * Clamps the bug's position to stay within the map boundaries
+     */
+    private void clampToMapBounds() {
+        if (map == null) {
+            return;
+        }
+        
+        // Get map boundaries
+        int mapStartX = 0;
+        int mapStartY = 0;
+        int mapEndX = map.getEndBoundX();
+        int mapEndY = map.getEndBoundY();
+        
+        // Get bug's bounds
+        Rectangle bounds = getBounds();
+        float bugX = getX();
+        float bugY = getY();
+        float bugWidth = bounds.getWidth();
+        float bugHeight = bounds.getHeight();
+        
+        // Calculate bounds accounting for bug's size
+        float bugLeft = bugX;
+        float bugRight = bugX + bugWidth;
+        float bugTop = bugY;
+        float bugBottom = bugY + bugHeight;
+        
+        // Clamp X position
+        if (bugLeft < mapStartX) {
+            setX(mapStartX);
+        } else if (bugRight > mapEndX) {
+            setX(mapEndX - bugWidth);
+        }
+        
+        // Clamp Y position
+        if (bugTop < mapStartY) {
+            setY(mapStartY);
+        } else if (bugBottom > mapEndY) {
+            setY(mapEndY - bugHeight);
         }
     }
 

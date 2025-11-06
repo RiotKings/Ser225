@@ -16,11 +16,17 @@ import Utils.Direction;
 import GameObject.PlayerBullet;
 
 import GameObject.Bullet;
+import Engine.ScreenManager;
 
 public abstract class Player extends GameObject {
     // values that affect player movement
     // these should be set in a subclass
-    protected float walkSpeed = 0;
+   
+
+    
+    protected float walkSpeed = 2.3f;
+
+
     protected int interactionRange = 1;
     protected Direction currentWalkingXDirection;
     protected Direction currentWalkingYDirection;
@@ -105,7 +111,7 @@ public abstract class Player extends GameObject {
     }
 
     public void update() {
-        double speed = 2.3;
+        double speed = walkSpeed;
         double dx = 0;
         double dy = 0;
         long currentTime = System.currentTimeMillis();
@@ -379,9 +385,27 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     // Aim toward the mouse cursor, with fallback if mouse not injected yet
     protected float[] getAimTargetWorld() {
         if (mouse != null && map != null && map.getCamera() != null) {
-            float wx = mouse.getMouseX() + map.getCamera().getX();
-            float wy = mouse.getMouseY() + map.getCamera().getY();
-            return new float[] { wx, wy };
+            // Get mouse coordinates relative to panel
+            int mouseX = mouse.getMouseX();
+            int mouseY = mouse.getMouseY();
+            
+            // Adjust for screen offset (to account for centering)
+            int offsetX = ScreenManager.getScreenOffsetX();
+            int offsetY = ScreenManager.getScreenOffsetY();
+            
+            // Convert to screen-space coordinates (within the game area)
+            int screenX = mouseX - offsetX;
+            int screenY = mouseY - offsetY;
+            
+            // Check if coordinates are within game area bounds
+            if (screenX >= 0 && screenX <= ScreenManager.getScreenWidth() &&
+                screenY >= 0 && screenY <= ScreenManager.getScreenHeight()) {
+                // Use map's coordinate conversion (handles special cases like scaling)
+                float[] worldCoords = map.screenToWorldCoordinates(screenX, screenY);
+                if (worldCoords != null) {
+                    return worldCoords;
+                }
+            }
         }
         // Fallback: aim in facing direction
         float[] c = getPlayerCenterWorld();
@@ -580,12 +604,34 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     }
     invincible = false;
 }
+    
+   // --- Acquired items ---
+public boolean hasSpeedBoots = false;
+public boolean hasExtraHeart = false;
 
-    /*  Aquired items 
+public boolean hasSpeedBoots() {
+    return hasSpeedBoots;
+}
 
-    boolean Item1;
+public boolean hasExtraHeart(){
+    return hasExtraHeart;
+}
 
-    */
+public void setHasSpeedBoots(boolean hasSpeedBoots) {
+    this.hasSpeedBoots = hasSpeedBoots;
+}
+
+public void setHasExtraHeart(boolean hasExtraHeart){
+    this.hasExtraHeart = hasExtraHeart;
+}
+
+
+    // add more later, e.g. private boolean hasKey; etc.
+
+
+
+
+
 
     // Uncomment this to have game draw player's bounds to make it easier to visualize
     /* 
