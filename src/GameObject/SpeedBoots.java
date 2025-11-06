@@ -20,7 +20,7 @@ public class SpeedBoots extends Item {
     return new FrameBuilder(ImageLoader.load("SpeedBoots.png"))
             .withScale(0.15f)
             .build();
-}
+    }
 
     @Override
     protected void onCollect(Player player) {

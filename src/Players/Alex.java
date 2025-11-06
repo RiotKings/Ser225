@@ -24,6 +24,7 @@ public class Alex extends Player {
         this.sanity = 6;
         this.knowledge = 0;
         
+        
     }
 
      public Alex(SpriteSheet spriteSheet, float x, float y, String startingAnimationName,
@@ -45,8 +46,6 @@ public class Alex extends Player {
     public void setKnowledge(int knowledge) {
         this.knowledge = Math.max(0, knowledge);
     }
-
-    
 
     public void takeDamage(int damage){
         
@@ -75,6 +74,9 @@ public class Alex extends Player {
         }
         if(hasExtraHeart){
                 maxHealth = maxHealth + 1;
+        }
+        if(hasDoubleDamage){
+                PLAYER_BULLET_DAMAGE = PLAYER_BULLET_DAMAGE * 2;
         }
     }
 
