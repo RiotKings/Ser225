@@ -22,7 +22,6 @@ public class Floor1Room18 extends Map {
             this.playerStartPosition = (fallback != null) ? fallback.getLocation() : new Point(0, 0);
         }
         this.setEnemyCount(3);
-        this.setEnemyCount(2);
     }
 
     @Override
