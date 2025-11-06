@@ -220,6 +220,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
             Map next;
             if (MapCount == 3) {
                 next = new TreasureRoom(); // Treasure 
+                MapCount++;
             }else 
             if (MapCount == 6) {
                 next = new TreasureRoom(); // Treasure
