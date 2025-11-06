@@ -92,7 +92,7 @@ public class Mine extends NPC {
      */
     private void explode() {
         // Number of bullets and radius
-        int numBullets = 24;
+        int numBullets = 30;
         float bulletSpeed = 150f;
         float centerX = getX();
         float centerY = getY();
