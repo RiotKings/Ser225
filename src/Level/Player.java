@@ -103,7 +103,7 @@ public void setKnowledgeSystem(KnowledgeSystem knowledgeSystem) {
 
     // Shooting
     private static final float STEP_DT = 1f / 60f;
-    private static final int FIRE_INTERVAL = 60;
+    public static  int FIRE_INTERVAL = 60;
     private static final float MUZZLE_OFFSET = 30f;
     private static final int BURST_COUNT = 1;
     private static final int BULLET_SIZE = 6;
@@ -654,6 +654,7 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
 public boolean hasSpeedBoots = false;
 public boolean hasExtraHeart = false;
 public boolean hasDoubleDamage = false;
+public boolean hasbulletfire = false;
 
 public boolean hasSpeedBoots() {
     return hasSpeedBoots;
@@ -666,6 +667,9 @@ public boolean hasExtraHeart(){
     return hasExtraHeart;
 }
 
+public boolean hasbulletfire(){
+    return hasbulletfire;
+}
 public void setHasSpeedBoots(boolean hasSpeedBoots) {
     this.hasSpeedBoots = hasSpeedBoots;
 }
@@ -676,6 +680,10 @@ public void setHasExtraHeart(boolean hasExtraHeart){
 
 public void setHasDoubleDamage(boolean hasDoubleDamage){
     this.hasDoubleDamage = hasDoubleDamage;
+}
+
+public void setHasbulletfire(boolean hasbulletfire){
+    this.hasbulletfire = hasbulletfire;
 }
 
 // Shield methods

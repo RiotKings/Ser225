@@ -288,8 +288,7 @@ lastPlayerHealth = currentHealth;
             lastIndex = j;
             next = pool[j];
         }
-                    MapCount++;
-
+        
         map = next;
         map.setFlagManager(flagManager);
         player.setMap(map);

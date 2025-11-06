@@ -79,6 +79,9 @@ public class Alex extends Player {
         if(hasDoubleDamage){
                 PLAYER_BULLET_DAMAGE = PLAYER_BULLET_DAMAGE * 2;
         }
+        if(hasbulletfire){
+                FIRE_INTERVAL = 30;
+        }
     }
 
     public void draw(GraphicsHandler graphicsHandler) {
