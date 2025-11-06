@@ -38,6 +38,7 @@ import Maps.Floor1Room7;
 // new rooms 
 import Maps.Floor1Room8;
 import Maps.Floor1Room9;
+import Maps.TestMap;
 import Maps.Floor1Room10;
 import Maps.Floor1Room11;
 import Maps.Floor1Room12;
@@ -87,7 +88,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new FirstRoom(); // starting room
+        map = new TreasureRoom(); // starting room
         map.setFlagManager(flagManager);
 
         // setup player
