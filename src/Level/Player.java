@@ -25,7 +25,13 @@ public abstract class Player extends GameObject {
     protected float baseWalkSpeed = 2.3f;
     protected float walkSpeed = 2.3f;
 
+// Add near the top with other fields
+protected KnowledgeSystem knowledgeSystem;
 
+// Add this setter method
+public void setKnowledgeSystem(KnowledgeSystem knowledgeSystem) {
+    this.knowledgeSystem = knowledgeSystem;
+}
     protected int interactionRange = 1;
     protected Direction currentWalkingXDirection;
     protected Direction currentWalkingYDirection;
@@ -193,71 +199,100 @@ public abstract class Player extends GameObject {
     }
 
     // player WALKING state logic
-    protected void playerWalking() {
-        if (!keyLocker.isKeyLocked(INTERACT_KEY) && Keyboard.isKeyDown(INTERACT_KEY)) {
-            keyLocker.lockKey(INTERACT_KEY);
-            map.entityInteract(this);
-        }
+protected void playerWalking() {
+    if (!keyLocker.isKeyLocked(INTERACT_KEY) && Keyboard.isKeyDown(INTERACT_KEY)) {
+        keyLocker.lockKey(INTERACT_KEY);
+        map.entityInteract(this);
+    }
 
-        // if walk left key is pressed, move player to the left
-        if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) {
+    // Check if controls are reversed
+    boolean reversed = (knowledgeSystem != null && knowledgeSystem.areControlsReversed());
+    
+    // if walk left key is pressed, move player to the left (or right if reversed)
+    if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) {
+        if (reversed) {
+            moveAmountX += walkSpeed; // Move right instead
+            facingDirection = Direction.RIGHT;
+            currentWalkingXDirection = Direction.RIGHT;
+            lastWalkingXDirection = Direction.RIGHT;
+        } else {
             moveAmountX -= walkSpeed;
             facingDirection = Direction.LEFT;
             currentWalkingXDirection = Direction.LEFT;
             lastWalkingXDirection = Direction.LEFT;
         }
+    }
 
-        // if walk right key is pressed, move player to the right
-        else if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) {
+    // if walk right key is pressed, move player to the right (or left if reversed)
+    else if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) {
+        if (reversed) {
+            moveAmountX -= walkSpeed; // Move left instead
+            facingDirection = Direction.LEFT;
+            currentWalkingXDirection = Direction.LEFT;
+            lastWalkingXDirection = Direction.LEFT;
+        } else {
             moveAmountX += walkSpeed;
             facingDirection = Direction.RIGHT;
             currentWalkingXDirection = Direction.RIGHT;
             lastWalkingXDirection = Direction.RIGHT;
         }
-        else {
-            currentWalkingXDirection = Direction.NONE;
-        }
+    }
+    else {
+        currentWalkingXDirection = Direction.NONE;
+    }
 
-        if (Keyboard.isKeyDown(MOVE_UP_KEY)) {
+    if (Keyboard.isKeyDown(MOVE_UP_KEY)) {
+        if (reversed) {
+            moveAmountY += walkSpeed; // Move down instead
+            currentWalkingYDirection = Direction.DOWN;
+            lastWalkingYDirection = Direction.DOWN;
+        } else {
             moveAmountY -= walkSpeed;
             currentWalkingYDirection = Direction.UP;
             lastWalkingYDirection = Direction.UP;
         }
-        else if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) {
+    }
+    else if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) {
+        if (reversed) {
+            moveAmountY -= walkSpeed; // Move up instead
+            currentWalkingYDirection = Direction.UP;
+            lastWalkingYDirection = Direction.UP;
+        } else {
             moveAmountY += walkSpeed;
             currentWalkingYDirection = Direction.DOWN;
             lastWalkingYDirection = Direction.DOWN;
         }
-        else {
-            currentWalkingYDirection = Direction.NONE;
-        }
+    }
+    else {
+        currentWalkingYDirection = Direction.NONE;
+    }
 
-        if ((currentWalkingXDirection == Direction.RIGHT || currentWalkingXDirection == Direction.LEFT) && currentWalkingYDirection == Direction.NONE) {
-            lastWalkingYDirection = Direction.NONE;
-        }
+    if ((currentWalkingXDirection == Direction.RIGHT || currentWalkingXDirection == Direction.LEFT) && currentWalkingYDirection == Direction.NONE) {
+        lastWalkingYDirection = Direction.NONE;
+    }
 
-        if ((currentWalkingYDirection == Direction.UP || currentWalkingYDirection == Direction.DOWN) && currentWalkingXDirection == Direction.NONE) {
-            lastWalkingXDirection = Direction.NONE;
-        }
+    if ((currentWalkingYDirection == Direction.UP || currentWalkingYDirection == Direction.DOWN) && currentWalkingXDirection == Direction.NONE) {
+        lastWalkingXDirection = Direction.NONE;
+    }
 
-        if (Keyboard.isKeyUp(MOVE_LEFT_KEY) && Keyboard.isKeyUp(MOVE_RIGHT_KEY) && Keyboard.isKeyUp(MOVE_UP_KEY) && Keyboard.isKeyUp(MOVE_DOWN_KEY)) {
-            playerState = PlayerState.STANDING;
-        }
-        if (isDodging) {
+    if (Keyboard.isKeyUp(MOVE_LEFT_KEY) && Keyboard.isKeyUp(MOVE_RIGHT_KEY) && Keyboard.isKeyUp(MOVE_UP_KEY) && Keyboard.isKeyUp(MOVE_DOWN_KEY)) {
+        playerState = PlayerState.STANDING;
+    }
+    if (isDodging) {
         // Move faster in dodge direction
         x += dodgeDirX * DODGE_SPEED;
         y += dodgeDirY * DODGE_SPEED;
         return; // skip normal movement while dodging
-        }
-        if (Keyboard.isKeyDown(Key.SPACE) && !keyLocker.isKeyLocked(Key.SPACE)) {
+    }
+    if (Keyboard.isKeyDown(Key.SPACE) && !keyLocker.isKeyLocked(Key.SPACE)) {
         startDodge();
         keyLocker.lockKey(Key.SPACE);
-        }
-
-        if (Keyboard.isKeyUp(Key.SPACE)) {
-        keyLocker.unlockKey(Key.SPACE);
-        }
     }
+
+    if (Keyboard.isKeyUp(Key.SPACE)) {
+        keyLocker.unlockKey(Key.SPACE);
+    }
+}
 
     protected void updateLockedKeys() {
         if (Keyboard.isKeyUp(INTERACT_KEY) && !isLocked) {
