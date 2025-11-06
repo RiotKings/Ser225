@@ -42,7 +42,7 @@ public class Floor1Room18 extends Map {
             npcs.add(enemy);
         }
          // Add mine NPC
-        MapTile mineTile = getMapTile(3, 11);
+        MapTile mineTile = getMapTile(3, 8);
         if (mineTile != null) 
             npcs.add(new Mine(1, mineTile.getLocation()));
 
