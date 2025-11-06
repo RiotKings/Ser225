@@ -74,8 +74,7 @@ public class TreasureRoom extends Map{
             new SpeedBoots(1000, x, y),
             new ExtraHeart(1,x,y),
             new DoubleDamage(2,x,y),
-            new Shield(1003,x,y),
-            // , new SomeOtherItem(1001, x, y)
+            new Shield(1003,x,y),            // , new SomeOtherItem(1001, x, y)
             // , new AnotherItem(1002, x, y)
 
         };
