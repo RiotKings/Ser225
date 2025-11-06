@@ -9,6 +9,9 @@ import Scripts.DoorScript;
 import Utils.Point;
 import java.util.ArrayList;
 
+import Engine.Item;
+import GameObject.DoubleDamage;
+
 public class Floor1Room6 extends Map {
 
     public Floor1Room6() {

@@ -1,5 +1,13 @@
 package Screens;
 
+import java.io.File;
+import java.net.URL;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 import Engine.GraphicsHandler;
 import Engine.Mouse;
 import Engine.Screen;
@@ -13,6 +21,10 @@ import Players.Alex;
 import Utils.Direction;
 import Hud.GameHealthHUD;
 
+import javax.sound.sampled.*;
+import java.io.File;
+import java.net.URL;
+
 //Levels
 import Maps.FirstRoom;
 import Maps.Floor1Room0;
@@ -22,6 +34,18 @@ import Maps.Floor1Room3;
 import Maps.Floor1Room4;
 import Maps.Floor1Room6;
 import Maps.Floor1Room7;
+// new rooms 
+import Maps.Floor1Room8;
+import Maps.Floor1Room9;
+import Maps.Floor1Room10;
+import Maps.Floor1Room11;
+import Maps.Floor1Room12;
+import Maps.Floor1Room13;
+import Maps.Floor1Room14;
+import Maps.Floor1Room15;
+import Maps.Floor1Room16;
+import Maps.Floor1Room17;
+import Maps.Floor1Room18;
 import Maps.TreasureRoom;
 
 // This class is for when the RPG game is actually being played
@@ -34,6 +58,10 @@ public class PlayLevelScreen extends Screen implements GameListener {
     protected GameOverScreen gameOverScreen;
     protected FlagManager flagManager;
     protected GameHealthHUD healthHUD;
+
+    private Clip bgmClip;
+    private int loopStartFrame = -1;
+    private int loopEndFrame   = -1;
 
     int MapCount = 0; 
     int lastIndex = -1;
@@ -51,7 +79,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new Floor1Room6(); // starting room
+        map = new FirstRoom(); // starting room
         map.setFlagManager(flagManager);
 
         // setup player
@@ -82,6 +110,8 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
         winScreen = new WinScreen(this);
         gameOverScreen = new GameOverScreen(this);
+
+        startBackgroundMusic();
     }
 
     public void update() {
@@ -99,10 +129,12 @@ public class PlayLevelScreen extends Screen implements GameListener {
             // if level has been completed, bring up level cleared screen
             case LEVEL_COMPLETED:
                 winScreen.update();
+                stopBackgroundMusic();
                 break;
             // if player has lost, bring up game over screen
             case LEVEL_LOST:
                 gameOverScreen.update();
+                stopBackgroundMusic();
         }
     }
 
@@ -170,20 +202,20 @@ public class PlayLevelScreen extends Screen implements GameListener {
             new Floor1Room5(), 
             new Floor1Room6(),
             new Floor1Room7(),
-            /*
-             new Floor1Room8(),
-             new Floor1Room9(),
-             new Floor1Room10(),
-             new Floor1Room11(),
-             new Floor1Room12(),
-             new Floor1Room13(),
-             new Floor1Room14(),
-             new Floor1Room15(),
-             new Floor1Room16(),
-             new Floor1Room17(),
-             new Floor1Room18(),
+            // new rooms
+            new Floor1Room8(),
+            new Floor1Room9(),
+            new Floor1Room10(),
+            new Floor1Room11(),
+            new Floor1Room12(),
+            new Floor1Room13(),
+            new Floor1Room14(),
+            new Floor1Room15(),
+            new Floor1Room16(),
+            new Floor1Room17(),
+            new Floor1Room18(),
         
-             */
+             
         };
 
             
@@ -197,27 +229,25 @@ public class PlayLevelScreen extends Screen implements GameListener {
             map.getNPCs().clear();
         }
                 
-        // Decide next map
-            Map next;
-            if (MapCount == 6) {
-                next = new Floor1BossRoomMap(); // Floor1BossRoom
-            }else 
-            if (MapCount == 3) {
-                next = new TreasureRoom(); // Floor1BossRoom
-                MapCount++;
-                
-            } else { 
-                int j;
-                do {
-                    j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
-                } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
+                // Decide next map
+        Map next;
+        if (MapCount == 3) {
+            next = new TreasureRoom(); // Treasure
+        } else if (MapCount == 6) {
+            next = new TreasureRoom(); // Treasure
+        } else if (MapCount == 7) {
+            next = new Floor1BossRoomMap(); // Boss
+        } else {
+            int j;
+            do {
+                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
+            } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
 
-                lastIndex = j;
-                next = pool[j];
-                MapCount++;
-                
-            }
+            lastIndex = j;
+            next = pool[j];
+        }
 
+        MapCount++;
             map = next;
             map.setFlagManager(flagManager);
             player.setMap(map);
@@ -230,5 +260,52 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
             System.out.println("roomcount = " + MapCount);
         }
+    }
+
+        private void startBackgroundMusic() {
+        try {
+            URL url = new File("Resources/background_music.wav").toURI().toURL();
+            AudioInputStream in = AudioSystem.getAudioInputStream(url);
+
+            AudioFormat base = in.getFormat();
+            AudioFormat decoded = new AudioFormat(
+                    AudioFormat.Encoding.PCM_SIGNED,
+                    base.getSampleRate(),
+                    16,
+                    base.getChannels(),
+                    base.getChannels() * 2,
+                    base.getSampleRate(),
+                    false
+            );
+            AudioInputStream din = AudioSystem.getAudioInputStream(decoded, in);
+
+            bgmClip = AudioSystem.getClip();
+            bgmClip.open(din);
+
+            float frameRate = decoded.getFrameRate();
+            int totalFrames = (int) bgmClip.getFrameLength();
+            int startMs = 0;
+            int endMs   = 40000;
+            loopStartFrame = Math.max(0, (int) (startMs / 1000f * frameRate));
+            loopEndFrame   = Math.min(totalFrames - 1, (int) (endMs   / 1000f * frameRate));
+
+            bgmClip.setLoopPoints(loopStartFrame, loopEndFrame);
+            bgmClip.setFramePosition(loopStartFrame);
+            bgmClip.loop(Clip.LOOP_CONTINUOUSLY);
+            bgmClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopBackgroundMusic() {
+        try {
+            if (bgmClip != null) {
+                bgmClip.stop();
+                bgmClip.flush();
+                bgmClip.close();
+            }
+        } catch (Exception ignored) {}
+        bgmClip = null;
     }
 }

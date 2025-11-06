@@ -22,10 +22,7 @@ public abstract class Player extends GameObject {
     // values that affect player movement
     // these should be set in a subclass
    
-
-    
     protected float walkSpeed = 2.3f;
-
 
     protected int interactionRange = 1;
     protected Direction currentWalkingXDirection;
@@ -43,8 +40,8 @@ public abstract class Player extends GameObject {
     protected Direction facingDirection;
     protected Direction lastMovementDirection;
 
-    private static final int PLAYER_BULLET_DAMAGE = 1;
-
+    protected int PLAYER_BULLET_DAMAGE = 1;
+    
     // health system
     protected int currentHealth = 6;  // Starting health (3 hearts)
     protected int maxHealth = 6;      // Max health (3 hearts)
@@ -619,13 +616,30 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     
    // --- Acquired items ---
 public boolean hasSpeedBoots = false;
+public boolean hasExtraHeart = false;
+public boolean hasDoubleDamage = false;
 
 public boolean hasSpeedBoots() {
     return hasSpeedBoots;
 }
 
+public boolean hasDoubleDamage() {
+    return hasDoubleDamage;
+}
+public boolean hasExtraHeart(){
+    return hasExtraHeart;
+}
+
 public void setHasSpeedBoots(boolean hasSpeedBoots) {
     this.hasSpeedBoots = hasSpeedBoots;
+}
+
+public void setHasExtraHeart(boolean hasExtraHeart){
+    this.hasExtraHeart = hasExtraHeart;
+}
+
+public void setHasDoubleDamage(boolean hasDoubleDamage){
+    this.hasDoubleDamage = hasDoubleDamage;
 }
 
 // Shield methods

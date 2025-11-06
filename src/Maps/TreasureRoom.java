@@ -16,13 +16,15 @@ import Scripts.*;
 
 import Engine.Item;
 import GameObject.SpeedBoots;
-import GameObject.Shield;
+import GameObject.ExtraHeart;
+
 import Utils.Point;
+import GameObject.DoubleDamage;
 
 public class TreasureRoom extends Map{
     public TreasureRoom() {
         super("TreasureRoom.txt", new CommonTileset());
-        this.playerStartPosition = new Point(325, 200);
+        this.playerStartPosition = new Point(400, 300);
         this.setEnemyCount(0);
     }
      @Override
@@ -68,7 +70,11 @@ public class TreasureRoom extends Map{
         // Build a pool of possible item NPCs.
         NPC[] pool = new NPC[] {
             new SpeedBoots(1000, x, y),
-            new Shield(1000, x, y)
+            new ExtraHeart(1,x,y),
+            new DoubleDamage(2,x,y)
+            // , new SomeOtherItem(1001, x, y)
+            // , new AnotherItem(1002, x, y)
+
         };
 
         int j = ThreadLocalRandom.current().nextInt(pool.length);
