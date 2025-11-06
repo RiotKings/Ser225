@@ -38,6 +38,7 @@ import Maps.Floor1Room7;
 // new rooms 
 import Maps.Floor1Room8;
 import Maps.Floor1Room9;
+import Maps.TestMap;
 import Maps.Floor1Room10;
 import Maps.Floor1Room11;
 import Maps.Floor1Room12;

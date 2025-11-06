@@ -7,6 +7,8 @@ import Tilesets.CommonTileset;
 import Utils.Point;
 import java.util.ArrayList;
 
+import GameObject.DoubleDamage;
+
 public class TestMap extends Map {
 
     public TestMap() {
@@ -45,6 +47,8 @@ public class TestMap extends Map {
             npcs.add(enemy);
         }
         
+        DoubleDamage doubleDamage =new DoubleDamage(2,500,500);
+        npcs.add (doubleDamage);
         return npcs;
         // TEMP FIX: disable NPCs for Map Editor stability
         
