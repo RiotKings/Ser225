@@ -22,6 +22,7 @@ import Maps.Floor1Room3;
 import Maps.Floor1Room4;
 import Maps.Floor1Room6;
 import Maps.Floor1Room7;
+import Maps.TreasureRoom;
 
 // This class is for when the RPG game is actually being played
 public class PlayLevelScreen extends Screen implements GameListener {
@@ -50,7 +51,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new FirstRoom(); // starting room
+        map = new Floor1Room6(); // starting room
         map.setFlagManager(flagManager);
 
         // setup player
@@ -142,6 +143,14 @@ public class PlayLevelScreen extends Screen implements GameListener {
         screenCoordinator.setGameState(GameState.MENU);
     }
 
+    @Override
+    public void onScreenSizeChanged() {
+        // Update map camera and midpoints when screen size changes (e.g., fullscreen)
+        if (map != null) {
+            map.updateScreenSize();
+        }
+    }
+
     // This enum represents the different states this screen can be in
     private enum PlayLevelScreenState {
         RUNNING, LEVEL_COMPLETED, LEVEL_LOST;
@@ -159,7 +168,21 @@ public class PlayLevelScreen extends Screen implements GameListener {
             new Floor1Room4(),
             new Floor1Room5(), 
             new Floor1Room6(),
-            new Floor1Room7()
+            new Floor1Room7(),
+            /*
+             new Floor1Room8(),
+             new Floor1Room9(),
+             new Floor1Room10(),
+             new Floor1Room11(),
+             new Floor1Room12(),
+             new Floor1Room13(),
+             new Floor1Room14(),
+             new Floor1Room15(),
+             new Floor1Room16(),
+             new Floor1Room17(),
+             new Floor1Room18(),
+        
+             */
         };
 
             
@@ -175,8 +198,13 @@ public class PlayLevelScreen extends Screen implements GameListener {
                 
         // Decide next map
             Map next;
-            if (MapCount == 5) {
+            if (MapCount == 6) {
                 next = new Floor1BossRoomMap(); // Floor1BossRoom
+            }else 
+            if (MapCount == 3) {
+                next = new TreasureRoom(); // Floor1BossRoom
+                MapCount++;
+                
             } else { 
                 int j;
                 do {

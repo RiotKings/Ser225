@@ -7,4 +7,12 @@ public abstract class Screen {
     public abstract void initialize();
     public abstract void update();
     public abstract void draw(GraphicsHandler graphicsHandler);
+    
+    /**
+     * Called when the screen size changes (e.g., window resize, fullscreen toggle)
+     * Override this method in screens that need to update their content for new screen dimensions
+     */
+    public void onScreenSizeChanged() {
+        // Default implementation does nothing - screens can override if needed
+    }
 }
