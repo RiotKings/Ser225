@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Floor1Room15 extends Map {
 
     public Floor1Room15() {
-        super("Floor1Room7.txt", new CommonTileset());
+        super("Floor1Room15.txt", new CommonTileset());
 
         MapTile center = getMapTile(10, 7);
         if (center != null) {
@@ -31,15 +31,13 @@ public class Floor1Room15 extends Map {
         MapTile bugTile = getMapTile(11, 7);
         if (bugTile != null) 
             npcs.add(new Bug(1, bugTile.getLocation()));
+        // Add Bug NPC
+        MapTile bugTile2 = getMapTile(3, 3);
+        if (bugTile != null) 
+            npcs.add(new Bug(1, bugTile2.getLocation()));
         
-        // Add EnemyBasic NPC
-        MapTile enemyTile0 = getMapTile(12, 2);  // Spawn at a different location
-        if (enemyTile0 != null) {
-            EnemyBasic enemy = new EnemyBasic(2, enemyTile0.getLocation().x, enemyTile0.getLocation().y);
-            // Set bounds for the enemy to wander within (whole map bounds)
-            enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
-            npcs.add(enemy);
-        }
+        
+        
         
         return npcs;
     }
@@ -52,7 +50,7 @@ public class Floor1Room15 extends Map {
      @Override
     public ArrayList<Trigger> loadTriggers() {
         ArrayList<Trigger> triggers = new ArrayList<>();
-        triggers.add(new Trigger(290, 50, 40, 40, new DoorScript()));
+        triggers.add(new Trigger(340, 0, 40, 40, new DoorScript()));
         return triggers;
     
     }
