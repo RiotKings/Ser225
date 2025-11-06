@@ -99,50 +99,42 @@ public class KnowledgeSystem {
         System.out.println("CONTROLS REVERSED!");
     }
     
-    // Apply visual effects - call this in your draw method
+   // Apply visual effects - call this in your draw method
 public void applyVisualEffects(GraphicsHandler graphicsHandler, int screenWidth, int screenHeight) {
     Graphics2D g = graphicsHandler.getGraphics();
     
-    // Save original composite
-    Composite originalComposite = g.getComposite();
-    
-    // Apply desaturation/color tint
+    // Apply desaturation with purple tint
     float desaturation = getDesaturation();
     if (desaturation > 0) {
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, desaturation * 0.3f)); // Reduced from 0.5f
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, desaturation * 0.3f));
         g.setColor(new Color(50, 20, 70)); // Purple tint
         g.fillRect(0, 0, screenWidth, screenHeight);
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
     
-    // Vignette effect (darkened edges) - FIXED to not stack
+    // Uniform darkness overlay (vignette effect) - ONE layer only
     if (knowledgeTier >= 2) {
-        int vignetteSize = 100; // Fixed size instead of multiplying by tier
-        float vignetteAlpha = 0.15f + (0.1f * (knowledgeTier - 2)); // Gradually increases: 0.15, 0.25, 0.35
+        // Calculate darkness based on tier (but don't let it get too dark)
+        float darknessAlpha = 0.15f + (knowledgeTier - 2) * 0.1f; // 0.15 at tier 2, 0.25 at tier 3, 0.35 at tier 4
+        darknessAlpha = Math.min(darknessAlpha, 0.4f); // Cap at 40% opacity so it never gets too dark
         
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, vignetteAlpha));
+        // Draw a single uniform darkening layer
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, darknessAlpha));
         g.setColor(Color.BLACK);
-        
-        // Top
-        g.fillRect(0, 0, screenWidth, vignetteSize);
-        // Bottom
-        g.fillRect(0, screenHeight - vignetteSize, screenWidth, vignetteSize);
-        // Left
-        g.fillRect(0, 0, vignetteSize, screenHeight);
-        // Right
-        g.fillRect(screenWidth - vignetteSize, 0, vignetteSize, screenHeight);
+        g.fillRect(0, 0, screenWidth, screenHeight);
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
     
     // Occasional screen glitch at high tiers
     if (knowledgeTier >= 3 && random.nextFloat() < 0.01f) {
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
-        g.setColor(new Color(255, 0, 255)); // Magenta glitch
+        g.setColor(new Color(255, 0, 255, 50));
         int glitchY = random.nextInt(screenHeight);
         int glitchHeight = 5 + random.nextInt(20);
         g.fillRect(0, glitchY, screenWidth, glitchHeight);
     }
     
-    // Restore original composite
-    g.setComposite(originalComposite);
+    // Add screen shake offset info (if you want to use it for camera)
+    // This doesn't draw anything, just makes the shake values available
 }
     
     // audio management
