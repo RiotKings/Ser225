@@ -228,29 +228,25 @@ public class PlayLevelScreen extends Screen implements GameListener {
             map.getNPCs().clear();
         }
                 
-        // Decide next map
-            Map next;
-            if (MapCount == 3) {
-                next = new TreasureRoom(); // Treasure 
-                
-            }else 
-            if (MapCount == 6) {
-                next = new TreasureRoom(); // Treasure
-                
-            } else {
-            if (MapCount == 7) {
-                next = new Floor1BossRoomMap(); // Floor1BossRoom
-                
-            }
-                int j;
-                do {
-                    j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
-                } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
+                // Decide next map
+        Map next;
+        if (MapCount == 3) {
+            next = new TreasureRoom(); // Treasure
+        } else if (MapCount == 6) {
+            next = new TreasureRoom(); // Treasure
+        } else if (MapCount == 7) {
+            next = new Floor1BossRoomMap(); // Boss
+        } else {
+            int j;
+            do {
+                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
+            } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
 
-                lastIndex = j;
-                next = pool[j];
-            }
-            MapCount++;
+            lastIndex = j;
+            next = pool[j];
+        }
+
+        MapCount++;
             map = next;
             map.setFlagManager(flagManager);
             player.setMap(map);
