@@ -17,6 +17,7 @@ import Scripts.*;
 import Engine.Item;
 import GameObject.SpeedBoots;
 import GameObject.ExtraHeart;
+import GameObject.firerate;
 
 import Utils.Point;
 import GameObject.DoubleDamage;
