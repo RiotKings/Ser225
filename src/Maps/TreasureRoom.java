@@ -17,9 +17,11 @@ import Scripts.*;
 import Engine.Item;
 import GameObject.SpeedBoots;
 import GameObject.ExtraHeart;
+import GameObject.firerate;
 
 import Utils.Point;
 import GameObject.DoubleDamage;
+import GameObject.Shield;
 
 public class TreasureRoom extends Map{
     public TreasureRoom() {
@@ -68,12 +70,11 @@ public class TreasureRoom extends Map{
         float y = itemTile.getLocation().y;
 
         // Build a pool of possible item NPCs.
-        // Right now you only have SpeedBoots, but you can add more later.
         NPC[] pool = new NPC[] {
             new SpeedBoots(1000, x, y),
             new ExtraHeart(1,x,y),
-            new DoubleDamage(2,x,y)
-            // , new SomeOtherItem(1001, x, y)
+            new DoubleDamage(2,x,y),
+            new Shield(1003,x,y),            // , new SomeOtherItem(1001, x, y)
             // , new AnotherItem(1002, x, y)
 
         };

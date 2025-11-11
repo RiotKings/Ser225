@@ -48,10 +48,15 @@ public class Mine extends NPC {
 
     @Override
     public void performAction(Player player) {
+        // If already removed, don't do anything
+        if (this.mapEntityStatus == MapEntityStatus.REMOVED) {
+            return;
+        }
+        
         if (currentHealth <= 0) {
             this.setMapEntityStatus(MapEntityStatus.REMOVED);
             map.decreaseEnemyCount();
-            System.out.println("enemy count = " +map.getEnemyCount());
+            System.out.println("Mine killed by bullets. Enemy count = " +map.getEnemyCount());
             return;
         }
 
@@ -114,9 +119,11 @@ public class Mine extends NPC {
         }
 
         // Remove mine after explosion
-        this.setMapEntityStatus(MapEntityStatus.REMOVED);
-        map.decreaseEnemyCount();
-        System.out.println("enemy count = " +map.getEnemyCount());
+        if (this.mapEntityStatus != MapEntityStatus.REMOVED) {
+            this.setMapEntityStatus(MapEntityStatus.REMOVED);
+            map.decreaseEnemyCount();
+            System.out.println("Mine exploded. Enemy count = " +map.getEnemyCount());
+        }
     }
 
     private void patrolBehavior() {

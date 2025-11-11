@@ -52,8 +52,7 @@ public class Floor1Room7 extends Map {
      @Override
     public ArrayList<Trigger> loadTriggers() {
         ArrayList<Trigger> triggers = new ArrayList<>();
-        triggers.add(new Trigger(290, 50, 40, 40, new DoorScript()));
-        return triggers;
+        triggers.add(new Trigger(340, 0, 40, 40, new DoorScript()));        return triggers;
     
     }
 

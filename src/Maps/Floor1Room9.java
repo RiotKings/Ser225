@@ -48,7 +48,7 @@ public class Floor1Room9 extends Map {
             npcs.add(new Zombie(1, zombieTile0.getLocation()));
             
          // Add mine NPC
-        MapTile mineTile = getMapTile(3, 11);
+        MapTile mineTile = getMapTile(6, 4);
         if (mineTile != null) 
             npcs.add(new Mine(1, mineTile.getLocation()));
 

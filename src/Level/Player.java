@@ -24,6 +24,13 @@ public abstract class Player extends GameObject {
    
     protected float walkSpeed = 2.3f;
 
+// Add near the top with other fields
+protected KnowledgeSystem knowledgeSystem;
+
+// Add this setter method
+public void setKnowledgeSystem(KnowledgeSystem knowledgeSystem) {
+    this.knowledgeSystem = knowledgeSystem;
+}
     protected int interactionRange = 1;
     protected Direction currentWalkingXDirection;
     protected Direction currentWalkingYDirection;
@@ -83,6 +90,11 @@ public abstract class Player extends GameObject {
     private double lastDirectionY = 0;
     protected boolean invincible = false;
 
+    // Shield system variables
+    private boolean hasShield = false;
+    private long shieldStartTime = 0;
+    private long shieldDuration = 0; // Duration in milliseconds
+
     public boolean isDodging() {
     return isDodging;
     }
@@ -91,7 +103,7 @@ public abstract class Player extends GameObject {
 
     // Shooting
     private static final float STEP_DT = 1f / 60f;
-    private static final int FIRE_INTERVAL = 60;
+    public static  int FIRE_INTERVAL = 60;
     private static final float MUZZLE_OFFSET = 30f;
     private static final int BURST_COUNT = 1;
     private static final int BULLET_SIZE = 6;
@@ -114,6 +126,7 @@ public abstract class Player extends GameObject {
         long currentTime = System.currentTimeMillis();
 
         updateDodge();
+        updateShield(currentTime);
         
         
         if (isDodging && currentTime - dodgeStartTime > DODGE_DURATION) {
@@ -191,71 +204,100 @@ public abstract class Player extends GameObject {
     }
 
     // player WALKING state logic
-    protected void playerWalking() {
-        if (!keyLocker.isKeyLocked(INTERACT_KEY) && Keyboard.isKeyDown(INTERACT_KEY)) {
-            keyLocker.lockKey(INTERACT_KEY);
-            map.entityInteract(this);
-        }
+protected void playerWalking() {
+    if (!keyLocker.isKeyLocked(INTERACT_KEY) && Keyboard.isKeyDown(INTERACT_KEY)) {
+        keyLocker.lockKey(INTERACT_KEY);
+        map.entityInteract(this);
+    }
 
-        // if walk left key is pressed, move player to the left
-        if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) {
+    // Check if controls are reversed
+    boolean reversed = (knowledgeSystem != null && knowledgeSystem.areControlsReversed());
+    
+    // if walk left key is pressed, move player to the left (or right if reversed)
+    if (Keyboard.isKeyDown(MOVE_LEFT_KEY)) {
+        if (reversed) {
+            moveAmountX += walkSpeed; // Move right instead
+            facingDirection = Direction.RIGHT;
+            currentWalkingXDirection = Direction.RIGHT;
+            lastWalkingXDirection = Direction.RIGHT;
+        } else {
             moveAmountX -= walkSpeed;
             facingDirection = Direction.LEFT;
             currentWalkingXDirection = Direction.LEFT;
             lastWalkingXDirection = Direction.LEFT;
         }
+    }
 
-        // if walk right key is pressed, move player to the right
-        else if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) {
+    // if walk right key is pressed, move player to the right (or left if reversed)
+    else if (Keyboard.isKeyDown(MOVE_RIGHT_KEY)) {
+        if (reversed) {
+            moveAmountX -= walkSpeed; // Move left instead
+            facingDirection = Direction.LEFT;
+            currentWalkingXDirection = Direction.LEFT;
+            lastWalkingXDirection = Direction.LEFT;
+        } else {
             moveAmountX += walkSpeed;
             facingDirection = Direction.RIGHT;
             currentWalkingXDirection = Direction.RIGHT;
             lastWalkingXDirection = Direction.RIGHT;
         }
-        else {
-            currentWalkingXDirection = Direction.NONE;
-        }
+    }
+    else {
+        currentWalkingXDirection = Direction.NONE;
+    }
 
-        if (Keyboard.isKeyDown(MOVE_UP_KEY)) {
+    if (Keyboard.isKeyDown(MOVE_UP_KEY)) {
+        if (reversed) {
+            moveAmountY += walkSpeed; // Move down instead
+            currentWalkingYDirection = Direction.DOWN;
+            lastWalkingYDirection = Direction.DOWN;
+        } else {
             moveAmountY -= walkSpeed;
             currentWalkingYDirection = Direction.UP;
             lastWalkingYDirection = Direction.UP;
         }
-        else if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) {
+    }
+    else if (Keyboard.isKeyDown(MOVE_DOWN_KEY)) {
+        if (reversed) {
+            moveAmountY -= walkSpeed; // Move up instead
+            currentWalkingYDirection = Direction.UP;
+            lastWalkingYDirection = Direction.UP;
+        } else {
             moveAmountY += walkSpeed;
             currentWalkingYDirection = Direction.DOWN;
             lastWalkingYDirection = Direction.DOWN;
         }
-        else {
-            currentWalkingYDirection = Direction.NONE;
-        }
+    }
+    else {
+        currentWalkingYDirection = Direction.NONE;
+    }
 
-        if ((currentWalkingXDirection == Direction.RIGHT || currentWalkingXDirection == Direction.LEFT) && currentWalkingYDirection == Direction.NONE) {
-            lastWalkingYDirection = Direction.NONE;
-        }
+    if ((currentWalkingXDirection == Direction.RIGHT || currentWalkingXDirection == Direction.LEFT) && currentWalkingYDirection == Direction.NONE) {
+        lastWalkingYDirection = Direction.NONE;
+    }
 
-        if ((currentWalkingYDirection == Direction.UP || currentWalkingYDirection == Direction.DOWN) && currentWalkingXDirection == Direction.NONE) {
-            lastWalkingXDirection = Direction.NONE;
-        }
+    if ((currentWalkingYDirection == Direction.UP || currentWalkingYDirection == Direction.DOWN) && currentWalkingXDirection == Direction.NONE) {
+        lastWalkingXDirection = Direction.NONE;
+    }
 
-        if (Keyboard.isKeyUp(MOVE_LEFT_KEY) && Keyboard.isKeyUp(MOVE_RIGHT_KEY) && Keyboard.isKeyUp(MOVE_UP_KEY) && Keyboard.isKeyUp(MOVE_DOWN_KEY)) {
-            playerState = PlayerState.STANDING;
-        }
-        if (isDodging) {
+    if (Keyboard.isKeyUp(MOVE_LEFT_KEY) && Keyboard.isKeyUp(MOVE_RIGHT_KEY) && Keyboard.isKeyUp(MOVE_UP_KEY) && Keyboard.isKeyUp(MOVE_DOWN_KEY)) {
+        playerState = PlayerState.STANDING;
+    }
+    if (isDodging) {
         // Move faster in dodge direction
         x += dodgeDirX * DODGE_SPEED;
         y += dodgeDirY * DODGE_SPEED;
         return; // skip normal movement while dodging
-        }
-        if (Keyboard.isKeyDown(Key.SPACE) && !keyLocker.isKeyLocked(Key.SPACE)) {
+    }
+    if (Keyboard.isKeyDown(Key.SPACE) && !keyLocker.isKeyLocked(Key.SPACE)) {
         startDodge();
         keyLocker.lockKey(Key.SPACE);
-        }
-
-        if (Keyboard.isKeyUp(Key.SPACE)) {
-        keyLocker.unlockKey(Key.SPACE);
-        }
     }
+
+    if (Keyboard.isKeyUp(Key.SPACE)) {
+        keyLocker.unlockKey(Key.SPACE);
+    }
+}
 
     protected void updateLockedKeys() {
         if (Keyboard.isKeyUp(INTERACT_KEY) && !isLocked) {
@@ -521,7 +563,10 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
 
     if (hasAnimationLooped == true){
         isDodging = false;
-        invincible = false;
+        // Only set invincible to false if shield is not active
+        if (!hasShield) {
+            invincible = false;
+        }
         System.out.println("is not invincible");
         playerState = PlayerState.STANDING;
         lastDodgeTime = System.currentTimeMillis();
@@ -599,13 +644,17 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     if (Keyboard.isKeyUp(Key.SPACE)) {
         keyLocker.unlockKey(Key.SPACE);
     }
-    invincible = false;
+    // Only set invincible to false if shield is not active and not dodging
+    if (!hasShield && !isDodging) {
+        invincible = false;
+    }
 }
     
    // --- Acquired items ---
 public boolean hasSpeedBoots = false;
 public boolean hasExtraHeart = false;
 public boolean hasDoubleDamage = false;
+public boolean hasbulletfire = false;
 
 public boolean hasSpeedBoots() {
     return hasSpeedBoots;
@@ -618,6 +667,9 @@ public boolean hasExtraHeart(){
     return hasExtraHeart;
 }
 
+public boolean hasbulletfire(){
+    return hasbulletfire;
+}
 public void setHasSpeedBoots(boolean hasSpeedBoots) {
     this.hasSpeedBoots = hasSpeedBoots;
 }
@@ -630,6 +682,42 @@ public void setHasDoubleDamage(boolean hasDoubleDamage){
     this.hasDoubleDamage = hasDoubleDamage;
 }
 
+public void setHasbulletfire(boolean hasbulletfire){
+    this.hasbulletfire = hasbulletfire;
+}
+
+// Shield methods
+public void activateShield(long duration) {
+    this.hasShield = true;
+    this.shieldStartTime = System.currentTimeMillis();
+    this.shieldDuration = duration;
+    this.invincible = true;
+    System.out.println("Shield activated for " + (duration / 1000) + " seconds!");
+}
+
+public void updateShield(long currentTime) {
+    if (hasShield) {
+        long elapsed = currentTime - shieldStartTime;
+        if (elapsed >= shieldDuration) {
+            // Shield expired
+            hasShield = false;
+            shieldStartTime = 0;
+            shieldDuration = 0;
+            // Only set invincible to false if not dodging
+            if (!isDodging) {
+                invincible = false;
+            }
+            System.out.println("Shield expired!");
+        } else {
+            // Shield is active
+            invincible = true;
+        }
+    }
+}
+
+public boolean hasShield() {
+    return hasShield;
+}
 
     // add more later, e.g. private boolean hasKey; etc.
 
