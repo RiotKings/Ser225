@@ -34,7 +34,7 @@ public class EnemyBasic extends NPC {
     private float inset = 24f;
 
     // Attack
-    private static final float AttackRadius = 215f;
+    private static final float AttackRadius = 400f;
     private boolean isAttacking = false;
     private float bulletCooldown = 0f;
     private static final float BulletInterval = 2.5f;
@@ -45,6 +45,13 @@ public class EnemyBasic extends NPC {
     private int maxHealth = 3;
 
     private static final float StopDistance = 5;
+
+    // Stuck variables
+    private int stuckCounter = 0;
+    private float lastX, lastY;
+    private long lastPositionCheck = 0;
+    private static final int STUCK_THRESHOLD = 30;
+    private static final long POSITION_CHECK_INTERVAL = 100;
 
     public EnemyBasic(int id, float x, float y) {
         super(id, x, y, new SpriteSheet(ImageLoader.load("samurai.png"), 22, 16), "STAND_LEFT");
@@ -109,7 +116,22 @@ public class EnemyBasic extends NPC {
                 float inv = (dist < 1e-5f) ? 0f : 1f / dist;
                 float nx = dx * inv, ny = dy * inv;
                 float move = chaseSpeed * STEP_DT;
-                tryMove(nx * move, ny * move);
+                checkIfStuck();
+
+                if (stuckCounter > STUCK_THRESHOLD) {
+                    tryAlternativeMovement();
+                } else {
+                    float movedX = moveXHandleCollision(nx * move);
+                    float movedY = moveYHandleCollision(ny * move);
+
+                    if (Math.abs(movedX) < Math.abs(nx * move) * 0.5f && Math.abs(movedY) < Math.abs(ny * move) * 0.5f) {
+                        if (Math.abs(dx) > Math.abs(dy)) {
+                            moveXHandleCollision(nx * move);
+                        } else {
+                            moveYHandleCollision(ny * move);
+                        }
+                    }
+                }
             }
 
             bulletCooldown -= STEP_DT;
@@ -144,12 +166,14 @@ public class EnemyBasic extends NPC {
 
             float perFrameSpeed = speed * STEP_DT;
             switch (wanderDir) {
-                case LEFT  -> tryMove(-perFrameSpeed, 0f);
-                case RIGHT -> tryMove(perFrameSpeed, 0f);
-                case UP    -> tryMove(0f, -perFrameSpeed);
-                case DOWN  -> tryMove(0f, perFrameSpeed);
+                case LEFT  -> moveXHandleCollision(-perFrameSpeed);
+                case RIGHT -> moveXHandleCollision(perFrameSpeed);
+                case UP    -> moveYHandleCollision(-perFrameSpeed);
+                case DOWN  -> moveYHandleCollision(perFrameSpeed);
             }
         }
+        checkIfStuck();
+        clampToMapBounds();
     }
 
     @Override
@@ -212,5 +236,84 @@ public class EnemyBasic extends NPC {
             case 2 -> Direction.UP;
             default -> Direction.DOWN;
         };
+    }
+
+    private void checkIfStuck() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastPositionCheck >= POSITION_CHECK_INTERVAL) {
+            float currentX = this.getX();
+            float currentY = this.getY();
+            
+            float distanceMoved = (float) Math.sqrt(
+                (currentX - lastX) * (currentX - lastX) + 
+                (currentY - lastY) * (currentY - lastY)
+            );
+            
+            if (distanceMoved < 1.0f) {
+                stuckCounter++;
+            } else {
+                stuckCounter = 0;
+            }
+            
+            lastX = currentX;
+            lastY = currentY;
+            lastPositionCheck = currentTime;
+        }
+    }
+
+    private void tryAlternativeMovement() {
+
+        moveXHandleCollision(chaseSpeed);
+        moveYHandleCollision(0);
+        
+        moveXHandleCollision(0);
+        moveYHandleCollision(chaseSpeed);
+
+        if (stuckCounter > STUCK_THRESHOLD * 2) {
+            float randomAngle = (float) (Math.random() * 2 * Math.PI);
+            float randomMoveX = (float) (Math.cos(randomAngle) * chaseSpeed);
+            float randomMoveY = (float) (Math.sin(randomAngle) * chaseSpeed);
+            
+            moveXHandleCollision(randomMoveX);
+            moveYHandleCollision(randomMoveY);
+            
+            if (Math.random() < 0.3f) {
+                stuckCounter = 0;
+            }
+        }
+    }
+
+    private void clampToMapBounds() {
+        if (map == null) {
+            return;
+        }
+
+        int mapStartX = 0;
+        int mapStartY = 0;
+        int mapEndX = map.getEndBoundX();
+        int mapEndY = map.getEndBoundY();
+
+        Rectangle bounds = getBounds();
+        float enemyX = getX();
+        float enemyY = getY();
+        float enemyWidth = bounds.getWidth();
+        float enemyHeight = bounds.getHeight();
+
+        float enemyLeft = enemyX;
+        float enemyRight = enemyX + enemyWidth;
+        float enemyTop = enemyY;
+        float enemyBottom = enemyY + enemyHeight;
+
+        if (enemyLeft < mapStartX) {
+            setX(mapStartX);
+        } else if (enemyRight > mapEndX) {
+            setX(mapEndX - enemyWidth);
+        }
+        
+        if (enemyTop < mapStartY) {
+            setY(mapStartY);
+        } else if (enemyBottom > mapEndY) {
+            setY(mapEndY - enemyHeight);
+        }
     }
 }
