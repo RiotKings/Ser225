@@ -59,10 +59,7 @@ public class Alex extends Player {
     
     public Alex(float x, float y) {
         super(new SpriteSheet(ImageLoader.load("Alex sprite planning 2.png"), 24, 24), x, y, "STAND_RIGHT");
-        
-     
     }
-    
 
     public void update() {
         super.update();

@@ -35,7 +35,6 @@ import Maps.Floor1Room3;
 import Maps.Floor1Room4;
 import Maps.Floor1Room6;
 import Maps.Floor1Room7;
-// new rooms 
 import Maps.Floor1Room8;
 import Maps.Floor1Room9;
 import Maps.TestMap;
@@ -212,6 +211,20 @@ lastPlayerHealth = currentHealth;
     }
 
     public void resetLevel() {
+        MapCount = 0;
+        lastIndex = -1;
+
+        if (player != null) {
+            player.setHasSpeedBoots(false);
+            player.setHasExtraHeart(false);
+            player.setHasDoubleDamage(false);
+            player.setHasbulletfire(false); 
+
+            player.deactivateShield();
+
+            player.getBullets().clear();
+        }
+
         initialize();
     }
 
