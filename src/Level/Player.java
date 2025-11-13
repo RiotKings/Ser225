@@ -127,6 +127,8 @@ public void setKnowledgeSystem(KnowledgeSystem knowledgeSystem) {
 
         updateDodge();
         updateShield(currentTime);
+
+        
         
         
         if (isDodging && currentTime - dodgeStartTime > DODGE_DURATION) {
@@ -717,6 +719,15 @@ public void updateShield(long currentTime) {
 
 public boolean hasShield() {
     return hasShield;
+}
+
+public void deactivateShield() {
+    this.hasShield = false;
+    this.shieldStartTime = 0;
+    this.shieldDuration = 0;
+    if (!isDodging) {
+        this.invincible = false;
+    }
 }
 
     // add more later, e.g. private boolean hasKey; etc.

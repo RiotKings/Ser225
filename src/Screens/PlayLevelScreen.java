@@ -211,6 +211,20 @@ lastPlayerHealth = currentHealth;
     }
 
     public void resetLevel() {
+        MapCount = 0;
+        lastIndex = -1;
+
+        if (player != null) {
+            player.setHasSpeedBoots(false);
+            player.setHasExtraHeart(false);
+            player.setHasDoubleDamage(false);
+            player.setHasbulletfire(false); 
+
+            player.deactivateShield();
+
+            player.getBullets().clear();
+        }
+
         initialize();
     }
 
