@@ -17,6 +17,7 @@ import Maps.Floor1Room4;
 import Maps.TreasureRoom;
 import Maps.Floor1Room8;
 import Maps.Floor1Room9;
+import Maps.Floor2Room0;
 import Maps.Floor1Room10;
 import Maps.Floor1Room11;
 import Maps.Floor1Room12;
@@ -59,6 +60,22 @@ public class EditorMaps {
             add("Floor1Room16");
             add("Floor1Room17");
             add("Floor1Room18");
+
+
+            //Floor 2 maps
+
+              add("Floor2Room0");
+
+
+
+
+
+
+
+
+
+
+
 
         }};
     }
@@ -113,6 +130,8 @@ public class EditorMaps {
                 return new Floor1Room17();
             case "Floor1Room18":
                 return new Floor1Room18();    
+            case "Floor2Room0":
+                return new Floor2Room0(); 
             default:
                 throw new RuntimeException("Unrecognized map name");
         }

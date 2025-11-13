@@ -35,7 +35,6 @@ import Maps.Floor1Room3;
 import Maps.Floor1Room4;
 import Maps.Floor1Room6;
 import Maps.Floor1Room7;
-// new rooms 
 import Maps.Floor1Room8;
 import Maps.Floor1Room9;
 import Maps.TestMap;
