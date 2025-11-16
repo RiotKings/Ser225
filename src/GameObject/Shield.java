@@ -23,8 +23,10 @@ public class Shield extends Item {
 
     @Override
     protected void onCollect(Player player) {
-        player.activateShield(10000); // 10 seconds = 10000 milliseconds
-        System.out.println("Player collected Shield — 10 seconds of invincibility activated!");
+        // Grant the player a shield that will block the next instance of damage
+        // in every room (one block per room).
+        player.activateShield();
+        System.out.println("Player collected Shield — it will block the next hit in each room!");
     }
 }
 

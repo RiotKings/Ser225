@@ -313,6 +313,9 @@ lastPlayerHealth = currentHealth;
         map.getTextbox().setInteractKey(player.getInteractKey());
         map.preloadScripts();
 
+        // New room entered — refresh shield so it can block one hit again
+        player.resetShieldForNewRoom();
+
         player.setLocation(325, 370);
 
         // NOW spawn phantom enemies AFTER the map is set up
