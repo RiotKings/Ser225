@@ -6,9 +6,6 @@ import Engine.Item;
 import GameObject.Frame;
 import Level.Player;
 
-/**
- * Shield item — grants player 10 seconds of invincibility when collected.
- */
 public class Shield extends Item {
 
     public Shield(int id, float x, float y) {
