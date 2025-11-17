@@ -4,9 +4,11 @@ import Level.Map;
 import Level.MapTile;
 import Level.NPC;
 import Level.Player;
+import Level.Trigger;
 import Tilesets.CommonTileset;
 import Utils.Point;
 import NPCs.FloorBoss;
+import Scripts.DoorScript;
 import Engine.ScreenManager;
 import Engine.GraphicsHandler;
 
@@ -141,5 +143,12 @@ public class Floor1BossRoomMap extends Map {
     
     public float getScaleY() {
         return scaleY;
+    }
+     @Override
+    public ArrayList<Trigger> loadTriggers() {
+        ArrayList<Trigger> triggers = new ArrayList<>();
+        triggers.add(new Trigger(550, 0, 40, 40, new DoorScript()));
+        return triggers;
+    
     }
 }
