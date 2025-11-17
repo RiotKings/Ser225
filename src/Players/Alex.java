@@ -48,13 +48,18 @@ public class Alex extends Player {
     }
 
     public void takeDamage(int damage){
-        
-        if (invincible == false){
-                super.takeDamage(damage);
-                System.out.println("Player has " + super.getHealth() + " health left!"); 
-                System.out.println(invincible);
+        // First, see if the shield wants to block this damage instance.
+        if (tryBlockDamage()) {
+            // Shield absorbed the hit; no health is lost.
+            return;
         }
-
+        
+        // If not blocked by shield, only take damage when not invincible.
+        if (!invincible){
+            super.takeDamage(damage);
+            System.out.println("Player has " + super.getHealth() + " health left!"); 
+            System.out.println(invincible);
+        }
     }
     
     public Alex(float x, float y) {

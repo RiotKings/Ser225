@@ -331,7 +331,7 @@ lastPlayerHealth = currentHealth;
                 player.getBullets().clear();
             }
 
-            // clear all NPCs (including bullets) from the old map
+        // clear all NPCs (including bullets) from the old map
             if (map != null) {
                 map.getNPCs().clear();
             }
@@ -373,6 +373,10 @@ lastPlayerHealth = currentHealth;
             map.getTextbox().setInteractKey(player.getInteractKey());
             map.preloadScripts();
 
+            // New room entered — refresh shield so it can block one hit again
+            player.resetShieldForNewRoom();
+
+            
             player.setLocation(325, 370);
 
             // spawn phantom enemies AFTER map loads
