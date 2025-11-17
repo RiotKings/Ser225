@@ -387,14 +387,16 @@ public class CommonTileset extends Tileset {
         Frame drownedGates9 = new FrameBuilder(getSubImage(7, 3))
                 .withScale(tileScale)
                 .build();
-        MapTileBuilder drownedGatesTile9 = new MapTileBuilder(drownedGates9);
+        MapTileBuilder drownedGatesTile9 = new MapTileBuilder(drownedGates9)
+        .withTileType(TileType.NOT_PASSABLE);
         mapTiles.add(drownedGatesTile9);
 
         // drownedGates10
         Frame drownedGates10 = new FrameBuilder(getSubImage(7, 4))
                 .withScale(tileScale)
                 .build();
-        MapTileBuilder drownedGatesTile10 = new MapTileBuilder(drownedGates10);
+        MapTileBuilder drownedGatesTile10 = new MapTileBuilder(drownedGates10)
+        .withTileType(TileType.NOT_PASSABLE);
         mapTiles.add(drownedGatesTile10);
 
         // drownedGates11
@@ -445,7 +447,8 @@ public class CommonTileset extends Tileset {
         Frame drownedGates17 = new FrameBuilder(getSubImage(9, 1))
                 .withScale(tileScale)
                 .build();
-        MapTileBuilder drownedGatesTile17 = new MapTileBuilder(drownedGates17);
+        MapTileBuilder drownedGatesTile17 = new MapTileBuilder(drownedGates17)
+        .withTileType(TileType.NOT_PASSABLE);
         mapTiles.add(drownedGatesTile17);
 
         // drownedGates18
@@ -460,7 +463,8 @@ public class CommonTileset extends Tileset {
         Frame drownedGates19 = new FrameBuilder(getSubImage(9, 3))
                 .withScale(tileScale)
                 .build();
-        MapTileBuilder drownedGatesTile19 = new MapTileBuilder(drownedGates19);
+        MapTileBuilder drownedGatesTile19 = new MapTileBuilder(drownedGates19)
+        .withTileType(TileType.NOT_PASSABLE);
         mapTiles.add(drownedGatesTile19);
 
         // drownedGates20
@@ -538,7 +542,8 @@ public class CommonTileset extends Tileset {
         Frame drownedGates29 = new FrameBuilder(getSubImage(11, 3))
                 .withScale(tileScale)
                 .build();
-        MapTileBuilder drownedGatesTile29 = new MapTileBuilder(drownedGates29);
+        MapTileBuilder drownedGatesTile29 = new MapTileBuilder(drownedGates29)
+        .withTileType(TileType.NOT_PASSABLE);
         mapTiles.add(drownedGatesTile29);
 
         // drownedGates30
@@ -712,7 +717,8 @@ public class CommonTileset extends Tileset {
         Frame drownedGates53 = new FrameBuilder(getSubImage(16, 2))
                 .withScale(tileScale)
                 .build();
-        MapTileBuilder drownedGatesTile53 = new MapTileBuilder(drownedGates53);
+        MapTileBuilder drownedGatesTile53 = new MapTileBuilder(drownedGates53)
+        .withTileType(TileType.NOT_PASSABLE);
         mapTiles.add(drownedGatesTile53);
 
         // drownedGates54
