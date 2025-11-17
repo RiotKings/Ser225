@@ -96,7 +96,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
     private int loopStartFrame = -1;
     private int loopEndFrame   = -1;
 
-    int MapCount = 9; 
+    int MapCount = 0; 
     int lastIndex = -1;
 
     public PlayLevelScreen(ScreenCoordinator screenCoordinator) {
@@ -336,7 +336,7 @@ lastPlayerHealth = currentHealth;
                 map.getNPCs().clear();
             }
 
-            // Decide next map
+                    // Decide next map
             Map next = null;
 
             if (MapCount == 5) {
@@ -350,16 +350,32 @@ lastPlayerHealth = currentHealth;
             } else if (MapCount == 20) {
                 next = new TreasureRoom();
             } else if (MapCount == 21) {
-                //next = new Floor2BossRoomMap();
+                // next = new Floor2BossRoomMap();
             } else if (MapCount == 22) {
-                //next = new Floor3BossRoomMap(); 
+                // next = new Floor3BossRoomMap();
             } else if (MapCount < 10) {
-                int j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF1.length);
+
+                // --- NO SAME ROOM TWICE (F1) ---
+                int j;
+                do {
+                    j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF1.length);
+                } while (poolF1.length > 1 && j == lastIndex);
+
+                lastIndex = j;
                 next = poolF1[j];
-            } else if (MapCount > 10) {
-                int j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF2.length);
+
+            } else { // MapCount > 10
+
+                // --- NO SAME ROOM TWICE (F2) ---
+                int j;
+                do {
+                    j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF2.length);
+                } while (poolF2.length > 1 && j == lastIndex);
+
+                lastIndex = j;
                 next = poolF2[j];
             }
+
 
 
 
@@ -376,7 +392,7 @@ lastPlayerHealth = currentHealth;
             // New room entered — refresh shield so it can block one hit again
             player.resetShieldForNewRoom();
 
-            
+
             player.setLocation(325, 370);
 
             // spawn phantom enemies AFTER map loads
