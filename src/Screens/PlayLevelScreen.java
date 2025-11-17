@@ -392,8 +392,8 @@ lastPlayerHealth = currentHealth;
             // New room entered — refresh shield so it can block one hit again
             player.resetShieldForNewRoom();
 
-
-            player.setLocation(325, 370);
+            var pos = map.getPlayerStartPosition();
+            player.setLocation(pos.x, pos.y);
 
             // spawn phantom enemies AFTER map loads
             spawnPhantomEnemies();
