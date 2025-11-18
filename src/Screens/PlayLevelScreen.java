@@ -3,11 +3,6 @@ package Screens;
 import java.io.File;
 import java.net.URL;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-
 import Engine.GraphicsHandler;
 import Engine.Mouse;
 import Engine.Screen;
@@ -152,50 +147,49 @@ public class PlayLevelScreen extends Screen implements GameListener {
         startBackgroundMusic();
     }
 
-    public void update() {
-        // based on screen state, perform specific actions
-        switch (playLevelScreenState) {
-            // if level is "running" update player and map to keep game logic for the platformer level going
-            case RUNNING:
-                player.update();
-                map.update(player);
+ public void update() {
+    // based on screen state, perform specific actions
+    switch (playLevelScreenState) {
+        // if level is "running" update player and map to keep game logic for the platformer level going
+        case RUNNING:
+            player.update();
+            map.update(player);
+            
+            // Update knowledge system
+            knowledgeSystem.update(player);
+            
+            // Check if player took damage and increase knowledge
+            int currentHealth = player.getHealth();
+            if (currentHealth < lastPlayerHealth) {
+                int damageTaken = lastPlayerHealth - currentHealth;
                 
-                // Update knowledge system
-                knowledgeSystem.update(player);
+                float maxHealth = player.getMaxHealth();
+                float knowledgePerDamage = 1.33f / maxHealth;
                 
-              // Check if player took damage and increase knowledge
-int currentHealth = player.getHealth();
-if (currentHealth < lastPlayerHealth) {
-    int damageTaken = lastPlayerHealth - currentHealth;
-    
-    // Faster progression: reach 100% at 75% health lost (4.5 damage out of 6)
-    // This lets players experience Tier 4 effects before dying
-    float maxHealth = player.getMaxHealth();
-    float knowledgePerDamage = 1.33f / maxHealth; // 1.33 makes it reach 100% at ~4.5 damage
-    
-    knowledgeSystem.addKnowledge(damageTaken * knowledgePerDamage);
-    
-    System.out.println("Player took " + damageTaken + " damage! Knowledge: " + 
-        String.format("%.1f", knowledgeSystem.getKnowledgeLevel() * 100) + "% (Tier " + 
-        knowledgeSystem.getKnowledgeTier() + ")");
-}
-lastPlayerHealth = currentHealth;
+                knowledgeSystem.addKnowledge(damageTaken * knowledgePerDamage);
                 
-                if (player.getHealth() <= 0) {
-                    onLose();
-                }
-                break;
-            // if level has been completed, bring up level cleared screen
-            case LEVEL_COMPLETED:
-                winScreen.update();
-                stopBackgroundMusic();
-                break;
-            // if player has lost, bring up game over screen
-            case LEVEL_LOST:
-                gameOverScreen.update();
-                stopBackgroundMusic();
-        }
+                System.out.println("Player took " + damageTaken + " damage! Knowledge: " + 
+                    String.format("%.1f", knowledgeSystem.getKnowledgeLevel() * 100) + "% (Tier " + 
+                    knowledgeSystem.getKnowledgeTier() + ")");
+            }
+            lastPlayerHealth = currentHealth;
+            
+            if (player.getHealth() <= 0) {
+                onLose();
+            }
+            break;
+        // if level has been completed, bring up level cleared screen
+        case LEVEL_COMPLETED:
+            winScreen.update();
+            stopBackgroundMusic();
+            break;
+        // if player has lost, bring up game over screen
+        case LEVEL_LOST:
+            gameOverScreen.update();
+            stopBackgroundMusic();
+            break;
     }
+}
 
     @Override
     public void onWin() {
@@ -424,50 +418,62 @@ public void changeMap() {
         }
     }
 
-        private void startBackgroundMusic() {
+    private void startBackgroundMusic() {
+    try {
+        URL url = new File("Resources/tobehere.wav").toURI().toURL();
+        AudioInputStream in = AudioSystem.getAudioInputStream(url);
+
+        AudioFormat base = in.getFormat();
+        AudioFormat decoded = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                base.getSampleRate(),
+                16,
+                base.getChannels(),
+                base.getChannels() * 2,
+                base.getSampleRate(),
+                false
+        );
+        AudioInputStream din = AudioSystem.getAudioInputStream(decoded, in);
+
+        bgmClip = AudioSystem.getClip();
+        bgmClip.open(din);
+
+        float frameRate = decoded.getFrameRate();
+        int totalFrames = (int) bgmClip.getFrameLength();
+        int startMs = 0;
+        int endMs   = 40000;
+        loopStartFrame = Math.max(0, (int) (startMs / 1000f * frameRate));
+        loopEndFrame   = Math.min(totalFrames - 1, (int) (endMs   / 1000f * frameRate));
+
+        bgmClip.setLoopPoints(loopStartFrame, loopEndFrame);
+        bgmClip.setFramePosition(loopStartFrame);
+        bgmClip.loop(Clip.LOOP_CONTINUOUSLY);
+        bgmClip.start();
+        
+        // Set volume AFTER starting the clip
         try {
-            URL url = new File("Resources/tobehere.wav").toURI().toURL();
-            AudioInputStream in = AudioSystem.getAudioInputStream(url);
-
-            AudioFormat base = in.getFormat();
-            AudioFormat decoded = new AudioFormat(
-                    AudioFormat.Encoding.PCM_SIGNED,
-                    base.getSampleRate(),
-                    16,
-                    base.getChannels(),
-                    base.getChannels() * 2,
-                    base.getSampleRate(),
-                    false
-            );
-            AudioInputStream din = AudioSystem.getAudioInputStream(decoded, in);
-
-            bgmClip = AudioSystem.getClip();
-            bgmClip.open(din);
-
-            float frameRate = decoded.getFrameRate();
-            int totalFrames = (int) bgmClip.getFrameLength();
-            int startMs = 0;
-            int endMs   = 40000;
-            loopStartFrame = Math.max(0, (int) (startMs / 1000f * frameRate));
-            loopEndFrame   = Math.min(totalFrames - 1, (int) (endMs   / 1000f * frameRate));
-
-            bgmClip.setLoopPoints(loopStartFrame, loopEndFrame);
-            bgmClip.setFramePosition(loopStartFrame);
-            bgmClip.loop(Clip.LOOP_CONTINUOUSLY);
-            bgmClip.start();
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (bgmClip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                FloatControl gainControl = (FloatControl) bgmClip.getControl(FloatControl.Type.MASTER_GAIN);
+                
+                // Adjust volume here: 0.3f = 30% volume
+                float volume = 0.3f; // Change this to make it louder or quieter (0.1 to 1.0)
+                float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
+                gainControl.setValue(dB);
+                
+                System.out.println("Background music volume set to " + (volume * 100) + "%");
+            }
+        } catch (Exception volumeError) {
+            System.out.println("Could not set volume, playing at default level");
         }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
 
     private void stopBackgroundMusic() {
-        try {
-            if (bgmClip != null) {
-                bgmClip.stop();
-                bgmClip.flush();
-                bgmClip.close();
-            }
-        } catch (Exception ignored) {}
-        bgmClip = null;
+        if (bgmClip != null && bgmClip.isRunning()) {
+            bgmClip.stop();
+            bgmClip.close();
+        }
     }
 }
