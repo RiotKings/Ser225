@@ -6,6 +6,7 @@ import Level.Player;
 import NPCs.Bug;
 import NPCs.Zombie;
 import NPCs.Mine;
+import NPCs.Sentry;
 import NPCs.EnemyBasic;
 import NPCs.FloorBoss;
 import Engine.GraphicsHandler;
@@ -153,6 +154,22 @@ public class PlayerBullet extends NPC {
                     boolean hitmine = (br.getX1() < miner.getX1() + miner.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > miner.getX1() - PAD_X1) && (br.getY1() < miner.getY1() + miner.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > miner.getY1() - PAD_UP1);
                     if (hitmine){
                         mine.takeDamage(damage);
+
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
+                }
+                else if (npc instanceof Sentry sentry) {
+                    if (sentry.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                    Rectangle sentryr = sentry.getBounds();
+
+                    final float PAD_X1 = 6f, PAD_UP1 = 30f, PAD_DOWN1 = 3f;
+
+                    boolean hitsentry = (br.getX1() < sentryr.getX1() + sentryr.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > sentryr.getX1() - PAD_X1) && (br.getY1() < sentryr.getY1() + sentryr.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > sentryr.getY1() - PAD_UP1);
+                    if (hitsentry){
+                        sentry.takeDamage(damage);
 
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;

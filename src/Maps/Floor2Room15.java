@@ -24,6 +24,13 @@ public class Floor2Room15 extends Map {
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
         
+         MapTile enemyTile1 = getMapTile(10, 7);  // Spawn at a different location
+        if (enemyTile1 != null) {
+            EnemyBasic enemy = new EnemyBasic(2, enemyTile1.getLocation().x, enemyTile1.getLocation().y);
+            // Set bounds for the enemy to wander within (whole map bounds)
+            enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
+            npcs.add(enemy);
+        }
        
         return npcs;
         // TEMP FIX: disable NPCs for Map Editor stability

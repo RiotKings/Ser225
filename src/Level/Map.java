@@ -19,6 +19,7 @@ import java.util.Scanner;
 import NPCs.Bug;
 import NPCs.EnemyBasic;
 import NPCs.FloorBoss;
+import NPCs.Sentry;
 
 /*
     This class is for defining a map that is used for a specific level
