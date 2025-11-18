@@ -426,7 +426,7 @@ lastPlayerHealth = currentHealth;
 
         private void startBackgroundMusic() {
         try {
-            URL url = new File("Resources/background_music.wav").toURI().toURL();
+            URL url = new File("Resources/tobehere.wav").toURI().toURL();
             AudioInputStream in = AudioSystem.getAudioInputStream(url);
 
             AudioFormat base = in.getFormat();
