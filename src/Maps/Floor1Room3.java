@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Floor1Room3 extends Map {
     public Floor1Room3() {
         super("Floor1Room3", new CommonTileset());
-        this.playerStartPosition = new Point(5, 5);
+        this.playerStartPosition = new Point(325, 370);
         this.setEnemyCount(3);
     }
      @Override

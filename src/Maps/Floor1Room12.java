@@ -13,13 +13,7 @@ public class Floor1Room12 extends Map {
     public Floor1Room12() {
         super("Floor1Room12.txt", new CommonTileset());
 
-        MapTile center = getMapTile(10, 7);
-        if (center != null) {
-            this.playerStartPosition = center.getLocation();
-        } else {
-            MapTile fallback = getMapTile(2, 2);
-            this.playerStartPosition = (fallback != null) ? fallback.getLocation() : new Point(0, 0);
-        }
+        this.playerStartPosition = new Point(325, 370);
         this.setEnemyCount(5);
     }
 
