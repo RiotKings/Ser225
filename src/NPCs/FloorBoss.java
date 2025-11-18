@@ -84,7 +84,8 @@ public class FloorBoss extends NPC {
 
         if (currentHealth <= 0) {
             this.setMapEntityStatus(MapEntityStatus.REMOVED);
-            return;
+            map.decreaseEnemyCount();
+                        return;
         } 
 
         Rectangle eb = getBounds();

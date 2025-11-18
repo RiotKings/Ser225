@@ -37,7 +37,31 @@ import Maps.Floor1Room6;
 import Maps.Floor1Room7;
 import Maps.Floor1Room8;
 import Maps.Floor1Room9;
+import Maps.Floor2Room0;
+import Maps.Floor2Room1;
+import Maps.Floor2Room10;
+import Maps.Floor2Room11;
+import Maps.Floor2Room12;
+import Maps.Floor2Room13;
+import Maps.Floor2Room14;
 import Maps.Floor2Room15;
+import Maps.Floor2Room16;
+import Maps.Floor2Room17;
+import Maps.Floor2Room18;
+import Maps.Floor2Room19;
+import Maps.Floor2Room2;
+import Maps.Floor2Room20;
+import Maps.Floor2Room21;
+import Maps.Floor2Room22;
+import Maps.Floor2Room23;
+import Maps.Floor2Room24;
+import Maps.Floor2Room3;
+import Maps.Floor2Room4;
+import Maps.Floor2Room5;
+import Maps.Floor2Room6;
+import Maps.Floor2Room7;
+import Maps.Floor2Room8;
+import Maps.Floor2Room9;
 import Maps.TestMap;
 import Maps.Floor1Room10;
 import Maps.Floor1Room11;
@@ -247,81 +271,138 @@ lastPlayerHealth = currentHealth;
     }
 
 
-    @Override
+   @Override
     public void changeMap() {
         System.out.println("Attempting to change map. Enemy count: " + map.getEnemyCount());
         if (map.getEnemyCount() == 0){
-        Map[] pool = new Map[] {
-            new Floor1Room0(),
-            new Floor1Room1(),
-            new Floor1Room2(),
-            new Floor1Room3(),
-            new Floor1Room4(),
-            new Floor1Room5(), 
-            new Floor1Room6(),
-            new Floor1Room7(),
-            // new rooms
-            new Floor1Room8(),
-            new Floor1Room9(),
-            new Floor1Room10(),
-            new Floor1Room11(),
-            new Floor1Room12(),
-            new Floor1Room13(),
-            new Floor1Room14(),
-            new Floor1Room15(),
-            new Floor1Room16(),
-            new Floor1Room17(),
-            new Floor1Room18(),
-        
-             
-        };
 
-        //clear player's bullets before changing maps
-        if (player != null && player.getBullets() != null) {
-            player.getBullets().clear();
-        }
+            Map[] poolF1 = new Map[] {
+                new Floor1Room0(),
+                new Floor1Room1(),
+                new Floor1Room2(),
+                new Floor1Room3(),
+                new Floor1Room4(),
+                new Floor1Room5(), 
+                new Floor1Room6(),
+                new Floor1Room7(),
+                new Floor1Room8(),
+                new Floor1Room9(),
+                new Floor1Room10(),
+                new Floor1Room11(),
+                new Floor1Room12(),
+                new Floor1Room13(),
+                new Floor1Room14(),
+                new Floor1Room15(),
+                new Floor1Room16(),
+                new Floor1Room17(),
+                new Floor1Room18(),
+            };
+            
+            Map[] poolF2 = new Map[] { 
+                new Floor2Room0(), 
+                new Floor2Room1(),
+                new Floor2Room2(),
+                new Floor2Room3(),
+                new Floor2Room4(),
+                new Floor2Room5(),
+                new Floor2Room6(),
+                new Floor2Room7(),
+                new Floor2Room8(),
+                new Floor2Room9(),
+                new Floor2Room10(),
+                new Floor2Room11(),
+                new Floor2Room12(),
+                new Floor2Room13(),
+                new Floor2Room14(),
+                new Floor2Room15(),
+                new Floor2Room16(),
+                new Floor2Room17(),
+                new Floor2Room18(),
+                new Floor2Room19(),
+                new Floor2Room20(),
+                new Floor2Room21(),
+                new Floor2Room22(),
+                new Floor2Room23(),
+                new Floor2Room24()
+            };
+
+            // clear player's bullets before changing maps
+            if (player != null && player.getBullets() != null) {
+                player.getBullets().clear();
+            }
 
         // clear all NPCs (including bullets) from the old map
-        if (map != null) {
-            map.getNPCs().clear();
+            if (map != null) {
+                map.getNPCs().clear();
+            }
+
+                    // Decide next map
+            Map next = null;
+
+            if (MapCount == 5) {
+                next = new TreasureRoom();
+            } else if (MapCount == 10) {
+                next = new TreasureRoom();
+            } else if (MapCount == 11) {
+                next = new Floor1BossRoomMap();
+            } else if (MapCount == 15) {
+                next = new TreasureRoom();
+            } else if (MapCount == 20) {
+                next = new TreasureRoom();
+            } else if (MapCount == 21) {
+                // next = new Floor2BossRoomMap();
+            } else if (MapCount == 22) {
+                // next = new Floor3BossRoomMap();
+            } else if (MapCount < 10) {
+
+                // --- NO SAME ROOM TWICE (F1) ---
+                int j;
+                do {
+                    j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF1.length);
+                } while (poolF1.length > 1 && j == lastIndex);
+
+                lastIndex = j;
+                next = poolF1[j];
+
+            } else { // MapCount > 10
+
+                // --- NO SAME ROOM TWICE (F2) ---
+                int j;
+                do {
+                    j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF2.length);
+                } while (poolF2.length > 1 && j == lastIndex);
+
+                lastIndex = j;
+                next = poolF2[j];
+            }
+
+
+
+
+            MapCount++;
+            System.out.println(MapCount);
+            map = next;
+            map.setFlagManager(flagManager);
+            player.setMap(map);
+            map.setPlayer(player);
+            map.addListener(this);
+            map.getTextbox().setInteractKey(player.getInteractKey());
+            map.preloadScripts();
+
+            // New room entered — refresh shield so it can block one hit again
+            player.resetShieldForNewRoom();
+
+            var pos = map.getPlayerStartPosition();
+            player.setLocation(pos.x, pos.y);
+
+            // spawn phantom enemies AFTER map loads
+            spawnPhantomEnemies();
+
+            System.out.println("roomcount = " + MapCount);
         }
-                
-                // Decide next map
-        Map next;
-        if (MapCount == 3) {
-            next = new TreasureRoom(); // Treasure
-        } else if (MapCount == 6) {
-            next = new TreasureRoom(); // Treasure
-        } else if (MapCount == 7) {
-            next = new Floor1BossRoomMap(); // Boss
-        } else {
-            int j;
-            do {
-                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(pool.length);
-            } while (pool.length > 1 && j == lastIndex);  // avoid immediate repeat
-
-            lastIndex = j;
-            next = pool[j];
-        }
-        
-        MapCount++;
-        System.out.println(MapCount);
-        map = next;
-        map.setFlagManager(flagManager);
-        player.setMap(map);
-        map.setPlayer(player);
-        map.addListener(this);
-        map.getTextbox().setInteractKey(player.getInteractKey());
-        map.preloadScripts();
-
-        player.setLocation(325, 370);
-
-        // NOW spawn phantom enemies AFTER the map is set up
-        spawnPhantomEnemies();
-
-        System.out.println("roomcount = " + MapCount);
     }
-}
+
+
     
     // Spawn phantom enemies when entering a new room
     private void spawnPhantomEnemies() {

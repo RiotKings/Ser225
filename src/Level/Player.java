@@ -91,9 +91,10 @@ public void setKnowledgeSystem(KnowledgeSystem knowledgeSystem) {
     protected boolean invincible = false;
 
     // Shield system variables
+    // hasShield: player owns a shield power-up
+    // shieldConsumedThisRoom: has the shield already blocked damage in the current room?
     private boolean hasShield = false;
-    private long shieldStartTime = 0;
-    private long shieldDuration = 0; // Duration in milliseconds
+    private boolean shieldConsumedThisRoom = false;
 
     public boolean isDodging() {
     return isDodging;
@@ -126,7 +127,6 @@ public void setKnowledgeSystem(KnowledgeSystem knowledgeSystem) {
         long currentTime = System.currentTimeMillis();
 
         updateDodge();
-        updateShield(currentTime);
 
         
         
@@ -385,9 +385,13 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
         }
     }
 
+    /**
+     * Apply raw damage to the player, ignoring shield/invincibility logic.
+     * Most callers should use the subclass override (e.g., Alex.takeDamage),
+     * which decides whether the damage is actually applied.
+     */
     public void takeDamage(int damage) {
         setHealth(currentHealth - damage);
-        
     }
 
     public void heal(int amount) {
@@ -565,10 +569,8 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
 
     if (hasAnimationLooped == true){
         isDodging = false;
-        // Only set invincible to false if shield is not active
-        if (!hasShield) {
-            invincible = false;
-        }
+        // Dodge has finished, always clear invincibility granted by dodge.
+        invincible = false;
         System.out.println("is not invincible");
         playerState = PlayerState.STANDING;
         lastDodgeTime = System.currentTimeMillis();
@@ -646,8 +648,9 @@ public void onEndCollisionCheckY(boolean hasCollided, Direction direction, GameO
     if (Keyboard.isKeyUp(Key.SPACE)) {
         keyLocker.unlockKey(Key.SPACE);
     }
-    // Only set invincible to false if shield is not active and not dodging
-    if (!hasShield && !isDodging) {
+    // Clear generic invincibility when not dodging;
+    // shield no longer uses the invincible flag.
+    if (!isDodging) {
         invincible = false;
     }
 }
@@ -688,47 +691,53 @@ public void setHasbulletfire(boolean hasbulletfire){
     this.hasbulletfire = hasbulletfire;
 }
 
-// Shield methods
-public void activateShield(long duration) {
-    this.hasShield = true;
-    this.shieldStartTime = System.currentTimeMillis();
-    this.shieldDuration = duration;
-    this.invincible = true;
-    System.out.println("Shield activated for " + (duration / 1000) + " seconds!");
-}
+    // Shield methods
+    /**
+     * Give the player a shield that can block one instance of damage
+     * per room. The shield does not make the player passively invincible;
+     * instead, it is checked at the moment damage would be applied.
+     */
+    public void activateShield() {
+        this.hasShield = true;
+        this.shieldConsumedThisRoom = false;
+        System.out.println("Shield acquired: will block the next hit in each room.");
+    }
 
-public void updateShield(long currentTime) {
-    if (hasShield) {
-        long elapsed = currentTime - shieldStartTime;
-        if (elapsed >= shieldDuration) {
-            // Shield expired
-            hasShield = false;
-            shieldStartTime = 0;
-            shieldDuration = 0;
-            // Only set invincible to false if not dodging
-            if (!isDodging) {
-                invincible = false;
-            }
-            System.out.println("Shield expired!");
-        } else {
-            // Shield is active
-            invincible = true;
+    /**
+     * Attempt to block damage using the shield. Returns true if the shield
+     * successfully blocked this damage instance.
+     */
+    public boolean tryBlockDamage() {
+        if (hasShield && !shieldConsumedThisRoom) {
+            shieldConsumedThisRoom = true;
+            // Shield blocks this damage instance
+            System.out.println("Shield blocked incoming damage in this room!");
+            return true;
+        }
+        return false;
+    }
+
+    public boolean hasShield() {
+        return hasShield;
+    }
+
+    /**
+     * Called when entering a new room so the shield can be used again.
+     */
+    public void resetShieldForNewRoom() {
+        if (hasShield) {
+            shieldConsumedThisRoom = false;
+            System.out.println("New room entered - shield is ready to block one hit.");
         }
     }
-}
 
-public boolean hasShield() {
-    return hasShield;
-}
-
-public void deactivateShield() {
-    this.hasShield = false;
-    this.shieldStartTime = 0;
-    this.shieldDuration = 0;
-    if (!isDodging) {
-        this.invincible = false;
+    public void deactivateShield() {
+        this.hasShield = false;
+        this.shieldConsumedThisRoom = false;
+        if (!isDodging) {
+            this.invincible = false;
+        }
     }
-}
 
     // add more later, e.g. private boolean hasKey; etc.
 
