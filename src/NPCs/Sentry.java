@@ -14,27 +14,30 @@ import Level.MapEntityStatus;
 import Level.NPC;
 import Level.Player;
 
-import GameObject.Frame;
-import GameObject.SpriteSheet;
-import GameObject.Frame;
-import GameObject.ImageEffect;
+import java.awt.image.BufferedImage;
+import java.awt.geom.AffineTransform;
+import java.awt.Graphics2D;
+import java.lang.reflect.Method;
 
 public class Sentry extends NPC {
 
     private static final float STEP_DT = 1f / 60f;
-    private static final float AttackRadius = 500f;    // range to detect player
+    private static final float AttackRadius = 1000f;
     private static final float MuzzleOffset = 10f;
-    private static final float BulletInterval = 0.6f;  // fast fire rate (seconds)
+    private static final float BulletInterval = 0.7f;
     private static final int Damage = 1;
 
-    private int currentHealth = 8;  // decent HP
-    private int maxHealth = 8;
+    private int currentHealth = 6;
+    private int maxHealth = 6;
 
     private float bulletCooldown = 0f;
 
+    private final BufferedImage baseImage;
+    private double lastAngle = 0.0;
+
     public Sentry(int id, float x, float y) {
-        // choose appropriate sprite sheet size — adjust if your asset differs
-        super(id, x, y, new SpriteSheet(ImageLoader.load("cat.png"), 24, 24), "STAND");
+        super(id, x, y, new SpriteSheet(ImageLoader.load("Sentry1.png"), 42, 34), "STAND");
+        this.baseImage = ImageLoader.load("Sentry1.png");
     }
 
     @Override
@@ -43,13 +46,7 @@ public class Sentry extends NPC {
             put("STAND", new Frame[] {
                 new FrameBuilder(spriteSheet.getSprite(0, 0))
                     .withScale(2)
-                    .withBounds(0, 0, 24, 24)
-                    .build()
-            });
-            put("FIRE", new Frame[] {
-                new FrameBuilder(spriteSheet.getSprite(0, 1), 6)
-                    .withScale(2)
-                    .withBounds(0, 0, 24, 24)
+                    .withBounds(0, 0, 42, 34)
                     .build()
             });
         }};
@@ -77,12 +74,13 @@ public class Sentry extends NPC {
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
 
         if (dist <= AttackRadius) {
-            // aim at player and shoot
+
+            float inv = (dist < 1e-5f) ? 0f : 1f / dist;
+            float nx = dx * inv, ny = dy * inv;
+            lastAngle = Math.atan2(ny, nx);
+
             bulletCooldown -= STEP_DT;
             if (bulletCooldown <= 0f) {
-                float inv = (dist < 1e-5f) ? 0f : 1f / dist;
-                float nx = dx * inv, ny = dy * inv;
-
                 float bx = sx + nx * MuzzleOffset;
                 float by = sy + ny * MuzzleOffset;
 
@@ -91,19 +89,44 @@ public class Sentry extends NPC {
                 map.addNPC(bullet);
 
                 bulletCooldown = BulletInterval;
-                this.setCurrentAnimationName("FIRE");
-            } else {
-                this.setCurrentAnimationName("STAND");
             }
-        } else {
-            // idle
             this.setCurrentAnimationName("STAND");
+        } else {
             bulletCooldown = Math.max(0f, bulletCooldown - STEP_DT);
+            this.setCurrentAnimationName("STAND");
         }
     }
 
     @Override
     public void draw(GraphicsHandler graphicsHandler) {
+        if (baseImage == null) {
+            super.draw(graphicsHandler);
+            return;
+        }
+        try {
+            Method m = graphicsHandler.getClass().getMethod("getGraphics");
+            Object raw = m.invoke(graphicsHandler);
+            if (raw instanceof Graphics2D) {
+                Graphics2D g2 = (Graphics2D) raw;
+                AffineTransform old = g2.getTransform();
+
+                Rectangle b = getBounds();
+                double cx = b.getX() + b.getWidth() * 0.5;
+                double cy = b.getY() + b.getHeight() * 0.5;
+
+                g2.translate(cx, cy);
+                g2.rotate(lastAngle);
+
+                int iw = baseImage.getWidth();
+                int ih = baseImage.getHeight();
+                g2.drawImage(baseImage, -iw / 2, -ih / 2, null);
+
+                g2.setTransform(old);
+                return;
+            }
+        } catch (Exception ignored) {
+        }
+
         super.draw(graphicsHandler);
     }
 
@@ -115,6 +138,9 @@ public class Sentry extends NPC {
 
     public void takeDamage(int damage) {
         setHealth(currentHealth - damage);
+    }
+
+    public void setBounds(float left, float top, float right, float bottom) {
     }
 
     @Override
