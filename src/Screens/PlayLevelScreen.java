@@ -112,7 +112,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new Floor1Room1(); // starting room
+        map = new TreasureRoom(); // starting room
         map.setFlagManager(flagManager);
 
         // setup player
@@ -274,7 +274,7 @@ lastPlayerHealth = currentHealth;
    @Override
     public void changeMap() {
         System.out.println("Attempting to change map. Enemy count: " + map.getEnemyCount());
-        if (map.getEnemyCount() == 0){
+        if (map.getEnemyCount() <= 0){
 
             Map[] poolF1 = new Map[] {
                 new Floor1Room0(),
