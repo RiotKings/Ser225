@@ -6,6 +6,7 @@ import java.net.URL;
 import Engine.GraphicsHandler;
 import Engine.Mouse;
 import Engine.Screen;
+import Engine.SoundEffect;
 import Game.GameState;
 import Game.ScreenCoordinator;
 import Level.*;
@@ -18,8 +19,6 @@ import Utils.Point;
 import Hud.GameHealthHUD;
 
 import javax.sound.sampled.*;
-import java.io.File;
-import java.net.URL;
 
 //Levels
 import Maps.FirstRoom;
@@ -268,11 +267,11 @@ public class PlayLevelScreen extends Screen implements GameListener {
 
    @Override
 public void changeMap() {
-    System.out.println("Attempting to change map. Enemy count: " + map.getEnemyCount());
+    System.out.println("Attempting to change map. Enemy count: " + map.getEnemyCount() + ", MapCount: " + MapCount);
     if (map.getEnemyCount() == 0){
         
         // sound affect here
-        Engine.SoundEffect.play("Resources/door_open.wav");
+        SoundEffect.play("Resources/door_open.wav");
 
         Map[] poolF1 = new Map[] {
             new Floor1Room0(),
@@ -349,8 +348,22 @@ public void changeMap() {
             next = new TreasureRoom();
         } else if (MapCount == 21) {
             // next = new Floor2BossRoomMap();
+            // Fall through to default behavior if boss room not implemented
+            int j;
+            do {
+                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF2.length);
+            } while (poolF2.length > 1 && j == lastIndex);
+            lastIndex = j;
+            next = poolF2[j];
         } else if (MapCount == 22) {
             // next = new Floor3BossRoomMap();
+            // Fall through to default behavior if boss room not implemented
+            int j;
+            do {
+                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF2.length);
+            } while (poolF2.length > 1 && j == lastIndex);
+            lastIndex = j;
+            next = poolF2[j];
         } else if (MapCount < 10) {
 
             // --- NO SAME ROOM TWICE (F1) ---
@@ -362,7 +375,7 @@ public void changeMap() {
             lastIndex = j;
             next = poolF1[j];
 
-        } else { // MapCount > 10
+        } else { // MapCount >= 10 and not special cases
 
             // --- NO SAME ROOM TWICE (F2) ---
             int j;
@@ -374,8 +387,13 @@ public void changeMap() {
             next = poolF2[j];
         }
 
+        if (next == null) {
+            System.err.println("ERROR: next map is null! MapCount: " + MapCount);
+            return;
+        }
+
         MapCount++;
-        System.out.println(MapCount);
+        System.out.println("Changing to new map. MapCount: " + MapCount);
         map = next;
         map.setFlagManager(flagManager);
         player.setMap(map);
@@ -394,6 +412,8 @@ public void changeMap() {
         spawnPhantomEnemies();
 
         System.out.println("roomcount = " + MapCount);
+    } else {
+        System.out.println("Cannot change map: enemy count is " + map.getEnemyCount() + " (must be 0)");
     }
 }
 
