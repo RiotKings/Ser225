@@ -3,6 +3,7 @@ package GameObject;
 import Level.MapEntityStatus;
 import Level.NPC;
 import Level.Player;
+import NPCs.Floor2Boss;
 import NPCs.Bug;
 import NPCs.Zombie;
 import NPCs.Mine;
@@ -171,6 +172,22 @@ public class PlayerBullet extends NPC {
                     if (hitsentry){
                         sentry.takeDamage(damage);
 
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
+                }
+                else if (npc instanceof Floor2Boss floor2Boss) {
+                    if (floor2Boss.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                    Rectangle bossr2 = floor2Boss.getBounds();
+
+                    final float PAD_X1 = 50f, PAD_UP1 = 60f, PAD_DOWN1 = 200f;
+
+                    boolean hitbug = (br.getX1() < bossr2.getX1() + bossr2.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bossr2.getX1() - PAD_X1) && (br.getY1() < bossr2.getY1() + bossr2.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bossr2.getY1() - PAD_UP1);
+                    if (hitbug) {
+                        floor2Boss.takeDamage(damage);
+                        //System.out.println("Hit boss for " + damage + " damage!");
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
                         break;

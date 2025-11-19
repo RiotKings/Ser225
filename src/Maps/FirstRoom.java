@@ -9,6 +9,7 @@ import Level.NPC;
 import Level.Trigger;
 import NPCs.Bug;
 import NPCs.EnemyBasic;
+import NPCs.Floor2Boss;
 import Scripts.TestMap.LostBallScript;
 import Tilesets.CommonTileset;
 import Scripts.*;
@@ -29,6 +30,8 @@ public class FirstRoom extends Map {
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
         // Add item NPC
+        
+
         return npcs;
     }
 

@@ -53,6 +53,7 @@ import Maps.Floor2Room21;
 import Maps.Floor2Room22;
 import Maps.Floor2Room23;
 import Maps.Floor2Room24;
+import Maps.Floor2BossFloor;
 
 
 
@@ -117,6 +118,8 @@ public class EditorMaps {
             add("Floor2Room23");
             add("Floor2Room24");
 
+            // Boss Floor
+            add("Floor2BossFloor");
 
 
 
@@ -254,7 +257,9 @@ public class EditorMaps {
                 return new Floor2Room23();
 
             case "Floor2Room24":
-                return new Floor2Room24();     
+                return new Floor2Room24();  
+            case "Floor2BossFloor":   
+                return new Floor2BossFloor();
             default:
                 throw new RuntimeException("Unrecognized map name");
         }
