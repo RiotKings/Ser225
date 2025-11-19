@@ -35,7 +35,7 @@ public class Floor2Room4 extends Map {
 
         MapTile sentryTile2 = getMapTile(12, 5);  // Spawn at a different location
         if (sentryTile1 != null) {
-            Sentry sentry = new Sentry(2, sentryTile1.getLocation().x, sentryTile1.getLocation().y);
+            Sentry sentry = new Sentry(2, sentryTile2.getLocation().x, sentryTile2.getLocation().y);
             // Set bounds for the enemy to wander within (whole map bounds)
             sentry.setBounds(0, 0, getWidthPixels(), getHeightPixels());
             npcs.add(sentry);

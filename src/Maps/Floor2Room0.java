@@ -33,7 +33,7 @@ public class Floor2Room0 extends Map {
             enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
             npcs.add(enemy);
         }
-        MapTile enemyTile2 = getMapTile(2, 3);  // Spawn at a different location
+        MapTile enemyTile2 = getMapTile(10, 3);  // Spawn at a different location
         if (enemyTile2 != null) {
             EnemyBasic enemy = new EnemyBasic(2, enemyTile2.getLocation().x, enemyTile2.getLocation().y);
             // Set bounds for the enemy to wander within (whole map bounds)
