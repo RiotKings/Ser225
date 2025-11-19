@@ -349,14 +349,9 @@ public void changeMap() {
         } else if (MapCount == 21) {
             // next = new Floor2BossRoomMap();
             // Fall through to default behavior if boss room not implemented
-            int j;
-            do {
-                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF2.length);
-            } while (poolF2.length > 1 && j == lastIndex);
-            lastIndex = j;
-            next = poolF2[j];
+            
         } else if (MapCount == 22) {
-            // next = new Floor3BossRoomMap();
+           next = new FinalBossRoomMap();
             // Fall through to default behavior if boss room not implemented
             int j;
             do {
