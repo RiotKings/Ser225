@@ -173,9 +173,9 @@ public class FinalBossRoomMap extends Map {
     @Override
     public ArrayList<Trigger> loadTriggers() {
         ArrayList<Trigger> triggers = new ArrayList<>();
-        // Add door at top of room to exit
-        triggers.add(new Trigger(340, 0, 40, 40, new DoorScript()));
+        triggers.add(new Trigger(550, 75, 40, 40, new DoorScript()));
         return triggers;
+    
     }
     
     /**
