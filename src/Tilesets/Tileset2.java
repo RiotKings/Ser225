@@ -91,16 +91,14 @@ public class Tileset2 extends Tileset {
         Frame Sanctum9 = new FrameBuilder(getSubImage(1, 3))
                 .withScale(tileScale)
                 .build();
-        MapTileBuilder SanctumTile9 = new MapTileBuilder(Sanctum9)
-                .withTileType(TileType.NOT_PASSABLE);
+        MapTileBuilder SanctumTile9 = new MapTileBuilder(Sanctum9);
         mapTiles.add(SanctumTile9);
 
         // Sanctum10
         Frame Sanctum10 = new FrameBuilder(getSubImage(1, 4))
                 .withScale(tileScale)
                 .build();
-        MapTileBuilder SanctumTile10 = new MapTileBuilder(Sanctum10)
-                .withTileType(TileType.NOT_PASSABLE);
+        MapTileBuilder SanctumTile10 = new MapTileBuilder(Sanctum10);
         mapTiles.add(SanctumTile10);
 
         // Sanctum11
@@ -211,8 +209,7 @@ public class Tileset2 extends Tileset {
         Frame Sanctum24 = new FrameBuilder(getSubImage(4, 3))
                 .withScale(tileScale)
                 .build();
-        MapTileBuilder SanctumTile24 = new MapTileBuilder(Sanctum24)
-                .withTileType(TileType.NOT_PASSABLE);
+        MapTileBuilder SanctumTile24 = new MapTileBuilder(Sanctum24);
         mapTiles.add(SanctumTile24);
 
         // Sanctum25
