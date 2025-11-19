@@ -54,7 +54,7 @@ public class EnemyBasic extends NPC {
     private static final long POSITION_CHECK_INTERVAL = 100;
 
     public EnemyBasic(int id, float x, float y) {
-        super(id, x, y, new SpriteSheet(ImageLoader.load("samurai.png"), 22, 16), "STAND_LEFT");
+        super(id, x, y, new SpriteSheet(ImageLoader.load("Cultist.png"), 21, 35), "STAND_LEFT");
         //System.out.println("[EnemyBasic] spawned at (" + x + "," + y + ")");
     }
 

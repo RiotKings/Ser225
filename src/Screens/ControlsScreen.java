@@ -18,6 +18,7 @@ public class ControlsScreen extends Screen {
     protected SpriteFont moveLabel;
     protected SpriteFont aimShootLabel;
     protected SpriteFont dodgeLabel;
+    protected SpriteFont pauseLabel;
     protected SpriteFont returnInstructionsLabel;
 
     public ControlsScreen(ScreenCoordinator screenCoordinator) {
@@ -33,6 +34,7 @@ public class ControlsScreen extends Screen {
         moveLabel = new SpriteFont("Move: W A S D", 150, 140, "Times New Roman", 22, Color.white);
         aimShootLabel = new SpriteFont("Aim & Shoot: Click to shoot, cursor for aiming", 150, 180, "Times New Roman", 22, Color.white);
         dodgeLabel = new SpriteFont("Dodge: Space Bar", 150, 220, "Times New Roman", 22, Color.white);
+        pauseLabel = new SpriteFont("Pause: P key", 150, 260, "Times New Roman", 22, Color.white);
         returnInstructionsLabel = new SpriteFont("Press Space to return to the menu", 20, 532, "Times New Roman", 30, Color.white);
 
         keyLocker.lockKey(Key.SPACE);
@@ -58,6 +60,7 @@ public class ControlsScreen extends Screen {
         moveLabel.draw(graphicsHandler);
         aimShootLabel.draw(graphicsHandler);
         dodgeLabel.draw(graphicsHandler);
+        pauseLabel.draw(graphicsHandler);
         returnInstructionsLabel.draw(graphicsHandler);
     }
 

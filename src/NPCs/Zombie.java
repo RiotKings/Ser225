@@ -18,7 +18,7 @@ import Utils.Point;
 public class Zombie extends NPC {
     private int totalAmountMoved = 0;
     private Direction direction = Direction.RIGHT;
-    private float speed = .5f; // Increased speed for chasing
+    private float speed = 1f; // Increased speed for chasing
 
     private int currentHealth = 4;
     private int maxHealth = 4;
