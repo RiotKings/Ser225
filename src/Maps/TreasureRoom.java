@@ -26,7 +26,7 @@ import GameObject.Shield;
 public class TreasureRoom extends Map{
     public TreasureRoom() {
         super("TreasureRoom.txt", new CommonTileset());
-        this.playerStartPosition = new Point(400, 300);
+        this.playerStartPosition = new Point(325, 370);
         this.setEnemyCount(0);
     }
      @Override

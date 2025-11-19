@@ -4,6 +4,8 @@ import Level.*;
 import Tilesets.Tileset2;
 import NPCs.Bug;
 import NPCs.EnemyBasic;
+import NPCs.Mine;
+import NPCs.Sentry;
 import Scripts.DoorScript;
 import Utils.Point;
 import java.util.ArrayList;
@@ -24,10 +26,24 @@ public class Floor2Room1 extends Map {
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
         
-       
-        return npcs;
-        // TEMP FIX: disable NPCs for Map Editor stability
+        // Add mine NPC
+        MapTile mineTile = getMapTile(5, 2);
+        if (mineTile != null) 
+            npcs.add(new Mine(1, mineTile.getLocation()));
+         // Add mine NPC
+        MapTile mineTile2 = getMapTile(9, 2);
+        if (mineTile != null) 
+            npcs.add(new Mine(1, mineTile2.getLocation()));
         
+        // TEMP FIX: disable NPCs for Map Editor stability
+        MapTile sentryTile1 = getMapTile(10, 7);  // Spawn at a different location
+        if (sentryTile1 != null) {
+            Sentry sentry = new Sentry(2, sentryTile1.getLocation().x, sentryTile1.getLocation().y);
+            // Set bounds for the enemy to wander within (whole map bounds)
+            sentry.setBounds(0, 0, getWidthPixels(), getHeightPixels());
+            npcs.add(sentry);
+        }
+        return npcs;
     }
 
      @Override
