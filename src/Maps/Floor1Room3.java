@@ -25,7 +25,7 @@ public class Floor1Room3 extends Map {
           ArrayList<NPC> npcs = new ArrayList<>();
         
        // Add Bug NPC
-        MapTile bugTile0 = getMapTile(3, 3);
+        MapTile bugTile0 = getMapTile(2, 3);
         if (bugTile0 != null) 
             npcs.add(new Bug(1, bugTile0.getLocation()));
         // Add Bug NPC

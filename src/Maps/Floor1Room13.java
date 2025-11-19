@@ -15,7 +15,7 @@ public class Floor1Room13 extends Map {
         super("Floor1Room13.txt", new CommonTileset());
 
         this.playerStartPosition = new Point(325, 370);
-        this.setEnemyCount(5);
+        this.setEnemyCount(3);
     }
 
     @Override
@@ -34,13 +34,7 @@ public class Floor1Room13 extends Map {
         if (zombieTile2 != null)
             npcs.add(new Zombie(1, zombieTile2.getLocation()));
         
-            MapTile zombieTile3 = getMapTile(5, 1);
-        if (zombieTile3 != null)
-            npcs.add(new Zombie(1, zombieTile3.getLocation()));
         
-            MapTile zombieTile4 = getMapTile(9, 1);
-        if (zombieTile4 != null)
-            npcs.add(new Zombie(1, zombieTile4.getLocation()));
         
         return npcs;
     }
