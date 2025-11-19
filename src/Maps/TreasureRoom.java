@@ -75,6 +75,7 @@ public class TreasureRoom extends Map{
             new ExtraHeart(1,x,y),
             new DoubleDamage(2,x,y),
             new Shield(1003,x,y),
+            new firerate(3, x, y)
         };
 
         int j = ThreadLocalRandom.current().nextInt(pool.length);
