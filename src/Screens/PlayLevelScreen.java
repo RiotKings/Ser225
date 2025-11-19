@@ -389,6 +389,8 @@ public void changeMap() {
         var pos = map.getPlayerStartPosition();
         player.setLocation(pos.x, pos.y);
 
+           
+
         // spawn phantom enemies AFTER map loads
         spawnPhantomEnemies();
 
