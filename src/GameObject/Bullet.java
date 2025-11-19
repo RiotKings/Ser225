@@ -23,6 +23,9 @@ public class Bullet extends NPC {
 
     public Bullet(int id, float x, float y, float nx, float ny, int damage) {
         super(id, x, y);
+        // Make bullets uncollidable so they don't push NPCs (like the boss) around
+        this.isUncollidable = true;
+        
         float len = (float) Math.sqrt(nx * nx + ny * ny);
         if (len < 1e-6f) { nx = 1f; ny = 0f; }
         else { nx /= len; ny /= len; }

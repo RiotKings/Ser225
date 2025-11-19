@@ -8,6 +8,7 @@ import NPCs.Zombie;
 import NPCs.Mine;
 import NPCs.EnemyBasic;
 import NPCs.FloorBoss;
+import NPCs.FinalBoss;
 import Engine.GraphicsHandler;
 import java.awt.Color;
 import GameObject.Rectangle;
@@ -122,6 +123,22 @@ public class PlayerBullet extends NPC {
                     if (hitbug) {
                         floorBoss.takeDamage(damage);
                         //System.out.println("Hit boss for " + damage + " damage!");
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
+                }
+                else if (npc instanceof FinalBoss finalBoss) {
+                    if (finalBoss.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                    Rectangle bossr = finalBoss.getBounds();
+
+                    final float PAD_X1 = 0f, PAD_UP1 = 0f, PAD_DOWN1 = 0f;
+
+                    boolean hitBoss = (br.getX1() < bossr.getX1() + bossr.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bossr.getX1() - PAD_X1) && (br.getY1() < bossr.getY1() + bossr.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bossr.getY1() - PAD_UP1);
+                    if (hitBoss) {
+                        finalBoss.takeDamage(damage);
+                        System.out.println("Hit Final Boss for " + damage + " damage!");
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
                         break;

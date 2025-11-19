@@ -41,8 +41,8 @@ public class FloorBoss extends NPC {
     private static final float MuzzleOffset = 30f;
     private static final int Damage = 2;
 
-    private int currentHealth = 6;
-    private int maxHealth = 6;
+    private int currentHealth = 10;
+    private int maxHealth = 10;
 
     private static final float StopDistance = 5;
 

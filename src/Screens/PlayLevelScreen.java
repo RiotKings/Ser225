@@ -48,6 +48,7 @@ import Maps.Floor1Room16;
 import Maps.Floor1Room17;
 import Maps.Floor1Room18;
 import Maps.TreasureRoom;
+import Maps.FinalBossRoomMap;
 
 // Knowledge system
 import NPCs.PhantomEnemy;
@@ -87,7 +88,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new FirstRoom(); // starting room
+        map = new FirstRoom();
         map.setFlagManager(flagManager);
 
         // setup player
