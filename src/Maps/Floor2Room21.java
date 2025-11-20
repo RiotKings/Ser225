@@ -24,10 +24,24 @@ public class Floor2Room21 extends Map {
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
         
+        MapTile enemyTile0 = getMapTile(6, 2);
+        if (enemyTile0 != null) {
+            EnemyBasic enemy = new EnemyBasic(2, enemyTile0.getLocation().x, enemyTile0.getLocation().y);
+            enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
+            npcs.add(enemy);
+        }
+
+        MapTile bugTile1 = getMapTile(3, 4);
+        if (bugTile1 != null) {
+            npcs.add(new Bug(1, bugTile1.getLocation()));
+        }
+
+        MapTile bugTile2 = getMapTile(11, 3);
+        if (bugTile2 != null) {
+            npcs.add(new Bug(1, bugTile2.getLocation()));
+        }
        
         return npcs;
-        // TEMP FIX: disable NPCs for Map Editor stability
-        
     }
 
      @Override
@@ -35,11 +49,10 @@ public class Floor2Room21 extends Map {
         ArrayList<Trigger> triggers = new ArrayList<>();
         triggers.add(new Trigger(340, 0, 40, 40, new DoorScript()));
         return triggers;
-    
     }
+    
     @Override
     protected void loadScripts() {
         // Add dialogue/triggers here later if needed
     }
-
 }
