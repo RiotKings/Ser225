@@ -144,10 +144,10 @@ public class Floor2BossFloor extends Map {
     public float getScaleY() {
         return scaleY;
     }
-     @Override
+    @Override
     public ArrayList<Trigger> loadTriggers() {
         ArrayList<Trigger> triggers = new ArrayList<>();
-        triggers.add(new Trigger(550, 0, 40, 40, new DoorScript()));
+        triggers.add(new Trigger(550, 75, 40, 40, new DoorScript()));
         return triggers;
     
     }
