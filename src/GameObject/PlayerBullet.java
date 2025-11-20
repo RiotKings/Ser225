@@ -3,12 +3,14 @@ package GameObject;
 import Level.MapEntityStatus;
 import Level.NPC;
 import Level.Player;
+import NPCs.Floor2Boss;
 import NPCs.Bug;
 import NPCs.Zombie;
 import NPCs.Mine;
 import NPCs.Sentry;
 import NPCs.EnemyBasic;
 import NPCs.FloorBoss;
+import NPCs.FinalBoss;
 import Engine.GraphicsHandler;
 import java.awt.Color;
 import GameObject.Rectangle;
@@ -128,6 +130,22 @@ public class PlayerBullet extends NPC {
                         break;
                     }
                 }
+                else if (npc instanceof FinalBoss finalBoss) {
+                    if (finalBoss.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                    Rectangle bossr = finalBoss.getBounds();
+
+                    final float PAD_X1 = 0f, PAD_UP1 = 0f, PAD_DOWN1 = 0f;
+
+                    boolean hitBoss = (br.getX1() < bossr.getX1() + bossr.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bossr.getX1() - PAD_X1) && (br.getY1() < bossr.getY1() + bossr.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bossr.getY1() - PAD_UP1);
+                    if (hitBoss) {
+                        finalBoss.takeDamage(damage);
+                        System.out.println("Hit Final Boss for " + damage + " damage!");
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
+                }
                 else if (npc instanceof Zombie zombie){
                     if (zombie.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
 
@@ -171,6 +189,22 @@ public class PlayerBullet extends NPC {
                     if (hitsentry){
                         sentry.takeDamage(damage);
 
+                        markedForRemoval = true;
+                        this.mapEntityStatus = MapEntityStatus.REMOVED;
+                        break;
+                    }
+                }
+                else if (npc instanceof Floor2Boss floor2Boss) {
+                    if (floor2Boss.getMapEntityStatus() == MapEntityStatus.REMOVED) continue;
+
+                    Rectangle bossr2 = floor2Boss.getBounds();
+
+                    final float PAD_X1 = 50f, PAD_UP1 = 60f, PAD_DOWN1 = 200f;
+
+                    boolean hitbug = (br.getX1() < bossr2.getX1() + bossr2.getWidth() + PAD_X1 * 2) && (br.getX1() + br.getWidth() > bossr2.getX1() - PAD_X1) && (br.getY1() < bossr2.getY1() + bossr2.getHeight() + PAD_UP1 + PAD_DOWN1) && (br.getY1() + br.getHeight() > bossr2.getY1() - PAD_UP1);
+                    if (hitbug) {
+                        floor2Boss.takeDamage(damage);
+                        //System.out.println("Hit boss for " + damage + " damage!");
                         markedForRemoval = true;
                         this.mapEntityStatus = MapEntityStatus.REMOVED;
                         break;

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Floor1Room4 extends Map {
     public Floor1Room4() {
         super("Floor1Room4", new CommonTileset());
-        this.playerStartPosition = new Point(5, 5);
+        this.playerStartPosition = new Point(325, 370);
         this.setEnemyCount(3);
     }
      @Override

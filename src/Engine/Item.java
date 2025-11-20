@@ -43,6 +43,9 @@ public abstract class Item extends NPC {
                     ir.getY1() + ir.getHeight() > pr.getY1();
 
             if (overlaps) {
+                // sound playes here
+                SoundEffect.play("Resources/item_pickup.wav");
+                
                 // Tell subclass to apply its effect (update player boolean, etc.)
                 onCollect(player);
 

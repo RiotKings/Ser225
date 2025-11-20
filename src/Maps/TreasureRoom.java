@@ -26,7 +26,7 @@ import GameObject.Shield;
 public class TreasureRoom extends Map{
     public TreasureRoom() {
         super("TreasureRoom.txt", new CommonTileset());
-        this.playerStartPosition = new Point(400, 300);
+        this.playerStartPosition = new Point(325, 370);
         this.setEnemyCount(0);
     }
      @Override
@@ -75,6 +75,7 @@ public class TreasureRoom extends Map{
             new ExtraHeart(1,x,y),
             new DoubleDamage(2,x,y),
             new Shield(1003,x,y),
+            new firerate(3, x, y)
         };
 
         int j = ThreadLocalRandom.current().nextInt(pool.length);

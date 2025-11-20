@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Floor1Room3 extends Map {
     public Floor1Room3() {
         super("Floor1Room3", new CommonTileset());
-        this.playerStartPosition = new Point(5, 5);
+        this.playerStartPosition = new Point(325, 370);
         this.setEnemyCount(3);
     }
      @Override
@@ -25,7 +25,7 @@ public class Floor1Room3 extends Map {
           ArrayList<NPC> npcs = new ArrayList<>();
         
        // Add Bug NPC
-        MapTile bugTile0 = getMapTile(3, 3);
+        MapTile bugTile0 = getMapTile(2, 3);
         if (bugTile0 != null) 
             npcs.add(new Bug(1, bugTile0.getLocation()));
         // Add Bug NPC

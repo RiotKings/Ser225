@@ -7,6 +7,7 @@ import Maps.TestMap;
 import Maps.TitleScreenMap;
 import Maps.Floor1Room5;
 import Maps.Floor1BossRoomMap;
+import Maps.FinalBossRoomMap;
 import Maps.FirstRoom;
 import Maps.Floor1Room0;
 import Maps.Floor1Room1;
@@ -53,6 +54,7 @@ import Maps.Floor2Room21;
 import Maps.Floor2Room22;
 import Maps.Floor2Room23;
 import Maps.Floor2Room24;
+import Maps.Floor2BossFloor;
 
 
 
@@ -66,6 +68,7 @@ public class EditorMaps {
             // initial rooms
             add("RegularRoom");
             add("BossRoom");
+            add("FinalBossRoom");
             add("FirstRoom");
             add("Floor1Room0");
             add("Floor1Room1");
@@ -117,6 +120,8 @@ public class EditorMaps {
             add("Floor2Room23");
             add("Floor2Room24");
 
+            // Boss Floor
+            add("Floor2BossFloor");
 
 
 
@@ -144,6 +149,8 @@ public class EditorMaps {
                 return new Floor1Room5();
             case "BossRoom":
                 return new Floor1BossRoomMap();
+            case "FinalBossRoom":
+                return new FinalBossRoomMap();
             case "FirstRoom":
                 return new FirstRoom();
             case "Floor1Room0":
@@ -254,7 +261,9 @@ public class EditorMaps {
                 return new Floor2Room23();
 
             case "Floor2Room24":
-                return new Floor2Room24();     
+                return new Floor2Room24();  
+            case "Floor2BossFloor":   
+                return new Floor2BossFloor();
             default:
                 throw new RuntimeException("Unrecognized map name");
         }

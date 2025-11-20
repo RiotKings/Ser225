@@ -15,13 +15,7 @@ public class Floor1Room9 extends Map {
     public Floor1Room9() {
         super("Floor1Room9.txt", new CommonTileset());
 
-        MapTile center = getMapTile(10, 7);
-        if (center != null) {
-            this.playerStartPosition = center.getLocation();
-        } else {
-            MapTile fallback = getMapTile(2, 2);
-            this.playerStartPosition = (fallback != null) ? fallback.getLocation() : new Point(0, 0);
-        }
+        this.playerStartPosition = new Point(325, 370);
         this.setEnemyCount(4);
     }
 
@@ -48,7 +42,7 @@ public class Floor1Room9 extends Map {
             npcs.add(new Zombie(1, zombieTile0.getLocation()));
             
          // Add mine NPC
-        MapTile mineTile = getMapTile(6, 4);
+        MapTile mineTile = getMapTile(7, 4);
         if (mineTile != null) 
             npcs.add(new Mine(1, mineTile.getLocation()));
 
