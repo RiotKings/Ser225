@@ -352,8 +352,7 @@ public void changeMap() {
         } else if (MapCount == 22) {
            next = new FinalBossRoomMap();
         }else if (MapCount == 23){
-            //LEVEL_COMPLETED;
-         
+           playLevelScreenState = PlayLevelScreenState.LEVEL_COMPLETED;       
         } else if (MapCount < 10) {
 
             // --- NO SAME ROOM TWICE (F1) ---
