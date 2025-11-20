@@ -4,6 +4,8 @@ import Level.*;
 import Tilesets.Tileset2;
 import NPCs.Bug;
 import NPCs.EnemyBasic;
+import NPCs.Sentry;
+import NPCs.Zombie;
 import Scripts.DoorScript;
 import Utils.Point;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ public class Floor2Room15 extends Map {
     public Floor2Room15() {
         super("Floor2Room15", new Tileset2());
             this.playerStartPosition = new Point(325, 370);
-             this.setEnemyCount(3);
+            this.setEnemyCount(2);
     }
 
     @Override
@@ -24,17 +26,18 @@ public class Floor2Room15 extends Map {
     protected ArrayList<NPC> loadNPCs() {
         ArrayList<NPC> npcs = new ArrayList<>();
         
-         MapTile enemyTile1 = getMapTile(10, 7);  // Spawn at a different location
-        if (enemyTile1 != null) {
-            EnemyBasic enemy = new EnemyBasic(2, enemyTile1.getLocation().x, enemyTile1.getLocation().y);
-            // Set bounds for the enemy to wander within (whole map bounds)
-            enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
-            npcs.add(enemy);
+        MapTile sentryTile1 = getMapTile(11, 2);
+        if (sentryTile1 != null) {
+            Sentry sentry = new Sentry(2, sentryTile1.getLocation().x, sentryTile1.getLocation().y);
+            sentry.setBounds(0, 0, getWidthPixels(), getHeightPixels());
+            npcs.add(sentry);
         }
-       
+        MapTile zombieTile1 = getMapTile(5, 5);
+        if (zombieTile1 != null) {
+            npcs.add(new Zombie(1, zombieTile1.getLocation()));
+        }
         return npcs;
         // TEMP FIX: disable NPCs for Map Editor stability
-        
     }
 
      @Override

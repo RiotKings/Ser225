@@ -42,14 +42,6 @@ public class Floor1Room1 extends Map {
             enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
             npcs.add(enemy);
         }
-
-        MapTile sentryTile1 = getMapTile(10, 7);  // Spawn at a different location
-        if (sentryTile1 != null) {
-            Sentry sentry = new Sentry(2, sentryTile1.getLocation().x, sentryTile1.getLocation().y);
-            // Set bounds for the enemy to wander within (whole map bounds)
-            sentry.setBounds(0, 0, getWidthPixels(), getHeightPixels());
-            npcs.add(sentry);
-        }
         return npcs;
         // TEMP FIX: disable NPCs for Map Editor stability
         

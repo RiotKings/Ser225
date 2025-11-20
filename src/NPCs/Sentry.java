@@ -36,8 +36,8 @@ public class Sentry extends NPC {
     private double lastAngle = 0.0;
 
     public Sentry(int id, float x, float y) {
-        super(id, x, y, new SpriteSheet(ImageLoader.load("Sentry1.png"), 42, 34), "STAND");
-        this.baseImage = ImageLoader.load("Sentry1.png");
+        super(id, x, y, new SpriteSheet(ImageLoader.load("Sentry.png"), 47, 47), "STAND");
+        this.baseImage = ImageLoader.load("Sentry.png");
     }
 
     @Override
@@ -46,7 +46,7 @@ public class Sentry extends NPC {
             put("STAND", new Frame[] {
                 new FrameBuilder(spriteSheet.getSprite(0, 0))
                     .withScale(2)
-                    .withBounds(0, 0, 42, 34)
+                    .withBounds(0, 0, 47, 47)
                     .build()
             });
         }};
