@@ -68,6 +68,7 @@ import Maps.Floor1Room17;
 import Maps.Floor1Room18;
 import Maps.TreasureRoom;
 import Maps.FinalBossRoomMap;
+import Maps.Floor2BossFloor;
 
 // Knowledge system
 import NPCs.PhantomEnemy;
@@ -107,7 +108,7 @@ public class PlayLevelScreen extends Screen implements GameListener {
         flagManager.addFlag("hasTalkedToBug");
         flagManager.addFlag("hasFoundBall");
 
-        map = new Floor1Room1(); // starting room
+        map = new FirstRoom(); // starting room
         map.setFlagManager(flagManager);
 
         // setup player
@@ -347,18 +348,12 @@ public void changeMap() {
         } else if (MapCount == 20) {
             next = new TreasureRoom();
         } else if (MapCount == 21) {
-            // next = new Floor2BossRoomMap();
-            // Fall through to default behavior if boss room not implemented
-            
+            next = new Floor2BossFloor();
         } else if (MapCount == 22) {
            next = new FinalBossRoomMap();
-            // Fall through to default behavior if boss room not implemented
-            int j;
-            do {
-                j = java.util.concurrent.ThreadLocalRandom.current().nextInt(poolF2.length);
-            } while (poolF2.length > 1 && j == lastIndex);
-            lastIndex = j;
-            next = poolF2[j];
+        }else if (MapCount == 23){
+            //LEVEL_COMPLETED;
+         
         } else if (MapCount < 10) {
 
             // --- NO SAME ROOM TWICE (F1) ---
