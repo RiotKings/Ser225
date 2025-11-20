@@ -453,12 +453,7 @@ public void changeMap() {
         float frameRate = decoded.getFrameRate();
         int totalFrames = (int) bgmClip.getFrameLength();
         int startMs = 0;
-        int endMs   = 40000;
-        loopStartFrame = Math.max(0, (int) (startMs / 1000f * frameRate));
-        loopEndFrame   = Math.min(totalFrames - 1, (int) (endMs   / 1000f * frameRate));
-
-        bgmClip.setLoopPoints(loopStartFrame, loopEndFrame);
-        bgmClip.setFramePosition(loopStartFrame);
+        
         bgmClip.loop(Clip.LOOP_CONTINUOUSLY);
         bgmClip.start();
         
