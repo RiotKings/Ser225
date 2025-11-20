@@ -8,6 +8,12 @@ import Utils.Point;
 import java.util.ArrayList;
 
 import GameObject.DoubleDamage;
+import GameObject.SpeedBoots;
+import GameObject.ExtraHeart;
+import GameObject.firerate;
+import GameObject.Shield;
+
+
 
 public class TestMap extends Map {
 
@@ -45,10 +51,30 @@ public class TestMap extends Map {
             // Set bounds for the enemy to wander within (whole map bounds)
             enemy.setBounds(0, 0, getWidthPixels(), getHeightPixels());
             npcs.add(enemy);
+
+
+
+
+
         }
         
-        DoubleDamage doubleDamage =new DoubleDamage(2,500,500);
-        npcs.add (doubleDamage);
+        
+
+            DoubleDamage doubleDamage = new DoubleDamage(2, 500, 500);
+            npcs.add(doubleDamage);
+
+        SpeedBoots speedBoots = new SpeedBoots(2, 550, 500);
+        npcs.add(speedBoots);
+
+        ExtraHeart extraHeart = new ExtraHeart(2, 600, 500);
+        npcs.add(extraHeart);
+
+        firerate fireRate = new firerate(2, 650, 500);
+        npcs.add(fireRate);
+
+        Shield shield = new Shield(2, 700, 500);
+        npcs.add(shield);
+
         return npcs;
         // TEMP FIX: disable NPCs for Map Editor stability
         
